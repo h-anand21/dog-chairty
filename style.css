@@ -68,9 +68,7 @@ body {
 .volunteer button {
   padding: 10px 20px;
   background-color: #1e1e20;
-  border: white;
-  color: rgb(204, 188, 188);
-  font-display: ;
+  border: 2px solid #fff;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
