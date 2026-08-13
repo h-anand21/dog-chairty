@@ -38,7 +38,6 @@ export const App: React.FC = () => {
           phone={activeOtpSession.phone}
           code={activeOtpSession.code}
           onAutoFill={(code) => {
-            // Trigger auto-fill in modal inputs
             const digits = code.split('');
             digits.forEach((d, idx) => {
               const el = document.getElementById(`otp-input-${idx}`) as HTMLInputElement;
@@ -49,11 +48,11 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Top Sticky Navbar */}
+      {/* Top Sticky Responsive Navbar */}
       <Navbar />
 
-      {/* Main Content Area */}
-      <main className="flex-1">
+      {/* Main Content Area with Mobile Safe Bottom Padding */}
+      <main className="flex-1 pb-24 sm:pb-28 lg:pb-12">
         {activeTab === 'discover' && (
           <DiscoverPage onSelectDog={(dog) => setSelectedDog(dog)} />
         )}
@@ -79,7 +78,7 @@ export const App: React.FC = () => {
         onClose={() => setIsAuthModalOpen(false)}
       />
 
-      {/* Mobile Bottom Navigation Bar */}
+      {/* Floating Mobile Bottom Navigation Bar */}
       <MobileNav />
 
       {/* Footer */}
