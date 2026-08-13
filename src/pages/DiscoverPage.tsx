@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { useApp } from '../../context/AppContext';
-import { useAudio } from '../../context/AudioContext';
+import { useApp } from '../context/AppContext';
+import { useAudio } from '../context/AudioContext';
 import { DogCard } from '../components/discover/DogCard';
 import { Dog, DogStatus } from '../types';
 import {
@@ -32,7 +32,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
   // Cities list from active dogs
   const cities = useMemo(() => {
     const set = new Set<string>();
-    dogs.forEach(d => {
+    dogs.forEach((d: Dog) => {
       const city = d.location.split(',')[0].trim();
       if (city) set.add(city);
     });
@@ -41,7 +41,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
   // Filtered dogs
   const filteredDogs = useMemo(() => {
-    return dogs.filter(dog => {
+    return dogs.filter((dog: Dog) => {
       const matchesSearch =
         dog.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         dog.breed.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -69,20 +69,17 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
       {/* HERO SECTION */}
       <section className="relative overflow-hidden pt-8 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8">
         
-        {/* Background decorative glowing circles */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-coral-300/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-10 right-10 w-72 h-72 bg-sky-300/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-5xl mx-auto text-center space-y-6 relative z-10">
           
-          {/* Top pill badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-coral-50 border border-coral-200 text-coral-600 font-extrabold text-xs tracking-wider uppercase shadow-xs animate-bounce-short">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-coral-50 border border-coral-200 text-coral-600 font-extrabold text-xs tracking-wider uppercase shadow-xs">
             <span className="text-sm">🐾</span>
             <span>Real-Time Canine Adoption & Friendship</span>
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           </div>
 
-          {/* Hero Title */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black font-display text-obsidian-900 tracking-tight leading-[1.1]">
             Every Dog Deserves <br />
             <span className="bg-gradient-to-r from-coral-500 via-coral-600 to-amber-500 bg-clip-text text-transparent">
@@ -90,12 +87,10 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
             </span>
           </h1>
 
-          {/* Subtitle */}
           <p className="text-base sm:text-lg text-obsidian-700 max-w-2xl mx-auto leading-relaxed">
             Direct owner listings, verified veterinary panels, real-time chat, and safe dual-confirmation ownership handovers.
           </p>
 
-          {/* Primary Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <button
               onClick={() => {
@@ -103,7 +98,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 const el = document.getElementById('marketplace-grid');
                 el?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white px-8 py-3.5 rounded-full font-bold text-base shadow-soft hover:shadow-soft-hover transition-all hover:scale-102"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white px-8 py-3.5 rounded-full font-bold text-base shadow-soft hover:shadow-soft-hover transition-all hover:scale-102 cursor-pointer"
             >
               <Heart className="w-5 h-5 fill-white" />
               <span>Explore Dogs to Adopt</span>
@@ -114,14 +109,13 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 playPawPop();
                 setIsListDogOpen(true);
               }}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white hover:bg-obsidian-300/80 text-obsidian-900 border-2 border-obsidian-400/80 px-8 py-3.5 rounded-full font-bold text-base shadow-xs transition-all hover:scale-102"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white hover:bg-obsidian-300/80 text-obsidian-900 border-2 border-obsidian-400/80 px-8 py-3.5 rounded-full font-bold text-base shadow-xs transition-all hover:scale-102 cursor-pointer"
             >
               <PlusCircle className="w-5 h-5 text-coral-500" />
               <span>Post a Dog for Adoption</span>
             </button>
           </div>
 
-          {/* Live Trust Metrics */}
           <div className="pt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
             <div className="glass-panel p-3.5 rounded-2xl text-center shadow-xs">
               <div className="text-2xl font-black text-coral-600">100%</div>
@@ -149,10 +143,8 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
         
         <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-soft border border-obsidian-400/40 space-y-4">
           
-          {/* Main Search Row */}
           <div className="flex flex-col md:flex-row gap-3">
             
-            {/* Search Input */}
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-obsidian-500" />
               <input
@@ -172,7 +164,6 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
               )}
             </div>
 
-            {/* City Dropdown */}
             <div className="flex items-center gap-2">
               <div className="relative min-w-[150px]">
                 <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-coral-500" />
@@ -189,7 +180,6 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 </select>
               </div>
 
-              {/* Status Filter Dropdown */}
               <div className="relative min-w-[170px]">
                 <select
                   value={selectedStatus}
@@ -207,7 +197,6 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
           </div>
 
-          {/* Quick Filter Chips Row */}
           <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-obsidian-400/30 text-xs">
             
             <div className="flex flex-wrap items-center gap-2">
@@ -216,7 +205,6 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 <span>Filters:</span>
               </span>
 
-              {/* Size Chips */}
               {['All', 'Small', 'Medium', 'Large'].map(size => (
                 <button
                   key={size}
@@ -224,7 +212,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     playPawPop();
                     setSelectedSize(size);
                   }}
-                  className={`px-3 py-1 rounded-full font-bold transition-all ${
+                  className={`px-3 py-1 rounded-full font-bold transition-all cursor-pointer ${
                     selectedSize === size
                       ? 'bg-coral-500 text-white shadow-xs'
                       : 'bg-obsidian-300/80 text-obsidian-700 hover:bg-obsidian-400'
@@ -236,7 +224,6 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
               <span className="text-obsidian-400">|</span>
 
-              {/* Energy Chips */}
               {['All', 'Low', 'Moderate', 'High'].map(energy => (
                 <button
                   key={energy}
@@ -244,7 +231,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     playPawPop();
                     setSelectedEnergy(energy);
                   }}
-                  className={`px-3 py-1 rounded-full font-bold transition-all ${
+                  className={`px-3 py-1 rounded-full font-bold transition-all cursor-pointer ${
                     selectedEnergy === energy
                       ? 'bg-sky-500 text-white shadow-xs'
                       : 'bg-obsidian-300/80 text-obsidian-700 hover:bg-obsidian-400'
@@ -255,7 +242,6 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
               ))}
             </div>
 
-            {/* Total Results Count */}
             <div className="text-xs font-bold text-obsidian-600">
               Showing <span className="text-coral-600 font-black">{filteredDogs.length}</span> pup{filteredDogs.length === 1 ? '' : 's'}
             </div>
@@ -290,7 +276,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredDogs.map(dog => (
+            {filteredDogs.map((dog: Dog) => (
               <DogCard
                 key={dog.id}
                 dog={dog}

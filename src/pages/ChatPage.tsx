@@ -1,11 +1,12 @@
 import React from 'react';
-import { useApp } from '../../context/AppContext';
-import { useAudio } from '../../context/AudioContext';
+import { useApp } from '../context/AppContext';
+import { useAudio } from '../context/AudioContext';
 import { ChatView } from '../components/chat/ChatView';
-import { MessageCircle, ShieldCheck, Search, Sparkles } from 'lucide-react';
+import { Conversation } from '../types';
+import { MessageCircle, ShieldCheck } from 'lucide-react';
 
 export const ChatPage: React.FC = () => {
-  const { conversations, activeConversationId, setActiveConversationId, currentUser } = useApp();
+  const { conversations, activeConversationId, setActiveConversationId } = useApp();
   const { playPawPop } = useAudio();
 
   return (
@@ -53,7 +54,7 @@ export const ChatPage: React.FC = () => {
                 </p>
               </div>
             ) : (
-              conversations.map(conv => {
+              conversations.map((conv: Conversation) => {
                 const isActive = conv.id === activeConversationId;
                 return (
                   <div

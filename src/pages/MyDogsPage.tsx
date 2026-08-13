@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
-import { useAudio } from '../../context/AudioContext';
+import { useApp } from '../context/AppContext';
+import { useAudio } from '../context/AudioContext';
 import { StatusBadge } from '../components/common/StatusBadge';
-import { Dog } from '../../types';
+import { Dog, AdoptionApplication } from '../types';
 import {
   Dog as DogIcon,
   Award,
   PlusCircle,
   HeartHandshake,
   CheckCircle2,
-  Calendar,
   FileText,
-  Sparkles,
 } from 'lucide-react';
 
 export const MyDogsPage: React.FC = () => {
@@ -20,7 +18,6 @@ export const MyDogsPage: React.FC = () => {
     dogs,
     applications,
     setIsListDogOpen,
-    setSelectedDog,
     setViewingCertificateDog,
     setActiveTab,
   } = useApp();
@@ -29,14 +26,14 @@ export const MyDogsPage: React.FC = () => {
 
   const [activeSubTab, setActiveSubTab] = useState<'adopted' | 'listed' | 'applications'>('adopted');
 
-  // Adopted Dogs (where current user is newOwnerId or currentOwnerId and status is adopted)
-  const adoptedDogs = dogs.filter(d => d.status === 'adopted' && (d.newOwnerId === currentUser.id || d.currentOwnerId === currentUser.id));
+  // Adopted Dogs
+  const adoptedDogs = dogs.filter((d: Dog) => d.status === 'adopted' && (d.newOwnerId === currentUser.id || d.currentOwnerId === currentUser.id));
 
-  // Listed Dogs (where current user listed them)
-  const listedDogs = dogs.filter(d => d.currentOwnerId === currentUser.id || d.previousOwnerId === currentUser.id);
+  // Listed Dogs
+  const listedDogs = dogs.filter((d: Dog) => d.currentOwnerId === currentUser.id || d.previousOwnerId === currentUser.id);
 
   // User Applications
-  const myApplications = applications.filter(a => a.applicantId === currentUser.id);
+  const myApplications = applications.filter((a: AdoptionApplication) => a.applicantId === currentUser.id);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 text-left">
@@ -74,7 +71,7 @@ export const MyDogsPage: React.FC = () => {
             playPawPop();
             setIsListDogOpen(true);
           }}
-          className="flex items-center gap-2 bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white px-6 py-3 rounded-full font-bold text-xs shadow-soft transition-all shrink-0"
+          className="flex items-center gap-2 bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white px-6 py-3 rounded-full font-bold text-xs shadow-soft transition-all shrink-0 cursor-pointer"
         >
           <PlusCircle className="w-4 h-4" />
           <span>+ List Another Dog</span>
@@ -85,7 +82,7 @@ export const MyDogsPage: React.FC = () => {
       <div className="flex items-center gap-3 border-b border-obsidian-400/40 pb-2">
         <button
           onClick={() => setActiveSubTab('adopted')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
             activeSubTab === 'adopted'
               ? 'bg-coral-500 text-white shadow-xs'
               : 'text-obsidian-600 hover:bg-obsidian-300/60'
@@ -97,7 +94,7 @@ export const MyDogsPage: React.FC = () => {
 
         <button
           onClick={() => setActiveSubTab('listed')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
             activeSubTab === 'listed'
               ? 'bg-coral-500 text-white shadow-xs'
               : 'text-obsidian-600 hover:bg-obsidian-300/60'
@@ -109,7 +106,7 @@ export const MyDogsPage: React.FC = () => {
 
         <button
           onClick={() => setActiveSubTab('applications')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
             activeSubTab === 'applications'
               ? 'bg-coral-500 text-white shadow-xs'
               : 'text-obsidian-600 hover:bg-obsidian-300/60'
@@ -132,14 +129,14 @@ export const MyDogsPage: React.FC = () => {
               </p>
               <button
                 onClick={() => setActiveTab('adopt_flow')}
-                className="px-6 py-2.5 rounded-full bg-coral-500 text-white font-bold text-xs"
+                className="px-6 py-2.5 rounded-full bg-coral-500 text-white font-bold text-xs cursor-pointer"
               >
                 Track Active Adoption
               </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {adoptedDogs.map(dog => (
+              {adoptedDogs.map((dog: Dog) => (
                 <div
                   key={dog.id}
                   className="bg-white rounded-3xl overflow-hidden border border-amber-300 shadow-soft flex flex-col justify-between"
@@ -183,7 +180,7 @@ export const MyDogsPage: React.FC = () => {
                         playPawPop();
                         setViewingCertificateDog(dog);
                       }}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-soft transition-all"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-soft transition-all cursor-pointer"
                     >
                       <FileText className="w-4 h-4" />
                       <span>View Official Certificate</span>
@@ -199,7 +196,7 @@ export const MyDogsPage: React.FC = () => {
       {/* SUBTAB 2: LISTED DOGS */}
       {activeSubTab === 'listed' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listedDogs.map(dog => (
+          {listedDogs.map((dog: Dog) => (
             <div
               key={dog.id}
               className="bg-white rounded-3xl overflow-hidden border border-obsidian-400/50 shadow-soft p-5 space-y-4"
@@ -235,7 +232,7 @@ export const MyDogsPage: React.FC = () => {
                   playPawPop();
                   setActiveTab('adopt_flow');
                 }}
-                className="w-full py-2 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-xs shadow-xs"
+                className="w-full py-2 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-xs shadow-xs cursor-pointer"
               >
                 Manage Inquiries & Applications ➔
               </button>
@@ -247,7 +244,7 @@ export const MyDogsPage: React.FC = () => {
       {/* SUBTAB 3: MY APPLICATIONS */}
       {activeSubTab === 'applications' && (
         <div className="space-y-4">
-          {myApplications.map(app => (
+          {myApplications.map((app: AdoptionApplication) => (
             <div
               key={app.id}
               className="bg-white rounded-3xl p-5 border border-obsidian-400/50 shadow-soft flex items-center justify-between gap-4"
@@ -269,7 +266,7 @@ export const MyDogsPage: React.FC = () => {
                   playPawPop();
                   setActiveTab('adopt_flow');
                 }}
-                className="px-4 py-2 rounded-full bg-coral-50 text-coral-700 hover:bg-coral-100 font-bold text-xs border border-coral-200"
+                className="px-4 py-2 rounded-full bg-coral-50 text-coral-700 hover:bg-coral-100 font-bold text-xs border border-coral-200 cursor-pointer"
               >
                 View Pipeline ➔
               </button>

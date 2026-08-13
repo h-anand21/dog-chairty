@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
-import { useAudio } from '../../context/AudioContext';
+import { useApp } from '../context/AppContext';
+import { useAudio } from '../context/AudioContext';
 import { AdoptionJourneyTracker } from '../components/adoption/AdoptionJourneyTracker';
-import { HeartHandshake, ShieldCheck, PlusCircle, Dog as DogIcon } from 'lucide-react';
+import { AdoptionApplication } from '../types';
+import { HeartHandshake, Dog as DogIcon } from 'lucide-react';
 
 export const AdoptFlowPage: React.FC = () => {
-  const { applications, currentUser, setActiveTab, setIsListDogOpen } = useApp();
+  const { applications, currentUser, setActiveTab } = useApp();
   const { playPawPop } = useAudio();
 
   const [activeFilter, setActiveFilter] = useState<'all' | 'my_requests' | 'incoming_requests'>('all');
 
-  // Filter applications based on current user role and active filter
-  const userApplications = applications.filter(app => {
+  const userApplications = applications.filter((app: AdoptionApplication) => {
     if (activeFilter === 'my_requests') {
       return app.applicantId === currentUser.id;
     }
@@ -39,13 +39,12 @@ export const AdoptFlowPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Action button */}
         <button
           onClick={() => {
             playPawPop();
             setActiveTab('discover');
           }}
-          className="flex items-center gap-2 bg-obsidian-900 hover:bg-obsidian-800 text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all shrink-0"
+          className="flex items-center gap-2 bg-obsidian-900 hover:bg-obsidian-800 text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer"
         >
           <DogIcon className="w-4 h-4" />
           <span>Browse More Dogs</span>
@@ -56,7 +55,7 @@ export const AdoptFlowPage: React.FC = () => {
       <div className="flex items-center gap-2 border-b border-obsidian-400/40 pb-2">
         <button
           onClick={() => setActiveFilter('all')}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
             activeFilter === 'all'
               ? 'bg-coral-500 text-white shadow-xs'
               : 'text-obsidian-600 hover:bg-obsidian-300/60'
@@ -66,7 +65,7 @@ export const AdoptFlowPage: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveFilter('my_requests')}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
             activeFilter === 'my_requests'
               ? 'bg-coral-500 text-white shadow-xs'
               : 'text-obsidian-600 hover:bg-obsidian-300/60'
@@ -76,7 +75,7 @@ export const AdoptFlowPage: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveFilter('incoming_requests')}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
             activeFilter === 'incoming_requests'
               ? 'bg-coral-500 text-white shadow-xs'
               : 'text-obsidian-600 hover:bg-obsidian-300/60'
@@ -103,7 +102,7 @@ export const AdoptFlowPage: React.FC = () => {
             </button>
           </div>
         ) : (
-          userApplications.map(app => (
+          userApplications.map((app: AdoptionApplication) => (
             <AdoptionJourneyTracker key={app.id} application={app} />
           ))
         )}

@@ -1,7 +1,14 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAudio } from '../../context/AudioContext';
-import { Compass, HeartHandshake, MessageCircle, Camera, Dog as DogIcon } from 'lucide-react';
+import { Compass, HeartHandshake, MessageCircle, Camera, Dog as DogIcon, LucideIcon } from 'lucide-react';
+
+interface NavItem {
+  id: 'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs';
+  label: string;
+  icon: LucideIcon;
+  badge?: number;
+}
 
 export const MobileNav: React.FC = () => {
   const { activeTab, setActiveTab, conversations } = useApp();
@@ -9,18 +16,18 @@ export const MobileNav: React.FC = () => {
 
   const unreadMessagesCount = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
 
-  const handleTab = (tab: typeof activeTab) => {
+  const handleTab = (tab: NavItem['id']) => {
     playPawPop();
     setActiveTab(tab);
   };
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { id: 'discover', label: 'Discover', icon: Compass },
     { id: 'adopt_flow', label: 'Journey', icon: HeartHandshake },
     { id: 'feed', label: 'PawFeed', icon: Camera },
     { id: 'chat', label: 'Chat', icon: MessageCircle, badge: unreadMessagesCount },
     { id: 'my_dogs', label: 'My Dogs', icon: DogIcon },
-  ] as const;
+  ];
 
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-obsidian-400/50 px-3 py-2 shadow-lg">
@@ -38,11 +45,11 @@ export const MobileNav: React.FC = () => {
             >
               <div className="relative">
                 <Icon className="w-5 h-5" />
-                {item.badge && item.badge > 0 ? (
+                {item.badge !== undefined && item.badge > 0 && (
                   <span className="absolute -top-1.5 -right-2.5 w-4 h-4 rounded-full bg-coral-500 text-white text-[9px] font-black flex items-center justify-center">
                     {item.badge}
                   </span>
-                ) : null}
+                )}
               </div>
               <span className="text-[10px]">{item.label}</span>
               {isActive && (
