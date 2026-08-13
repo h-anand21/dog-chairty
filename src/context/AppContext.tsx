@@ -12,6 +12,7 @@ import {
   Story,
   ReportItem,
   NotificationItem,
+  OtpSession,
 } from '../types';
 import {
   INITIAL_USERS,
@@ -23,11 +24,18 @@ import {
 } from '../data/mockData';
 
 interface AppContextType {
-  // User Management
+  // Authentication & Dynamic Users
   currentUser: User;
   allUsers: User[];
-  setCurrentUser: (user: User) => void;
+  isAuthModalOpen: boolean;
+  setIsAuthModalOpen: (open: boolean) => void;
+  activeOtpSession: OtpSession | null;
+  sendOtp: (phone: string) => string;
+  verifyOtp: (phone: string, code: string) => { success: boolean; isNewUser: boolean; message: string };
+  completeRegistration: (userData: Omit<User, 'id' | 'joinedDate'>) => User;
   switchUser: (userId: string) => void;
+  logout: () => void;
+  dismissOtpToast: () => void;
 
   // Dogs & Marketplace
   dogs: Dog[];
@@ -111,12 +119,19 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // 1. User State
+  // 1. User Registry & Auth State
+  const [allUsers, setAllUsers] = useState<User[]>(() => {
+    const saved = localStorage.getItem('pawconnect_users');
+    return saved ? JSON.parse(saved) : INITIAL_USERS;
+  });
+
   const [currentUser, setCurrentUser] = useState<User>(() => {
     const saved = localStorage.getItem('pawconnect_current_user');
-    return saved ? JSON.parse(saved) : INITIAL_USERS[1]; // Default to Sarah (Adopter) or Alex
+    return saved ? JSON.parse(saved) : INITIAL_USERS[0]; // Default to Sarah
   });
-  const allUsers = INITIAL_USERS;
+
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [activeOtpSession, setActiveOtpSession] = useState<OtpSession | null>(null);
 
   // 2. Navigation Tab
   const [activeTab, setActiveTab] = useState<'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin'>('discover');
@@ -205,7 +220,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         participants: ['user_alex', 'user_sarah'],
         lastMessage: 'Sure! Bruno loves playing with tennis balls at Eco Park.',
         lastMessageTimestamp: '10:45 AM',
-        unreadCount: 1
+        unreadCount: 0
       }
     ];
   });
@@ -294,6 +309,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Sync to LocalStorage
   useEffect(() => {
+    localStorage.setItem('pawconnect_users', JSON.stringify(allUsers));
+  }, [allUsers]);
+
+  useEffect(() => {
     localStorage.setItem('pawconnect_current_user', JSON.stringify(currentUser));
   }, [currentUser]);
 
@@ -337,7 +356,64 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('pawconnect_reports', JSON.stringify(reports));
   }, [reports]);
 
-  // Switch Active User Persona
+  // Clean / normalize phone numbers for matching
+  const cleanPhone = (p: string) => p.replace(/\D/g, '');
+
+  // Send OTP
+  const sendOtp = (phone: string): string => {
+    // Generate 4 digit code (e.g. 5824)
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    const session: OtpSession = {
+      phone,
+      code,
+      expiresAt: Date.now() + 5 * 60 * 1000
+    };
+    setActiveOtpSession(session);
+    return code;
+  };
+
+  // Verify OTP
+  const verifyOtp = (phone: string, code: string) => {
+    if (!activeOtpSession || activeOtpSession.code !== code) {
+      return { success: false, isNewUser: false, message: 'Invalid OTP code. Please check SMS banner.' };
+    }
+
+    const cleanInput = cleanPhone(phone);
+    const existing = allUsers.find(u => cleanPhone(u.phone) === cleanInput);
+
+    if (existing) {
+      setCurrentUser(existing);
+      setActiveOtpSession(null);
+      return { success: true, isNewUser: false, message: 'Welcome back!' };
+    }
+
+    // New user -> prompt for profile details
+    return { success: true, isNewUser: true, message: 'OTP verified! Please complete your profile.' };
+  };
+
+  // Complete Registration for New User
+  const completeRegistration = (userData: Omit<User, 'id' | 'joinedDate'>): User => {
+    const newUser: User = {
+      ...userData,
+      id: `user_${Date.now()}`,
+      joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    };
+
+    setAllUsers(prev => [newUser, ...prev]);
+    setCurrentUser(newUser);
+    setActiveOtpSession(null);
+    return newUser;
+  };
+
+  const logout = () => {
+    // Fallback to demo user or prompt login
+    setIsAuthModalOpen(true);
+  };
+
+  const dismissOtpToast = () => {
+    setActiveOtpSession(null);
+  };
+
   const switchUser = (userId: string) => {
     const found = allUsers.find(u => u.id === userId);
     if (found) {
@@ -356,11 +432,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       currentOwnerId: currentUser.id,
       currentOwnerName: currentUser.name,
       currentOwnerAvatar: currentUser.avatar,
+      currentOwnerPhone: currentUser.phone,
       isOwnerVerified: currentUser.isVerified,
     };
     setDogs(prev => [newDog, ...prev]);
 
-    // Also auto-create an announcement post on PawFeed
+    // Also auto-create announcement post on PawFeed
     const announcementPost: Post = {
       id: `post_${Date.now()}`,
       dogId: newDog.id,
@@ -370,7 +447,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ownerId: currentUser.id,
       ownerName: currentUser.name,
       image: newDog.coverPhoto,
-      caption: `🐾 Exciting news! ${newDog.name} (${newDog.breed}, ${newDog.age}) is officially listed for adoption on PawConnect! Let's help them find their forever home! ❤️`,
+      caption: `🐾 Exciting news! ${newDog.name} (${newDog.breed}, ${newDog.age}) is officially listed for adoption on PawConnect! Let's help them find a forever home! ❤️`,
       location: newDog.location,
       tags: [`#${newDog.breed.replace(/\s+/g, '')}`, '#AdoptDontShop', '#PawConnect'],
       likes: 12,
@@ -383,7 +460,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return newDog;
   };
 
-  // Toggle Like Dog
   const toggleLikeDog = (dogId: string) => {
     setDogs(prev =>
       prev.map(dog => {
@@ -414,10 +490,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setApplications(prev => [newApp, ...prev]);
 
-    // Increment interested count
     setDogs(prev => prev.map(d => d.id === data.dogId ? { ...d, interestedCount: d.interestedCount + 1 } : d));
 
-    // Notify owner
     const targetDog = dogs.find(d => d.id === data.dogId);
     if (targetDog) {
       const notif: NotificationItem = {
@@ -444,10 +518,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       prev.map(a => (a.id === applicationId ? { ...a, status: 'accepted', reviewedAt: 'Just now' } : a))
     );
 
-    // Update Dog status to 'pending'
     updateDogStatus(app.dogId, 'pending');
 
-    // Create / Ensure Chat Conversation exists
     const convId = `conv_${app.dogId}_${app.applicantId}`;
     setConversations(prev => {
       const exists = prev.some(c => c.id === convId);
@@ -467,7 +539,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ];
     });
 
-    // Seed welcome message
     setMessages(prev => ({
       ...prev,
       [convId]: [
@@ -485,15 +556,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ]
     }));
 
-    // Trigger Match / Connection celebration
     const dog = dogs.find(d => d.id === app.dogId) || null;
     const applicant = allUsers.find(u => u.id === app.applicantId) || {
       id: app.applicantId,
       name: app.applicantName,
+      phone: app.applicantPhone,
       email: app.applicantEmail,
       avatar: app.applicantAvatar,
       role: 'adopter' as const,
-      phone: app.applicantPhone,
       location: app.applicantLocation,
       isVerified: true,
       joinedDate: '2025',
@@ -512,11 +582,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       type: 'match'
     });
 
-    // Notify Adopter
     const notif: NotificationItem = {
       id: `notif_${Date.now()}`,
       userId: app.applicantId,
-      title: `🎉 ${app.dogName}'s Owner Accepted Your Application!`,
+      title: `🎉 ${app.dogName}'s Guardian Accepted Your Application!`,
       message: `${currentUser.name} accepted your request. Private chat is now unlocked!`,
       type: 'application_accepted',
       relatedDogId: app.dogId,
@@ -531,13 +600,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setApplications(prev =>
       prev.map(a =>
         a.id === applicationId
-          ? { ...a, status: 'declined', reviewedAt: 'Just now', declineReason: reason || 'Application declined by owner.' }
+          ? { ...a, status: 'declined', reviewedAt: 'Just now', declineReason: reason || 'Application declined by guardian.' }
           : a
       )
     );
   };
 
-  // Schedule Meet & Greet
   const scheduleMeetup = (data: Omit<MeetAndGreet, 'id' | 'status'>) => {
     const newMeet: MeetAndGreet = {
       ...data,
@@ -547,7 +615,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setMeetups(prev => [newMeet, ...prev]);
     updateDogStatus(data.dogId, 'meet_scheduled');
 
-    // Notify chat
     const convId = `conv_${data.dogId}_${data.adopterId}`;
     sendMessage(
       convId,
@@ -557,14 +624,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const acceptMeetup = (meetupId: string) => {
     setMeetups(prev => prev.map(m => (m.id === meetupId ? { ...m, status: 'completed' } : m)));
-    // Transition dog to agreement pending
     const meet = meetups.find(m => m.id === meetupId);
     if (meet) {
       updateDogStatus(meet.dogId, 'agreement_pending');
     }
   };
 
-  // Sign Agreement
   const signAgreement = (applicationId: string, role: 'owner' | 'adopter', signature: string) => {
     setAgreements(prev =>
       prev.map(agree => {
@@ -585,12 +650,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
-  // Dual Handover Confirmation & Dog Transfer Logic
   const confirmHandover = (applicationId: string, role: 'owner' | 'adopter') => {
     let completedTransfer = false;
     let targetDogId = '';
     let adopterId = '';
-    let ownerId = '';
 
     setHandovers(prev =>
       prev.map(h => {
@@ -615,19 +678,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       })
     );
 
-    // If both confirmed -> Execute OFFICIAL OWNERSHIP TRANSFER
     if (completedTransfer || (role === 'owner' && handovers.find(h => h.applicationId === applicationId)?.adopterConfirmed) || (role === 'adopter' && handovers.find(h => h.applicationId === applicationId)?.ownerConfirmed)) {
       const app = applications.find(a => a.id === applicationId);
       if (app) {
         targetDogId = app.dogId;
         adopterId = app.applicantId;
-        ownerId = currentUser.id;
 
         const adopterUser = allUsers.find(u => u.id === app.applicantId) || currentUser;
         const certId = `CERT-PAW-${Date.now().toString().slice(-6)}`;
         const adoptedDateStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 
-        // 1. Update Dog Ownership
         setDogs(prev =>
           prev.map(dog => {
             if (dog.id === targetDogId) {
@@ -649,12 +709,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           })
         );
 
-        // 2. Mark Application completed
         setApplications(prev =>
           prev.map(a => (a.id === applicationId ? { ...a, status: 'completed' } : a))
         );
 
-        // 3. Trigger Grand Handover Celebration
         const transferredDog = dogs.find(d => d.id === targetDogId);
         if (transferredDog) {
           setCelebrationData({
@@ -666,7 +724,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           });
         }
 
-        // 4. Send Notifications
         const transferNotif: NotificationItem = {
           id: `notif_${Date.now()}`,
           userId: adopterId,
@@ -682,7 +739,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  // Send Message
   const sendMessage = (convId: string, text: string, image?: string, isDogBark?: boolean) => {
     const newMsg: ChatMessage = {
       id: `msg_${Date.now()}`,
@@ -716,7 +772,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
-  // Social Feed Actions
   const likePost = (postId: string) => {
     setPosts(prev =>
       prev.map(post => {
@@ -771,7 +826,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setPosts(prev => [newPost, ...prev]);
   };
 
-  // Safety & Reporting
   const submitReport = (listingId: string, dogName: string, reason: ReportItem['reason'], details: string) => {
     const newReport: ReportItem = {
       id: `rep_${Date.now()}`,
@@ -793,7 +847,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
-  // Notifications
   const markNotificationAsRead = (notifId: string) => {
     setNotifications(prev => prev.map(n => (n.id === notifId ? { ...n, read: true } : n)));
   };
@@ -805,8 +858,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         currentUser,
         allUsers,
-        setCurrentUser,
+        isAuthModalOpen,
+        setIsAuthModalOpen,
+        activeOtpSession,
+        sendOtp,
+        verifyOtp,
+        completeRegistration,
         switchUser,
+        logout,
+        dismissOtpToast,
         dogs,
         selectedDog,
         setSelectedDog,

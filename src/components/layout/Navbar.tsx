@@ -15,6 +15,8 @@ import {
   Check,
   ChevronDown,
   UserCheck,
+  Phone,
+  LogOut,
   Sparkles,
 } from 'lucide-react';
 
@@ -31,6 +33,7 @@ export const Navbar: React.FC = () => {
     markNotificationAsRead,
     conversations,
     applications,
+    setIsAuthModalOpen,
   } = useApp();
 
   const { soundEnabled, toggleSound, playPawPop } = useAudio();
@@ -249,7 +252,7 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Persona Switcher Dropdown */}
+          {/* User Account / OTP Login Dropdown */}
           <div className="relative">
             <button
               onClick={() => setShowPersonaMenu(!showPersonaMenu)}
@@ -267,68 +270,89 @@ export const Navbar: React.FC = () => {
                     <UserCheck className="w-3 h-3 text-emerald-500 shrink-0" />
                   )}
                 </div>
-                <div className="text-[10px] font-bold text-coral-600 capitalize mt-0.5">
-                  {currentUser.role === 'owner' ? 'Dog Guardian' : currentUser.role === 'adopter' ? 'Adopter' : currentUser.role}
+                <div className="text-[10px] font-bold text-coral-600 capitalize mt-0.5 flex items-center gap-1">
+                  <span>{currentUser.phone}</span>
                 </div>
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-obsidian-500" />
             </button>
 
             {showPersonaMenu && (
-              <div className="absolute right-0 mt-3 w-72 glass-dropdown rounded-3xl p-3 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
-                <div className="px-3 py-2 border-b border-obsidian-200">
-                  <p className="text-[10px] font-black uppercase tracking-wider text-obsidian-400">
-                    Switch Test Account
-                  </p>
-                  <p className="text-xs text-obsidian-700 font-medium mt-0.5">
-                    Experience both sides of adoption:
-                  </p>
+              <div className="absolute right-0 mt-3 w-80 glass-dropdown rounded-3xl p-3.5 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
+                
+                {/* Active User Card */}
+                <div className="p-3 bg-coral-50/70 rounded-2xl border border-coral-200 mb-3">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={currentUser.avatar}
+                      alt=""
+                      className="w-11 h-11 rounded-2xl object-cover ring-2 ring-coral-400 shadow-xs"
+                    />
+                    <div>
+                      <div className="text-sm font-black text-obsidian-950 flex items-center gap-1">
+                        {currentUser.name}
+                        <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                      </div>
+                      <div className="text-xs font-semibold text-coral-700">{currentUser.phone}</div>
+                      <div className="text-[10px] text-obsidian-500 mt-0.5">Role: {currentUser.role}</div>
+                    </div>
+                  </div>
                 </div>
-                <div className="mt-2 space-y-1.5">
-                  {allUsers.map(user => {
-                    const isSelected = user.id === currentUser.id;
-                    return (
-                      <button
-                        key={user.id}
-                        onClick={() => {
-                          switchUser(user.id);
-                          setShowPersonaMenu(false);
-                          playPawPop();
-                        }}
-                        className={`w-full flex items-center justify-between p-2.5 rounded-2xl transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-coral-500 text-white font-bold shadow-soft'
-                            : 'hover:bg-obsidian-200/80 text-obsidian-800'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3 text-left">
-                          <img
-                            src={user.avatar}
-                            alt={user.name}
-                            className={`w-9 h-9 rounded-full object-cover ring-2 ${
-                              isSelected ? 'ring-white' : 'ring-obsidian-300'
-                            }`}
-                          />
-                          <div>
-                            <div className="text-xs font-black flex items-center gap-1">
-                              {user.name}
-                            </div>
-                            <div className={`text-[10px] ${isSelected ? 'text-white/80' : 'text-obsidian-500'}`}>
-                              {user.role === 'owner'
-                                ? 'Bruno\'s Guardian (Owner)'
-                                : user.role === 'adopter'
-                                ? 'Adopter Candidate'
-                                : user.role === 'shelter'
-                                ? 'Rescue Volunteer'
-                                : 'Safety Admin'}
+
+                {/* Login with New Mobile Number Button */}
+                <button
+                  onClick={() => {
+                    setShowPersonaMenu(false);
+                    playPawPop();
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 p-2.5 rounded-2xl btn-primary text-white text-xs font-black shadow-glow-coral mb-3 cursor-pointer"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Log in with New Mobile Number 📲</span>
+                </button>
+
+                <div className="px-1 py-1 border-t border-obsidian-200">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-obsidian-400 mb-1.5">
+                    Switch Registered User:
+                  </p>
+                  <div className="space-y-1 max-h-44 overflow-y-auto pr-1">
+                    {allUsers.map(user => {
+                      const isSelected = user.id === currentUser.id;
+                      return (
+                        <button
+                          key={user.id}
+                          onClick={() => {
+                            switchUser(user.id);
+                            setShowPersonaMenu(false);
+                            playPawPop();
+                          }}
+                          className={`w-full flex items-center justify-between p-2 rounded-xl transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-obsidian-900 text-white font-bold'
+                              : 'hover:bg-obsidian-100 text-obsidian-800'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 text-left">
+                            <img
+                              src={user.avatar}
+                              alt={user.name}
+                              className="w-7 h-7 rounded-full object-cover"
+                            />
+                            <div>
+                              <div className="text-xs font-bold leading-tight">{user.name}</div>
+                              <div className={`text-[10px] ${isSelected ? 'text-white/70' : 'text-obsidian-500'}`}>
+                                {user.phone}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        {isSelected && <Check className="w-4 h-4 text-white" />}
-                      </button>
-                    );
-                  })}
+                          {isSelected && <Check className="w-3.5 h-3.5 text-coral-400" />}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
+
               </div>
             )}
           </div>

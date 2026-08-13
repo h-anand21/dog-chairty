@@ -3,10 +3,10 @@ export type UserRole = 'owner' | 'adopter' | 'shelter' | 'admin';
 export interface User {
   id: string;
   name: string;
-  email: string;
+  phone: string;
+  email?: string;
   avatar: string;
   role: UserRole;
-  phone: string;
   location: string;
   isVerified: boolean;
   joinedDate: string;
@@ -46,6 +46,7 @@ export interface Dog {
   currentOwnerId: string;
   currentOwnerName: string;
   currentOwnerAvatar: string;
+  currentOwnerPhone?: string;
   isOwnerVerified: boolean;
   
   // Post-Adoption Transfer Details
@@ -90,7 +91,7 @@ export interface AdoptionApplication {
   applicantAvatar: string;
   applicantLocation: string;
   applicantPhone: string;
-  applicantEmail: string;
+  applicantEmail?: string;
   
   // Questionnaire answers
   reason: string;
@@ -241,4 +242,10 @@ export interface NotificationItem {
   relatedApplicationId?: string;
   timestamp: string;
   read: boolean;
+}
+
+export interface OtpSession {
+  phone: string;
+  code: string;
+  expiresAt: number;
 }

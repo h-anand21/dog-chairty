@@ -1,29 +1,13 @@
-import { User, Dog, AdoptionApplication, MeetAndGreet, AdoptionAgreement, Post, Story, ReportItem, NotificationItem } from '../types';
+import { User, Dog, AdoptionApplication, Post, Story, NotificationItem } from '../types';
 
 export const INITIAL_USERS: User[] = [
   {
-    id: 'user_alex',
-    name: 'Alex Rivera',
-    email: 'alex.rivera@pawconnect.org',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-    role: 'owner',
-    phone: '+1 (555) 349-8291',
-    location: 'Kolkata, Salt Lake Area',
-    isVerified: true,
-    joinedDate: 'March 2024',
-    homeType: 'House',
-    hasYard: true,
-    otherPets: 'None currently',
-    experienceLevel: 'Intermediate',
-    bio: 'Dedicated dog lover & volunteer. Relocating overseas for work, seeking a loving forever home for Bruno.'
-  },
-  {
     id: 'user_sarah',
     name: 'Sarah Jenkins',
+    phone: '+91 98765 43210',
     email: 'sarah.jenkins@gmail.com',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80',
     role: 'adopter',
-    phone: '+1 (555) 782-9014',
     location: 'Kolkata, New Town',
     isVerified: true,
     joinedDate: 'January 2025',
@@ -34,12 +18,28 @@ export const INITIAL_USERS: User[] = [
     bio: 'Lifelong dog parent, freelance designer working from home. Lots of space, love, and daily park walks!'
   },
   {
+    id: 'user_alex',
+    name: 'Alex Rivera',
+    phone: '+91 98300 12345',
+    email: 'alex.rivera@pawconnect.org',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    role: 'owner',
+    location: 'Kolkata, Salt Lake Area',
+    isVerified: true,
+    joinedDate: 'March 2024',
+    homeType: 'House',
+    hasYard: true,
+    otherPets: 'None currently',
+    experienceLevel: 'Intermediate',
+    bio: 'Dedicated dog lover & volunteer. Seeking a loving forever home for Bruno due to overseas relocation.'
+  },
+  {
     id: 'user_david',
     name: 'Dr. David Chen',
+    phone: '+91 98111 22334',
     email: 'dr.david@pawsanctuary.org',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
     role: 'shelter',
-    phone: '+1 (555) 912-4433',
     location: 'Delhi, South Extension',
     isVerified: true,
     joinedDate: 'November 2023',
@@ -47,15 +47,15 @@ export const INITIAL_USERS: User[] = [
     hasYard: true,
     otherPets: 'Rescue dogs in foster',
     experienceLevel: 'Professional Trainer',
-    bio: 'Licensed vet & rescue coordinator. Helping abandoned and surrendered dogs find responsible families.'
+    bio: 'Licensed vet & rescue coordinator helping dogs find responsible families.'
   },
   {
     id: 'user_admin',
     name: 'PawConnect Safety Team',
+    phone: '+91 98000 00000',
     email: 'safety@pawconnect.org',
     avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&auto=format&fit=crop&q=80',
     role: 'admin',
-    phone: '+1 (800) 555-PAWS',
     location: 'Headquarters',
     isVerified: true,
     joinedDate: 'January 2023',
@@ -63,7 +63,7 @@ export const INITIAL_USERS: User[] = [
     hasYard: true,
     otherPets: '2 office dogs',
     experienceLevel: 'Professional Trainer',
-    bio: 'Platform Trust & Safety Moderator. Reviewing adoption applications, dog listings, and handover certificates.'
+    bio: 'Platform Trust & Safety Moderator.'
   }
 ];
 
@@ -85,17 +85,18 @@ export const INITIAL_DOGS: Dog[] = [
       'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=800&auto=format&fit=crop&q=80'
     ],
     bio: 'Professional tennis ball chaser and certified champion snuggler. Extremely gentle with children, loves car rides with his head out the window, and knows 8 trick commands!',
-    reasonForAdoption: 'Current owner relocating overseas for work and unfortunately cannot take large dogs due to quarantine restrictions.',
+    reasonForAdoption: 'Current owner relocating overseas for work and cannot take large dogs due to quarantine regulations.',
     adoptionType: 'Free Adoption',
     status: 'available',
     currentOwnerId: 'user_alex',
     currentOwnerName: 'Alex Rivera',
     currentOwnerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    currentOwnerPhone: '+91 98300 12345',
     isOwnerVerified: true,
     vaccinated: true,
     neutered: true,
     microchipped: true,
-    medicalNotes: 'Up to date on rabies, DHPP & Bordetella. No chronic allergies. Has regular vet records from Salt Lake Vet Clinic.',
+    medicalNotes: 'Up to date on rabies, DHPP & Bordetella. No chronic allergies. Regular vet visits recorded.',
     favoriteThings: ['🎾 Tennis Balls', '🍗 Roast Chicken Treats', '🌳 Lake Park Walks', '🛋️ Sofa Cuddles'],
     personalityTraits: ['Playful', 'House-Trained', 'Good with Kids', 'Friendly with Dogs', 'Gentle Leash Walker'],
     interestedCount: 24,
@@ -122,6 +123,7 @@ export const INITIAL_DOGS: Dog[] = [
     currentOwnerId: 'user_david',
     currentOwnerName: 'Dr. David Chen',
     currentOwnerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+    currentOwnerPhone: '+91 98111 22334',
     isOwnerVerified: true,
     vaccinated: true,
     neutered: true,
@@ -153,6 +155,7 @@ export const INITIAL_DOGS: Dog[] = [
     currentOwnerId: 'user_david',
     currentOwnerName: 'Dr. David Chen',
     currentOwnerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+    currentOwnerPhone: '+91 98111 22334',
     isOwnerVerified: true,
     vaccinated: true,
     neutered: true,
@@ -178,12 +181,13 @@ export const INITIAL_DOGS: Dog[] = [
       'https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=800&auto=format&fit=crop&q=80'
     ],
     bio: 'Loyal, alert, and exceptionally smart. Thrives on agility courses and learning new tricks. Looking for an active owner who loves outdoor trails.',
-    reasonForAdoption: 'Owner had severe health changes preventing active exercise.',
+    reasonForAdoption: 'Owner had health changes preventing active exercise.',
     adoptionType: 'Free Adoption',
     status: 'available',
     currentOwnerId: 'user_david',
     currentOwnerName: 'Dr. David Chen',
     currentOwnerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+    currentOwnerPhone: '+91 98111 22334',
     isOwnerVerified: true,
     vaccinated: true,
     neutered: true,
@@ -193,66 +197,6 @@ export const INITIAL_DOGS: Dog[] = [
     personalityTraits: ['Loyal Guardian', 'Fast Learner', 'Athletic', 'Obedient'],
     interestedCount: 15,
     likesCount: 112
-  },
-  {
-    id: 'dog_coco',
-    name: 'Coco & Pip',
-    breed: 'French Bulldog',
-    age: '10 Months',
-    gender: 'Female',
-    size: 'Small',
-    energy: 'Low (Couch Potato)',
-    location: 'Kolkata, Alipore',
-    coverPhoto: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=800&auto=format&fit=crop&q=80',
-    photos: [
-      'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=800&auto=format&fit=crop&q=80'
-    ],
-    bio: 'Snorting little bundle of joy who believes all laps were constructed exclusively for her comfort. Great for apartment living!',
-    reasonForAdoption: 'Family member developed acute dander allergy.',
-    adoptionType: 'Free Adoption',
-    status: 'available',
-    currentOwnerId: 'user_alex',
-    currentOwnerName: 'Alex Rivera',
-    currentOwnerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-    isOwnerVerified: true,
-    vaccinated: true,
-    neutered: true,
-    microchipped: true,
-    medicalNotes: 'Nares checked, healthy breathing, vaccinated.',
-    favoriteThings: ['🛋️ Warm Blankets', '🍉 Watermelon slices', '🧸 Plushies', '😴 Afternoon Siestas'],
-    personalityTraits: ['Chill', 'Apartment Hero', 'Affectionate', 'Quiet'],
-    interestedCount: 42,
-    likesCount: 205
-  },
-  {
-    id: 'dog_bella',
-    name: 'Bella',
-    breed: 'Samoyed / Husky Mix',
-    age: '2.5 Years',
-    gender: 'Female',
-    size: 'Large',
-    energy: 'High Energy',
-    location: 'Pune, Koregaon Park',
-    coverPhoto: 'https://images.unsplash.com/photo-1529429617124-95b109e86bb8?w=800&auto=format&fit=crop&q=80',
-    photos: [
-      'https://images.unsplash.com/photo-1529429617124-95b109e86bb8?w=800&auto=format&fit=crop&q=80'
-    ],
-    bio: 'Fluffy cloud on four paws with the famous Samoyed smile. Loves cold weather, grooming sessions, and howling along to classical melodies.',
-    reasonForAdoption: 'Foster shelter transfer; looking for permanent home.',
-    adoptionType: 'Free Adoption',
-    status: 'available',
-    currentOwnerId: 'user_david',
-    currentOwnerName: 'Dr. David Chen',
-    currentOwnerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
-    isOwnerVerified: true,
-    vaccinated: true,
-    neutered: true,
-    microchipped: true,
-    medicalNotes: 'Gorgeous thick double coat, microchipped and vaccinated.',
-    favoriteThings: ['❄️ Ice Cubes', '🪮 Brushing Time', '🎶 Singing', '🏃 Morning Jog'],
-    personalityTraits: ['Vocal Singer', 'Happy Spirit', 'Fluffy', 'Social Butterfly'],
-    interestedCount: 28,
-    likesCount: 189
   }
 ];
 
@@ -267,7 +211,7 @@ export const INITIAL_APPLICATIONS: AdoptionApplication[] = [
     applicantName: 'Sarah Jenkins',
     applicantAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80',
     applicantLocation: 'Kolkata, New Town (5 miles away)',
-    applicantPhone: '+1 (555) 782-9014',
+    applicantPhone: '+91 98765 43210',
     applicantEmail: 'sarah.jenkins@gmail.com',
     reason: 'We have a fenced 2000 sq ft green garden and another friendly Golden Retriever (Luna). Bruno will have companionship, 2 daily park walks, and 24/7 care since I work from home!',
     homeType: 'House',
@@ -305,14 +249,6 @@ export const INITIAL_POSTS: Post[] = [
         userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80',
         text: 'Bruno looks so radiant in the water! Luna would love a swim date with him! 🐕🌊',
         timestamp: '2h ago'
-      },
-      {
-        id: 'c_2',
-        userId: 'user_david',
-        userName: 'Dr. David Chen',
-        userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
-        text: 'Look at that healthy golden coat! Such great swimming conditioning.',
-        timestamp: '1h ago'
       }
     ],
     createdAt: '3 hours ago'
@@ -331,34 +267,8 @@ export const INITIAL_POSTS: Post[] = [
     tags: ['#LabradorLife', '#SmartDog', '#AdoptionReady', '#GoodGirl'],
     likes: 852,
     likedBy: ['user_alex'],
-    comments: [
-      {
-        id: 'c_3',
-        userId: 'user_alex',
-        userName: 'Alex Rivera',
-        userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-        text: 'Such discipline! What a precious soul ❤️',
-        timestamp: '45m ago'
-      }
-    ],
-    createdAt: '5 hours ago'
-  },
-  {
-    id: 'post_3',
-    dogId: 'dog_milo',
-    dogName: 'Milo',
-    dogBreed: 'Beagle',
-    dogAvatar: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=400&auto=format&fit=crop&q=80',
-    ownerId: 'user_david',
-    ownerName: 'Dr. David Chen',
-    image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1000&auto=format&fit=crop&q=80',
-    caption: 'Found the biggest pinecone in the whole forest today. Carried it for 2 miles without dropping it once. 🌲🐾',
-    location: 'Greenfield Trails',
-    tags: ['#BeaglePuppy', '#PineconeHunter', '#ForestWalks'],
-    likes: 642,
-    likedBy: [],
     comments: [],
-    createdAt: 'Yesterday'
+    createdAt: '5 hours ago'
   }
 ];
 
@@ -381,26 +291,6 @@ export const INITIAL_STORIES: Story[] = [
     mediaUrl: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=800&auto=format&fit=crop&q=80',
     caption: 'Someone stole the peanut butter jar 🤫',
     timestamp: '1h ago',
-    viewed: false
-  },
-  {
-    id: 'story_3',
-    dogId: 'dog_milo',
-    dogName: 'Milo',
-    dogAvatar: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=400&auto=format&fit=crop&q=80',
-    mediaUrl: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=800&auto=format&fit=crop&q=80',
-    caption: 'Sunbeam napping mode: 100% 💤',
-    timestamp: '3h ago',
-    viewed: false
-  },
-  {
-    id: 'story_4',
-    dogId: 'dog_rocky',
-    dogName: 'Rocky',
-    dogAvatar: 'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=400&auto=format&fit=crop&q=80',
-    mediaUrl: 'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=800&auto=format&fit=crop&q=80',
-    caption: 'Trail patrol ready! 🌲🐾',
-    timestamp: '5h ago',
     viewed: false
   }
 ];
