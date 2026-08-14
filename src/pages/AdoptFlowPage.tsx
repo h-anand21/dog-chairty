@@ -13,10 +13,10 @@ export const AdoptFlowPage: React.FC = () => {
 
   const userApplications = applications.filter((app: AdoptionApplication) => {
     if (activeFilter === 'my_requests') {
-      return app.applicantId === currentUser.id;
+      return currentUser ? app.applicantId === currentUser.id : false;
     }
     if (activeFilter === 'incoming_requests') {
-      return currentUser.role === 'owner' || app.applicantId !== currentUser.id;
+      return currentUser ? (currentUser.role === 'owner' || app.applicantId !== currentUser.id) : true;
     }
     return true;
   });

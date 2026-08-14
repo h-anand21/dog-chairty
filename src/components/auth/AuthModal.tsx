@@ -11,6 +11,8 @@ import {
   UserCheck,
   CheckCircle2,
   Lock,
+  Heart,
+  Dog as DogIcon,
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -25,14 +27,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     verifyOtp,
     completeRegistration,
     activeOtpSession,
-    currentUser,
+    authPromptReason,
   } = useApp();
 
-  const { playSuccessChime, playPawPop } = useAudio();
+  const { playSuccessChime, playPawPop, playDogBark } = useAudio();
 
   const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
   const [countryCode, setCountryCode] = useState('+91');
-  const [phoneDigits, setPhoneDigits] = useState('9876543210');
+  const [phoneDigits, setPhoneDigits] = useState('');
   const [otpDigits, setOtpDigits] = useState(['', '', '', '']);
   const [errorMsg, setErrorMsg] = useState('');
   const [resendTimer, setResendTimer] = useState(30);
@@ -41,7 +43,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState('');
   const [role, setRole] = useState<'owner' | 'adopter'>('adopter');
   const [location, setLocation] = useState('Kolkata, Salt Lake');
-  const [bio, setBio] = useState('Loving dog parent seeking a loyal companion!');
+  const [bio, setBio] = useState('Dog lover seeking a furry companion to give a loving forever home!');
   const [avatar, setAvatar] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80');
 
   useEffect(() => {
@@ -61,8 +63,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const handleSendOtp = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setErrorMsg('');
-    if (phoneDigits.trim().length < 6) {
-      setErrorMsg('Please enter a valid mobile number.');
+    const cleaned = phoneDigits.replace(/\D/g, '');
+    if (cleaned.length < 10) {
+      setErrorMsg('Please enter a valid 10-digit mobile number.');
       return;
     }
 
@@ -86,12 +89,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+    if (pasted.length > 0) {
+      const newDigits = ['', '', '', ''];
+      for (let i = 0; i < pasted.length; i++) {
+        newDigits[i] = pasted[i];
+      }
+      setOtpDigits(newDigits);
+    }
+  };
+
   const handleVerifyOtp = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setErrorMsg('');
     const code = otpDigits.join('');
     if (code.length !== 4) {
-      setErrorMsg('Please enter the full 4-digit OTP.');
+      setErrorMsg('Please enter the 4-digit OTP sent to your phone.');
       return;
     }
 
@@ -135,13 +150,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  // Demo Phone Presets for Instant Testing
-  const demoAccounts = [
-    { label: 'Sarah (Adopter)', phone: '9876543210', role: 'adopter', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200' },
-    { label: 'Alex (Bruno Guardian)', phone: '9830012345', role: 'owner', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200' },
-    { label: 'Dr. David (Rescue Foster)', phone: '9811122334', role: 'shelter', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200' },
-  ];
-
   const sampleAvatars = [
     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
@@ -154,7 +162,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-obsidian-950/80 backdrop-blur-xl overflow-y-auto">
       <div className="relative w-full max-w-md bg-white rounded-4xl p-6 sm:p-8 shadow-2xl border border-obsidian-200 animate-in fade-in zoom-in-95 duration-200 text-left">
         
-        {/* Close button */}
+        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-5 right-5 w-9 h-9 rounded-full bg-obsidian-100 hover:bg-obsidian-200 flex items-center justify-center text-obsidian-700 transition-colors cursor-pointer"
@@ -167,15 +175,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           <div className="space-y-5">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-black text-[11px] mb-2">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Instant Mobile OTP Login</span>
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Verified Mobile Login</span>
               </div>
+
               <h2 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950">
-                Welcome to PawConnect 🐾
+                Log In to PawConnect 🐾
               </h2>
-              <p className="text-xs text-obsidian-600 mt-1 leading-relaxed">
-                Enter your mobile number to log in or create a verified pet guardian profile.
-              </p>
+
+              {authPromptReason ? (
+                <p className="text-xs text-coral-700 bg-coral-50 p-2.5 rounded-xl border border-coral-200 mt-2 font-semibold">
+                  {authPromptReason}
+                </p>
+              ) : (
+                <p className="text-xs text-obsidian-600 mt-1 leading-relaxed">
+                  Enter your mobile number to log in or create a verified pet guardian profile.
+                </p>
+              )}
             </div>
 
             <form onSubmit={handleSendOtp} className="space-y-4">
@@ -194,6 +210,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <option value="+1">🇺🇸 +1 (USA)</option>
                     <option value="+44">🇬🇧 +44 (UK)</option>
                     <option value="+971">🇦🇪 +971 (UAE)</option>
+                    <option value="+1">🇨🇦 +1 (Canada)</option>
+                    <option value="+61">🇦🇺 +61 (Australia)</option>
                   </select>
 
                   <div className="relative flex-1">
@@ -201,9 +219,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <input
                       type="tel"
                       required
+                      autoFocus
                       value={phoneDigits}
                       onChange={e => setPhoneDigits(e.target.value)}
-                      placeholder="e.g. 98765 43210"
+                      placeholder="Enter 10-digit number"
                       className="w-full pl-10 pr-4 py-3 rounded-2xl bg-obsidian-100 border border-obsidian-200 focus:bg-white focus:border-coral-500 focus:ring-4 focus:ring-coral-100 text-sm font-extrabold outline-hidden"
                     />
                   </div>
@@ -220,40 +239,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 type="submit"
                 className="w-full btn-primary text-white py-3.5 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Get OTP Code 📲</span>
+                <span>Send OTP Verification Code 📲</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
-            {/* Quick Demo Test Presets */}
-            <div className="pt-3 border-t border-obsidian-200">
-              <span className="text-[10px] font-black uppercase tracking-wider text-obsidian-400 block mb-2">
-                ⚡ Quick 1-Click Demo Accounts:
-              </span>
-              <div className="space-y-1.5">
-                {demoAccounts.map((acc, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => {
-                      setPhoneDigits(acc.phone);
-                      handleSendOtp();
-                    }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-2xl bg-obsidian-100 hover:bg-coral-50 hover:border-coral-200 border border-transparent transition-all text-left cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <img src={acc.avatar} alt="" className="w-7 h-7 rounded-full object-cover" />
-                      <div>
-                        <div className="text-xs font-black text-obsidian-900">{acc.label}</div>
-                        <div className="text-[10px] text-obsidian-500">+91 {acc.phone}</div>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-extrabold text-coral-600 bg-white px-2 py-0.5 rounded-md shadow-xs">
-                      Log In ➔
-                    </span>
-                  </button>
-                ))}
-              </div>
+            <div className="pt-3 border-t border-obsidian-200 text-center">
+              <p className="text-[11px] text-obsidian-500 font-medium">
+                🔒 We protect pet parents and adopters with 100% verified mobile numbers. No spam or commercial breeding allowed.
+              </p>
             </div>
 
           </div>
@@ -273,19 +267,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-black text-[11px] mb-2">
                 <Lock className="w-3.5 h-3.5" />
-                <span>Verification Code Sent</span>
+                <span>Verification Code Dispatched</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950">
                 Enter 4-Digit OTP 🔑
               </h2>
               <p className="text-xs text-obsidian-600 mt-1 leading-relaxed">
-                We sent a 4-digit verification code to <strong className="text-obsidian-950">{fullPhone}</strong>.
+                We sent a 4-digit code to <strong className="text-obsidian-950">{fullPhone}</strong>. Check the SMS notification banner at the top of your screen.
               </p>
             </div>
 
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               
-              {/* 4 Digit Box Inputs */}
+              {/* 4 Digit Inputs */}
               <div className="flex items-center justify-center gap-3 py-2">
                 {otpDigits.map((digit, idx) => (
                   <input
@@ -295,6 +289,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     inputMode="numeric"
                     maxLength={1}
                     value={digit}
+                    onPaste={handleOtpPaste}
                     onChange={e => handleOtpChange(idx, e.target.value)}
                     className="w-14 h-14 text-center text-2xl font-black rounded-2xl bg-obsidian-100 border-2 border-obsidian-300 focus:border-coral-500 focus:bg-white focus:ring-4 focus:ring-coral-100 outline-hidden transition-all shadow-inner"
                   />
@@ -304,16 +299,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               {/* Active OTP Session hint / Helper */}
               {activeOtpSession && (
                 <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 flex items-center justify-between">
-                  <span>Simulated OTP: <strong>{activeOtpSession.code}</strong></span>
+                  <span>SMS Code: <strong>{activeOtpSession.code}</strong></span>
                   <button
                     type="button"
                     onClick={() => {
                       const digits = activeOtpSession.code.split('');
                       setOtpDigits(digits);
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-amber-500 text-white font-black text-[10px] shadow-xs cursor-pointer"
+                    className="px-3 py-1 rounded-lg bg-amber-500 text-white font-black text-xs shadow-xs cursor-pointer"
                   >
-                    Auto-Fill
+                    Auto-Fill Code ⚡
                   </button>
                 </div>
               )}
@@ -328,14 +323,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 type="submit"
                 className="w-full btn-primary text-white py-3.5 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Verify & Continue 🐾</span>
+                <span>Verify OTP & Log In 🐾</span>
                 <CheckCircle2 className="w-4 h-4" />
               </button>
 
               <div className="text-center">
                 {resendTimer > 0 ? (
                   <span className="text-xs text-obsidian-400 font-semibold">
-                    Resend OTP in <strong className="text-obsidian-700">{resendTimer}s</strong>
+                    Resend code in <strong className="text-obsidian-700">{resendTimer}s</strong>
                   </span>
                 ) : (
                   <button
@@ -352,19 +347,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* STEP 3: NEW USER PROFILE SETUP */}
+        {/* STEP 3: NEW USER PROFILE ONBOARDING */}
         {step === 'profile' && (
           <div className="space-y-4">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-black text-[11px] mb-2">
                 <UserCheck className="w-3.5 h-3.5" />
-                <span>Complete Your Profile</span>
+                <span>Create Your Profile</span>
               </div>
               <h2 className="text-2xl font-black font-display text-obsidian-950">
-                Welcome to the Pack! 🐶
+                Welcome to PawConnect! 🐶
               </h2>
               <p className="text-xs text-obsidian-600 mt-1">
-                Tell us a little about yourself so dog guardians & adopters can connect with you.
+                Your mobile <strong className="text-obsidian-950">{fullPhone}</strong> is verified! Tell us your name and role to finalize registration.
               </p>
             </div>
 
@@ -385,7 +380,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
               <div>
                 <label className="block text-xs font-black text-obsidian-900 mb-1">
-                  Primary Role
+                  Account Purpose / Role
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -395,8 +390,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                       role === 'adopter' ? 'border-coral-500 bg-coral-50 text-coral-800' : 'border-obsidian-300 text-obsidian-700'
                     }`}
                   >
-                    <div>❤️ Adopter / Pet Lover</div>
-                    <div className="font-normal text-[10px] text-obsidian-500 mt-0.5">Looking to adopt</div>
+                    <div className="flex items-center gap-1">
+                      <Heart className="w-3.5 h-3.5 text-coral-500" />
+                      <span>Adopter / Parent</span>
+                    </div>
+                    <div className="font-normal text-[10px] text-obsidian-500 mt-0.5">Looking to adopt a dog</div>
                   </button>
 
                   <button
@@ -406,8 +404,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                       role === 'owner' ? 'border-coral-500 bg-coral-50 text-coral-800' : 'border-obsidian-300 text-obsidian-700'
                     }`}
                   >
-                    <div>🐾 Dog Guardian</div>
-                    <div className="font-normal text-[10px] text-obsidian-500 mt-0.5">Listing a pup</div>
+                    <div className="flex items-center gap-1">
+                      <DogIcon className="w-3.5 h-3.5 text-coral-500" />
+                      <span>Dog Guardian</span>
+                    </div>
+                    <div className="font-normal text-[10px] text-obsidian-500 mt-0.5">Looking to rehome a dog</div>
                   </button>
                 </div>
               </div>
@@ -428,7 +429,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
               <div>
                 <label className="block text-xs font-black text-obsidian-900 mb-1">
-                  Choose Avatar
+                  Choose Avatar / Photo
                 </label>
                 <div className="flex items-center gap-2">
                   {sampleAvatars.map((url, i) => (
@@ -453,7 +454,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   rows={2}
                   value={bio}
                   onChange={e => setBio(e.target.value)}
-                  placeholder="Tell others about your love for dogs..."
+                  placeholder="Tell other dog parents about yourself..."
                   className="w-full px-3.5 py-2 rounded-xl border border-obsidian-300 text-xs outline-hidden"
                 />
               </div>

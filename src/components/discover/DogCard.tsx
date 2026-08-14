@@ -11,7 +11,7 @@ interface DogCardProps {
 }
 
 export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
-  const { toggleLikeDog, setIsApplyModalOpen, setSelectedDog } = useApp();
+  const { toggleLikeDog, setIsApplyModalOpen, setSelectedDog, requireAuth } = useApp();
   const { playPawPop } = useAudio();
 
   const handleLike = (e: React.MouseEvent) => {
@@ -23,8 +23,10 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
   const handleAdoptClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     playPawPop();
-    setSelectedDog(dog);
-    setIsApplyModalOpen(true);
+    requireAuth(`Please verify your mobile number with OTP to apply for adopting ${dog.name}.`, () => {
+      setSelectedDog(dog);
+      setIsApplyModalOpen(true);
+    });
   };
 
   return (
@@ -101,7 +103,7 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
             <span className="truncate font-semibold">{dog.location}</span>
           </div>
           <div className="flex items-center gap-1 text-sky-700 font-bold bg-sky-50 border border-sky-100 px-2.5 py-0.5 rounded-full shrink-0">
-            <Sparkles className="w-3 h-3 text-sky-500" />
+            <Sparkles className="w-3.5 h-3.5 text-sky-500" />
             <span>{dog.energy.split(' ')[0]}</span>
           </div>
         </div>

@@ -39,7 +39,7 @@ export const MeetAndGreetModal: React.FC<MeetAndGreetModalProps> = ({
       applicationId,
       dogId,
       dogName,
-      ownerId: currentUser.id,
+      ownerId: currentUser?.id || 'user_guest',
       adopterId,
       date,
       time,

@@ -16,7 +16,7 @@ export const MobileNav: React.FC = () => {
 
   const unreadMessagesCount = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
   const activeAppsCount = applications.filter(
-    a => (a.applicantId === currentUser.id || currentUser.role === 'owner') &&
+    a => (a.applicantId === currentUser?.id || currentUser?.role === 'owner') &&
       a.status !== 'completed' &&
       a.status !== 'declined'
   ).length;

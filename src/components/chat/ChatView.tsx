@@ -191,7 +191,7 @@ export const ChatView: React.FC = () => {
 
         {/* Message Bubbles */}
         {activeMessages.map(msg => {
-          const isMine = msg.senderId === currentUser.id;
+          const isMine = msg.senderId === currentUser?.id;
           return (
             <div
               key={msg.id}

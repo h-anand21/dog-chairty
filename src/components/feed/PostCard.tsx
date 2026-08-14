@@ -25,7 +25,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [commentText, setCommentText] = useState('');
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const isLiked = post.likedBy.includes(currentUser.id);
+  const isLiked = currentUser ? post.likedBy.includes(currentUser.id) : false;
 
   const handleDoubleClick = () => {
     playDogBark();

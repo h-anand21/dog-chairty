@@ -25,10 +25,13 @@ import {
 
 interface AppContextType {
   // Authentication & Dynamic Users
-  currentUser: User;
+  currentUser: User | null;
   allUsers: User[];
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
+  authPromptReason: string;
+  setAuthPromptReason: (reason: string) => void;
+  requireAuth: (reason: string, action?: () => void) => boolean;
   activeOtpSession: OtpSession | null;
   sendOtp: (phone: string) => string;
   verifyOtp: (phone: string, code: string) => { success: boolean; isNewUser: boolean; message: string };
@@ -125,12 +128,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved ? JSON.parse(saved) : INITIAL_USERS;
   });
 
-  const [currentUser, setCurrentUser] = useState<User>(() => {
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('pawconnect_current_user');
-    return saved ? JSON.parse(saved) : INITIAL_USERS[0]; // Default to Sarah
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return INITIAL_USERS[0]; // Seeded with Sarah Jenkins
   });
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authPromptReason, setAuthPromptReason] = useState('');
+  const [pendingAuthAction, setPendingAuthAction] = useState<(() => void) | null>(null);
   const [activeOtpSession, setActiveOtpSession] = useState<OtpSession | null>(null);
 
   // 2. Navigation Tab
@@ -313,7 +325,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [allUsers]);
 
   useEffect(() => {
-    localStorage.setItem('pawconnect_current_user', JSON.stringify(currentUser));
+    if (currentUser) {
+      localStorage.setItem('pawconnect_current_user', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('pawconnect_current_user');
+    }
   }, [currentUser]);
 
   useEffect(() => {
@@ -356,12 +372,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('pawconnect_reports', JSON.stringify(reports));
   }, [reports]);
 
-  // Clean / normalize phone numbers for matching
+  // Clean / normalize phone numbers
   const cleanPhone = (p: string) => p.replace(/\D/g, '');
+
+  // Auth Guard Helper
+  const requireAuth = (reason: string, action?: () => void): boolean => {
+    if (currentUser) {
+      if (action) action();
+      return true;
+    }
+    setAuthPromptReason(reason);
+    setPendingAuthAction(() => action || null);
+    setIsAuthModalOpen(true);
+    return false;
+  };
 
   // Send OTP
   const sendOtp = (phone: string): string => {
-    // Generate 4 digit code (e.g. 5824)
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     const session: OtpSession = {
       phone,
@@ -375,7 +402,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Verify OTP
   const verifyOtp = (phone: string, code: string) => {
     if (!activeOtpSession || activeOtpSession.code !== code) {
-      return { success: false, isNewUser: false, message: 'Invalid OTP code. Please check SMS banner.' };
+      return { success: false, isNewUser: false, message: 'Invalid verification code. Please check the SMS banner.' };
     }
 
     const cleanInput = cleanPhone(phone);
@@ -384,7 +411,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (existing) {
       setCurrentUser(existing);
       setActiveOtpSession(null);
-      return { success: true, isNewUser: false, message: 'Welcome back!' };
+      if (pendingAuthAction) {
+        pendingAuthAction();
+        setPendingAuthAction(null);
+      }
+      return { success: true, isNewUser: false, message: `Welcome back, ${existing.name}!` };
     }
 
     // New user -> prompt for profile details
@@ -402,12 +433,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setAllUsers(prev => [newUser, ...prev]);
     setCurrentUser(newUser);
     setActiveOtpSession(null);
+    if (pendingAuthAction) {
+      pendingAuthAction();
+      setPendingAuthAction(null);
+    }
     return newUser;
   };
 
   const logout = () => {
-    // Fallback to demo user or prompt login
-    setIsAuthModalOpen(true);
+    setCurrentUser(null);
+    localStorage.removeItem('pawconnect_current_user');
   };
 
   const dismissOtpToast = () => {
@@ -423,35 +458,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Add Dog
   const addDog = (dogData: Omit<Dog, 'id' | 'interestedCount' | 'likesCount' | 'status'>): Dog => {
+    const ownerId = currentUser?.id || 'user_guest';
+    const ownerName = currentUser?.name || 'Pet Guardian';
+    const ownerAvatar = currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
+    const ownerPhone = currentUser?.phone || '+91 98765 00000';
+
     const newDog: Dog = {
       ...dogData,
       id: `dog_${Date.now()}`,
       status: 'available',
       interestedCount: 0,
       likesCount: 1,
-      currentOwnerId: currentUser.id,
-      currentOwnerName: currentUser.name,
-      currentOwnerAvatar: currentUser.avatar,
-      currentOwnerPhone: currentUser.phone,
-      isOwnerVerified: currentUser.isVerified,
+      currentOwnerId: ownerId,
+      currentOwnerName: ownerName,
+      currentOwnerAvatar: ownerAvatar,
+      currentOwnerPhone: ownerPhone,
+      isOwnerVerified: currentUser?.isVerified ?? true,
     };
     setDogs(prev => [newDog, ...prev]);
 
-    // Also auto-create announcement post on PawFeed
+    // Announcement post on PawFeed
     const announcementPost: Post = {
       id: `post_${Date.now()}`,
       dogId: newDog.id,
       dogName: newDog.name,
       dogBreed: newDog.breed,
       dogAvatar: newDog.photos[0] || newDog.coverPhoto,
-      ownerId: currentUser.id,
-      ownerName: currentUser.name,
+      ownerId: ownerId,
+      ownerName: ownerName,
       image: newDog.coverPhoto,
       caption: `🐾 Exciting news! ${newDog.name} (${newDog.breed}, ${newDog.age}) is officially listed for adoption on PawConnect! Let's help them find a forever home! ❤️`,
       location: newDog.location,
       tags: [`#${newDog.breed.replace(/\s+/g, '')}`, '#AdoptDontShop', '#PawConnect'],
       likes: 12,
-      likedBy: [currentUser.id],
+      likedBy: [ownerId],
       comments: [],
       createdAt: 'Just now'
     };
@@ -514,6 +554,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const app = applications.find(a => a.id === applicationId);
     if (!app) return;
 
+    const currentUserId = currentUser?.id || 'user_alex';
+    const currentUserName = currentUser?.name || 'Alex Rivera';
+    const currentUserAvatar = currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
+
     setApplications(prev =>
       prev.map(a => (a.id === applicationId ? { ...a, status: 'accepted', reviewedAt: 'Just now' } : a))
     );
@@ -530,7 +574,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           dogId: app.dogId,
           dogName: app.dogName,
           dogAvatar: app.dogPhoto,
-          participants: [currentUser.id, app.applicantId],
+          participants: [currentUserId, app.applicantId],
           lastMessage: `Application accepted! Say hi to ${app.applicantName}.`,
           lastMessageTimestamp: 'Just now',
           unreadCount: 0
@@ -545,9 +589,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         {
           id: `msg_${Date.now()}`,
           conversationId: convId,
-          senderId: currentUser.id,
-          senderName: currentUser.name,
-          senderAvatar: currentUser.avatar,
+          senderId: currentUserId,
+          senderName: currentUserName,
+          senderAvatar: currentUserAvatar,
           recipientId: app.applicantId,
           text: `🎉 Hi ${app.applicantName}! I loved your application for ${app.dogName}. The chat is now unlocked so we can coordinate questions and schedule our Meet & Greet!`,
           timestamp: 'Just now',
@@ -586,7 +630,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `notif_${Date.now()}`,
       userId: app.applicantId,
       title: `🎉 ${app.dogName}'s Guardian Accepted Your Application!`,
-      message: `${currentUser.name} accepted your request. Private chat is now unlocked!`,
+      message: `${currentUserName} accepted your request. Private chat is now unlocked!`,
       type: 'application_accepted',
       relatedDogId: app.dogId,
       relatedApplicationId: app.id,
@@ -684,7 +728,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         targetDogId = app.dogId;
         adopterId = app.applicantId;
 
-        const adopterUser = allUsers.find(u => u.id === app.applicantId) || currentUser;
+        const adopterUser = allUsers.find(u => u.id === app.applicantId) || currentUser || INITIAL_USERS[0];
         const certId = `CERT-PAW-${Date.now().toString().slice(-6)}`;
         const adoptedDateStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -740,12 +784,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const sendMessage = (convId: string, text: string, image?: string, isDogBark?: boolean) => {
+    const senderId = currentUser?.id || 'user_guest';
+    const senderName = currentUser?.name || 'Guest User';
+    const senderAvatar = currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
+
     const newMsg: ChatMessage = {
       id: `msg_${Date.now()}`,
       conversationId: convId,
-      senderId: currentUser.id,
-      senderName: currentUser.name,
-      senderAvatar: currentUser.avatar,
+      senderId,
+      senderName,
+      senderAvatar,
       recipientId: '',
       text,
       image,
@@ -773,16 +821,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const likePost = (postId: string) => {
+    const userId = currentUser?.id || 'user_guest';
     setPosts(prev =>
       prev.map(post => {
         if (post.id === postId) {
-          const isLiked = post.likedBy.includes(currentUser.id);
+          const isLiked = post.likedBy.includes(userId);
           return {
             ...post,
             likes: isLiked ? post.likes - 1 : post.likes + 1,
             likedBy: isLiked
-              ? post.likedBy.filter(id => id !== currentUser.id)
-              : [...post.likedBy, currentUser.id]
+              ? post.likedBy.filter(id => id !== userId)
+              : [...post.likedBy, userId]
           };
         }
         return post;
@@ -791,11 +840,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const addPostComment = (postId: string, text: string) => {
+    const userId = currentUser?.id || 'user_guest';
+    const userName = currentUser?.name || 'Guest User';
+    const userAvatar = currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
+
     const newComment = {
       id: `c_${Date.now()}`,
-      userId: currentUser.id,
-      userName: currentUser.name,
-      userAvatar: currentUser.avatar,
+      userId,
+      userName,
+      userAvatar,
       text,
       timestamp: 'Just now'
     };
@@ -806,20 +859,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const createPost = (image: string, caption: string, tags: string[], dogId: string) => {
     const dog = dogs.find(d => d.id === dogId) || dogs[0];
+    const userId = currentUser?.id || 'user_guest';
+    const userName = currentUser?.name || 'Guest User';
+
     const newPost: Post = {
       id: `post_${Date.now()}`,
       dogId: dog.id,
       dogName: dog.name,
       dogBreed: dog.breed,
       dogAvatar: dog.photos[0] || dog.coverPhoto,
-      ownerId: currentUser.id,
-      ownerName: currentUser.name,
+      ownerId: userId,
+      ownerName: userName,
       image,
       caption,
       location: dog.location,
       tags,
       likes: 1,
-      likedBy: [currentUser.id],
+      likedBy: [userId],
       comments: [],
       createdAt: 'Just now'
     };
@@ -827,12 +883,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const submitReport = (listingId: string, dogName: string, reason: ReportItem['reason'], details: string) => {
+    const userId = currentUser?.id || 'user_guest';
+    const userName = currentUser?.name || 'Guest User';
+
     const newReport: ReportItem = {
       id: `rep_${Date.now()}`,
       listingId,
       dogName,
-      reportedById: currentUser.id,
-      reportedByName: currentUser.name,
+      reportedById: userId,
+      reportedByName: userName,
       reason,
       details,
       timestamp: 'Just now',
@@ -851,7 +910,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setNotifications(prev => prev.map(n => (n.id === notifId ? { ...n, read: true } : n)));
   };
 
-  const unreadNotifsCount = notifications.filter(n => n.userId === currentUser.id && !n.read).length;
+  const unreadNotifsCount = currentUser
+    ? notifications.filter(n => n.userId === currentUser.id && !n.read).length
+    : 0;
 
   return (
     <AppContext.Provider
@@ -860,6 +921,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         allUsers,
         isAuthModalOpen,
         setIsAuthModalOpen,
+        authPromptReason,
+        setAuthPromptReason,
+        requireAuth,
         activeOtpSession,
         sendOtp,
         verifyOtp,

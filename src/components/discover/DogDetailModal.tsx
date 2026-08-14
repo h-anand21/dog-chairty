@@ -23,7 +23,7 @@ interface DogDetailModalProps {
 }
 
 export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) => {
-  const { toggleLikeDog, setIsApplyModalOpen, setIsReportModalOpen, setSelectedDog } = useApp();
+  const { toggleLikeDog, setIsApplyModalOpen, setIsReportModalOpen, setSelectedDog, requireAuth } = useApp();
   const { playDogBark, playPawPop } = useAudio();
 
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
@@ -42,14 +42,19 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
 
   const handleApply = () => {
     playPawPop();
-    setSelectedDog(dog);
-    setIsApplyModalOpen(true);
+    requireAuth(`Please verify your mobile number with OTP to apply for adopting ${dog.name}.`, () => {
+      setSelectedDog(dog);
+      setIsApplyModalOpen(true);
+      onClose();
+    });
   };
 
   const handleReport = () => {
     playPawPop();
-    setSelectedDog(dog);
-    setIsReportModalOpen(true);
+    requireAuth('Please verify your mobile number to report a listing.', () => {
+      setSelectedDog(dog);
+      setIsReportModalOpen(true);
+    });
   };
 
   const handleShare = () => {
@@ -289,7 +294,7 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
               )}
             </div>
 
-            {/* Guardian Footer Footnote */}
+            {/* Guardian Footer */}
             <div className="p-4 rounded-2xl bg-obsidian-100 border border-obsidian-200 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <img

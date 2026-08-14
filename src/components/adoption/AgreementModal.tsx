@@ -18,13 +18,13 @@ export const AgreementModal: React.FC<AgreementModalProps> = ({
   const { currentUser, signAgreement } = useApp();
   const { playSuccessChime, playPawPop } = useAudio();
 
-  const [signatureName, setSignatureName] = useState(currentUser.name);
+  const [signatureName, setSignatureName] = useState(currentUser?.name || '');
   const [agreedTerms, setAgreedTerms] = useState(true);
 
   if (!isOpen) return null;
 
-  const isOwner = currentUser.id === agreement.currentOwnerId;
-  const isAdopter = currentUser.id === agreement.adopterId;
+  const isOwner = currentUser?.id === agreement.currentOwnerId;
+  const isAdopter = currentUser?.id === agreement.adopterId;
   const alreadySigned = (isOwner && !!agreement.ownerSignature) || (isAdopter && !!agreement.adopterSignature);
 
   const handleSign = (e: React.FormEvent) => {

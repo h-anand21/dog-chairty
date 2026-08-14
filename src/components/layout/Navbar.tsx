@@ -21,6 +21,7 @@ import {
   Sparkles,
   Award,
   LogOut,
+  LogIn,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -28,6 +29,7 @@ export const Navbar: React.FC = () => {
     currentUser,
     allUsers,
     switchUser,
+    logout,
     activeTab,
     setActiveTab,
     setIsListDogOpen,
@@ -37,6 +39,7 @@ export const Navbar: React.FC = () => {
     conversations,
     applications,
     setIsAuthModalOpen,
+    requireAuth,
   } = useApp();
 
   const { soundEnabled, toggleSound, playPawPop } = useAudio();
@@ -47,7 +50,7 @@ export const Navbar: React.FC = () => {
   const unreadMessagesCount = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
 
   const activeAppsCount = applications.filter(
-    a => (a.applicantId === currentUser.id || currentUser.role === 'owner') &&
+    a => (a.applicantId === currentUser?.id || currentUser?.role === 'owner') &&
       a.status !== 'completed' &&
       a.status !== 'declined'
   ).length;
@@ -56,6 +59,13 @@ export const Navbar: React.FC = () => {
     playPawPop();
     setActiveTab(tab);
     setShowMobileDrawer(false);
+  };
+
+  const handlePostDog = () => {
+    playPawPop();
+    requireAuth('Please verify your mobile number to post a dog for adoption.', () => {
+      setIsListDogOpen(true);
+    });
   };
 
   return (
@@ -157,10 +167,7 @@ export const Navbar: React.FC = () => {
           
           {/* Post Dog CTA Button */}
           <button
-            onClick={() => {
-              playPawPop();
-              setIsListDogOpen(true);
-            }}
+            onClick={handlePostDog}
             className="btn-primary text-white px-4 sm:px-5 py-2 rounded-full font-black text-xs flex items-center gap-1.5 cursor-pointer shadow-glow-coral shrink-0"
           >
             <Plus className="w-4 h-4" />
@@ -229,159 +236,143 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* User Account Profile Pill Button */}
-          <div className="relative">
+          {/* User Account / Login Button */}
+          {currentUser ? (
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setShowProfileMenu(!showProfileMenu);
+                  setShowNotifMenu(false);
+                }}
+                className="flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-full bg-white/90 border border-obsidian-300 hover:border-coral-400 transition-all shadow-xs cursor-pointer"
+              >
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-coral-400"
+                />
+                <div className="hidden sm:block text-left">
+                  <div className="text-xs font-extrabold text-obsidian-950 leading-none truncate max-w-[110px] flex items-center gap-1">
+                    {currentUser.name.split(' ')[0]}
+                    {currentUser.isVerified && <UserCheck className="w-3 h-3 text-emerald-500" />}
+                  </div>
+                  <div className="text-[9px] font-bold text-coral-600 capitalize truncate mt-0.5">
+                    {currentUser.phone}
+                  </div>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-obsidian-500" />
+              </button>
+
+              {/* Profile Dropdown Drawer */}
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-3 w-80 glass-dropdown rounded-3xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150 text-left space-y-3">
+                  
+                  {/* Active User Card */}
+                  <div className="p-3.5 bg-coral-50/80 rounded-2xl border border-coral-200">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={currentUser.avatar}
+                        alt=""
+                        className="w-12 h-12 rounded-2xl object-cover ring-2 ring-coral-400 shadow-xs"
+                      />
+                      <div>
+                        <div className="text-sm font-black text-obsidian-950 flex items-center gap-1">
+                          {currentUser.name}
+                          {currentUser.isVerified && <UserCheck className="w-3.5 h-3.5 text-emerald-600" />}
+                        </div>
+                        <div className="text-xs font-semibold text-coral-700">{currentUser.phone}</div>
+                        <div className="text-[10px] text-obsidian-500 mt-0.5 capitalize">
+                          {currentUser.role === 'owner' ? '🐾 Dog Guardian' : '❤️ Adopter'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Navigation Links */}
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => {
+                        handleTabClick('my_dogs');
+                        setShowProfileMenu(false);
+                      }}
+                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-obsidian-100 text-obsidian-800 text-xs font-extrabold transition-colors cursor-pointer text-left"
+                    >
+                      <DogIcon className="w-4 h-4 text-coral-500" />
+                      <span>My Dogs & Certificates</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        handleTabClick('admin');
+                        setShowProfileMenu(false);
+                      }}
+                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-obsidian-100 text-obsidian-800 text-xs font-extrabold transition-colors cursor-pointer text-left"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-sky-500" />
+                      <span>Trust & Safety Center</span>
+                    </button>
+
+                    <button
+                      onClick={toggleSound}
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 text-obsidian-800 text-xs font-extrabold transition-colors cursor-pointer text-left"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        {soundEnabled ? (
+                          <Volume2 className="w-4 h-4 text-coral-500" />
+                        ) : (
+                          <VolumeX className="w-4 h-4 text-obsidian-400" />
+                        )}
+                        <span>Sound Effects</span>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-obsidian-200">
+                        {soundEnabled ? 'ON' : 'OFF'}
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Switch to Another Mobile Number */}
+                  <div className="pt-2 border-t border-obsidian-200 space-y-2">
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        playPawPop();
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-coral-50 hover:bg-coral-100 text-coral-700 text-xs font-black border border-coral-200 cursor-pointer"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      <span>Log In with Another Phone Number</span>
+                    </button>
+
+                    {/* Real Logout */}
+                    <button
+                      onClick={() => {
+                        logout();
+                        setShowProfileMenu(false);
+                        playPawPop();
+                      }}
+                      className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Log Out of Session</span>
+                    </button>
+                  </div>
+
+                </div>
+              )}
+            </div>
+          ) : (
             <button
               onClick={() => {
-                setShowProfileMenu(!showProfileMenu);
-                setShowNotifMenu(false);
+                playPawPop();
+                setIsAuthModalOpen(true);
               }}
-              className="flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-full bg-white/90 border border-obsidian-300 hover:border-coral-400 transition-all shadow-xs cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-coral-400 hover:bg-coral-50 text-coral-600 font-black text-xs transition-all shadow-xs cursor-pointer"
             >
-              <img
-                src={currentUser.avatar}
-                alt={currentUser.name}
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-coral-400"
-              />
-              <div className="hidden sm:block text-left">
-                <div className="text-xs font-extrabold text-obsidian-950 leading-none truncate max-w-[110px] flex items-center gap-1">
-                  {currentUser.name.split(' ')[0]}
-                  {currentUser.isVerified && <UserCheck className="w-3 h-3 text-emerald-500" />}
-                </div>
-                <div className="text-[9px] font-bold text-coral-600 capitalize truncate mt-0.5">
-                  {currentUser.role === 'owner' ? 'Dog Guardian' : currentUser.role === 'adopter' ? 'Adopter' : currentUser.role}
-                </div>
-              </div>
-              <ChevronDown className="w-3.5 h-3.5 text-obsidian-500" />
+              <LogIn className="w-4 h-4" />
+              <span>Log In with OTP</span>
             </button>
-
-            {/* Profile Dropdown Drawer */}
-            {showProfileMenu && (
-              <div className="absolute right-0 mt-3 w-80 glass-dropdown rounded-3xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150 text-left space-y-3">
-                
-                {/* Active User Card */}
-                <div className="p-3.5 bg-coral-50/80 rounded-2xl border border-coral-200">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={currentUser.avatar}
-                      alt=""
-                      className="w-12 h-12 rounded-2xl object-cover ring-2 ring-coral-400 shadow-xs"
-                    />
-                    <div>
-                      <div className="text-sm font-black text-obsidian-950 flex items-center gap-1">
-                        {currentUser.name}
-                        {currentUser.isVerified && <UserCheck className="w-3.5 h-3.5 text-emerald-600" />}
-                      </div>
-                      <div className="text-xs font-semibold text-coral-700">{currentUser.phone}</div>
-                      <div className="text-[10px] text-obsidian-500 mt-0.5 capitalize">
-                        {currentUser.role === 'owner' ? '🐾 Dog Guardian (Listing Dogs)' : '❤️ Adopter Candidate'}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Profile Navigation Links */}
-                <div className="space-y-1">
-                  <button
-                    onClick={() => {
-                      handleTabClick('my_dogs');
-                      setShowProfileMenu(false);
-                    }}
-                    className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-obsidian-100 text-obsidian-800 text-xs font-extrabold transition-colors cursor-pointer text-left"
-                  >
-                    <DogIcon className="w-4 h-4 text-coral-500" />
-                    <span>My Dogs & Certificates</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      handleTabClick('admin');
-                      setShowProfileMenu(false);
-                    }}
-                    className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-obsidian-100 text-obsidian-800 text-xs font-extrabold transition-colors cursor-pointer text-left"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-sky-500" />
-                    <span>Trust & Safety Center</span>
-                  </button>
-
-                  <button
-                    onClick={toggleSound}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 text-obsidian-800 text-xs font-extrabold transition-colors cursor-pointer text-left"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      {soundEnabled ? (
-                        <Volume2 className="w-4 h-4 text-coral-500" />
-                      ) : (
-                        <VolumeX className="w-4 h-4 text-obsidian-400" />
-                      )}
-                      <span>Sound Effects (Barks & Chimes)</span>
-                    </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-obsidian-200">
-                      {soundEnabled ? 'ON' : 'OFF'}
-                    </span>
-                  </button>
-                </div>
-
-                {/* Login with New Mobile Number */}
-                <div className="pt-2 border-t border-obsidian-200">
-                  <button
-                    onClick={() => {
-                      setShowProfileMenu(false);
-                      playPawPop();
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl btn-primary text-white text-xs font-black shadow-glow-coral cursor-pointer"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    <span>Log In with Mobile Number / OTP</span>
-                  </button>
-                </div>
-
-                {/* Account Switcher Presets */}
-                <div className="pt-2 border-t border-obsidian-200">
-                  <p className="text-[10px] font-black uppercase tracking-wider text-obsidian-400 mb-1.5">
-                    Switch Test Account:
-                  </p>
-                  <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
-                    {allUsers.map(user => {
-                      const isSelected = user.id === currentUser.id;
-                      return (
-                        <button
-                          key={user.id}
-                          onClick={() => {
-                            switchUser(user.id);
-                            setShowProfileMenu(false);
-                            playPawPop();
-                          }}
-                          className={`w-full flex items-center justify-between p-2 rounded-xl transition-all cursor-pointer ${
-                            isSelected
-                              ? 'bg-obsidian-900 text-white font-bold'
-                              : 'hover:bg-obsidian-100 text-obsidian-800'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 text-left">
-                            <img
-                              src={user.avatar}
-                              alt={user.name}
-                              className="w-6 h-6 rounded-full object-cover"
-                            />
-                            <div>
-                              <div className="text-xs font-bold leading-tight truncate max-w-[150px]">{user.name}</div>
-                              <div className={`text-[10px] ${isSelected ? 'text-white/70' : 'text-obsidian-500'}`}>
-                                {user.phone}
-                              </div>
-                            </div>
-                          </div>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-coral-400" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-              </div>
-            )}
-          </div>
+          )}
 
           {/* Mobile Hamburger Toggle */}
           <button
@@ -432,6 +423,22 @@ export const Navbar: React.FC = () => {
               );
             })}
           </div>
+
+          {!currentUser && (
+            <div className="pt-2 border-t border-obsidian-200">
+              <button
+                onClick={() => {
+                  setShowMobileDrawer(false);
+                  playPawPop();
+                  setIsAuthModalOpen(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl btn-primary text-white text-xs font-black shadow-glow-coral cursor-pointer"
+              >
+                <Phone className="w-4 h-4" />
+                <span>Log In with Mobile Number / OTP</span>
+              </button>
+            </div>
+          )}
         </div>
       )}
     </header>

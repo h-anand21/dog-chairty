@@ -77,8 +77,8 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
   if (agreement.isFullySigned) currentStep = 6;
   if (handover.isCompleted || application.status === 'completed') currentStep = 7;
 
-  const isOwner = currentUser.id === dog?.currentOwnerId;
-  const isAdopter = currentUser.id === application.applicantId;
+  const isOwner = currentUser?.id === dog?.currentOwnerId;
+  const isAdopter = currentUser?.id === application.applicantId;
 
   const handleOpenChat = () => {
     playPawPop();

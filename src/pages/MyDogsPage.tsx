@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
-import { StatusBadge } from '../components/common/StatusBadge';
 import { Dog, AdoptionApplication } from '../types';
+import { StatusBadge } from '../components/common/StatusBadge';
 import {
   Dog as DogIcon,
   Award,
-  PlusCircle,
-  HeartHandshake,
-  CheckCircle2,
+  Plus,
   FileText,
+  Clock,
+  Heart,
+  Sparkles,
+  UserCheck,
+  ChevronRight,
+  ShieldCheck,
+  Phone,
+  LogIn,
 } from 'lucide-react';
 
 export const MyDogsPage: React.FC = () => {
@@ -20,11 +26,39 @@ export const MyDogsPage: React.FC = () => {
     setIsListDogOpen,
     setViewingCertificateDog,
     setActiveTab,
+    setIsAuthModalOpen,
   } = useApp();
 
   const { playPawPop } = useAudio();
-
   const [activeSubTab, setActiveSubTab] = useState<'adopted' | 'listed' | 'applications'>('adopted');
+
+  if (!currentUser) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+        <div className="glass-card rounded-5xl p-8 sm:p-12 border border-white shadow-elevated space-y-5">
+          <div className="w-16 h-16 rounded-3xl bg-coral-50 flex items-center justify-center text-3xl mx-auto shadow-glow-coral">
+            🐾
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950">
+            Log In to View Your Dogs & Certificates
+          </h2>
+          <p className="text-xs sm:text-sm text-obsidian-600 max-w-md mx-auto leading-relaxed">
+            Enter your mobile number to access your listed dogs, active adoption applications, and official gold certificates.
+          </p>
+          <button
+            onClick={() => {
+              playPawPop();
+              setIsAuthModalOpen(true);
+            }}
+            className="btn-primary text-white px-8 py-3.5 rounded-full font-black text-xs shadow-glow-coral inline-flex items-center gap-2 cursor-pointer"
+          >
+            <Phone className="w-4 h-4" />
+            <span>Log In with Mobile Number / OTP</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Adopted Dogs
   const adoptedDogs = dogs.filter((d: Dog) => d.status === 'adopted' && (d.newOwnerId === currentUser.id || d.currentOwnerId === currentUser.id));
@@ -39,7 +73,7 @@ export const MyDogsPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 text-left">
       
       {/* Header Profile Section */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-obsidian-400/50 shadow-soft flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-obsidian-200 shadow-card flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-5">
           <img
             src={currentUser.avatar}
@@ -58,7 +92,7 @@ export const MyDogsPage: React.FC = () => {
               )}
             </div>
             <p className="text-xs text-obsidian-600 mt-1">
-              📍 {currentUser.location} • Member since {currentUser.joinedDate}
+              📍 {currentUser.location} • 📱 {currentUser.phone} • Member since {currentUser.joinedDate}
             </p>
             <p className="text-xs text-obsidian-700 mt-1 italic max-w-lg">
               &ldquo;{currentUser.bio}&rdquo;
@@ -71,121 +105,117 @@ export const MyDogsPage: React.FC = () => {
             playPawPop();
             setIsListDogOpen(true);
           }}
-          className="flex items-center gap-2 bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white px-6 py-3 rounded-full font-bold text-xs shadow-soft transition-all shrink-0 cursor-pointer"
+          className="btn-primary text-white px-6 py-3 rounded-full font-black text-xs shadow-glow-coral flex items-center gap-2 transition-all shrink-0 cursor-pointer"
         >
-          <PlusCircle className="w-4 h-4" />
-          <span>+ List Another Dog</span>
+          <Plus className="w-4 h-4" />
+          <span>Post New Dog for Adoption</span>
         </button>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-3 border-b border-obsidian-400/40 pb-2">
+      {/* Sub Tabs */}
+      <div className="flex items-center gap-2 border-b border-obsidian-200 pb-3">
         <button
-          onClick={() => setActiveSubTab('adopted')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+          onClick={() => {
+            playPawPop();
+            setActiveSubTab('adopted');
+          }}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
             activeSubTab === 'adopted'
-              ? 'bg-coral-500 text-white shadow-xs'
-              : 'text-obsidian-600 hover:bg-obsidian-300/60'
+              ? 'bg-coral-500 text-white shadow-glow-coral'
+              : 'bg-obsidian-100 text-obsidian-700 hover:bg-obsidian-200'
           }`}
         >
           <Award className="w-4 h-4" />
-          <span>Adopted Dogs ({adoptedDogs.length})</span>
+          <span>My Adopted Companions ({adoptedDogs.length})</span>
         </button>
 
         <button
-          onClick={() => setActiveSubTab('listed')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+          onClick={() => {
+            playPawPop();
+            setActiveSubTab('listed');
+          }}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
             activeSubTab === 'listed'
-              ? 'bg-coral-500 text-white shadow-xs'
-              : 'text-obsidian-600 hover:bg-obsidian-300/60'
+              ? 'bg-coral-500 text-white shadow-glow-coral'
+              : 'bg-obsidian-100 text-obsidian-700 hover:bg-obsidian-200'
           }`}
         >
           <DogIcon className="w-4 h-4" />
-          <span>My Listed Dogs ({listedDogs.length})</span>
+          <span>Dogs I Have Listed ({listedDogs.length})</span>
         </button>
 
         <button
-          onClick={() => setActiveSubTab('applications')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+          onClick={() => {
+            playPawPop();
+            setActiveSubTab('applications');
+          }}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
             activeSubTab === 'applications'
-              ? 'bg-coral-500 text-white shadow-xs'
-              : 'text-obsidian-600 hover:bg-obsidian-300/60'
+              ? 'bg-coral-500 text-white shadow-glow-coral'
+              : 'bg-obsidian-100 text-obsidian-700 hover:bg-obsidian-200'
           }`}
         >
-          <HeartHandshake className="w-4 h-4" />
+          <FileText className="w-4 h-4" />
           <span>My Applications ({myApplications.length})</span>
         </button>
       </div>
 
       {/* SUBTAB 1: ADOPTED DOGS */}
       {activeSubTab === 'adopted' && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {adoptedDogs.length === 0 ? (
-            <div className="bg-white rounded-3xl p-12 text-center border border-obsidian-300 shadow-soft max-w-md mx-auto space-y-4">
-              <div className="text-4xl">🐕🏡</div>
+            <div className="bg-white rounded-3xl p-12 text-center border border-obsidian-200 space-y-3">
+              <div className="text-4xl">🐕🏠</div>
               <h3 className="text-lg font-bold text-obsidian-900">No Adopted Dogs Yet</h3>
-              <p className="text-xs text-obsidian-600">
-                When you complete an adoption and dual handover, your dog and official Adoption Certificate will appear here!
+              <p className="text-xs text-obsidian-600 max-w-sm mx-auto">
+                Once you complete an adoption through dual handover, your new companion and official Gold Certificate will appear here!
               </p>
               <button
-                onClick={() => setActiveTab('adopt_flow')}
-                className="px-6 py-2.5 rounded-full bg-coral-500 text-white font-bold text-xs cursor-pointer"
+                onClick={() => setActiveTab('discover')}
+                className="mt-2 text-xs font-bold text-coral-600 hover:underline cursor-pointer"
               >
-                Track Active Adoption
+                Browse Dogs Available for Adoption ➔
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {adoptedDogs.map((dog: Dog) => (
                 <div
                   key={dog.id}
-                  className="bg-white rounded-3xl overflow-hidden border border-amber-300 shadow-soft flex flex-col justify-between"
+                  className="bg-white rounded-3xl p-5 border border-obsidian-200 shadow-card flex items-center justify-between gap-4"
                 >
-                  <div className="relative h-60 overflow-hidden">
+                  <div className="flex items-center gap-4">
                     <img
                       src={dog.coverPhoto}
                       alt={dog.name}
-                      className="w-full h-full object-cover"
+                      className="w-16 h-16 rounded-2xl object-cover ring-2 ring-emerald-400"
                     />
-                    <div className="absolute top-3 right-3">
-                      <span className="px-3 py-1 rounded-full bg-amber-500 text-white text-xs font-black shadow-md flex items-center gap-1">
-                        <Award className="w-3.5 h-3.5" />
-                        <span>Adopted</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-2xl font-black font-display text-obsidian-900">
-                        {dog.name} 🐾
-                      </h3>
-                      <p className="text-xs text-obsidian-600 mt-0.5">
-                        {dog.breed} • {dog.age} • Adopted on {dog.adoptedDate || '18 Aug 2026'}
-                      </p>
-                      
-                      <div className="mt-3 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
-                        <div className="flex items-center justify-between font-bold">
-                          <span>Certificate #{dog.certificateId || 'CERT-PAW-78192'}</span>
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                        </div>
-                        <p className="text-[11px] text-amber-800 mt-1">
-                          Previous Guardian: {dog.previousOwnerName || 'Alex Rivera'}
-                        </p>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-base font-bold text-obsidian-900">{dog.name}</h4>
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
+                          Adopted
+                        </span>
                       </div>
+                      <p className="text-xs text-obsidian-500 font-medium">
+                        {dog.breed} • {dog.age}
+                      </p>
+                      <p className="text-[11px] text-obsidian-600 mt-1">
+                        Transferred to <strong className="text-obsidian-900">{dog.newOwnerName}</strong>
+                      </p>
                     </div>
-
-                    <button
-                      onClick={() => {
-                        playPawPop();
-                        setViewingCertificateDog(dog);
-                      }}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-soft transition-all cursor-pointer"
-                    >
-                      <FileText className="w-4 h-4" />
-                      <span>View Official Certificate</span>
-                    </button>
                   </div>
+
+                  <button
+                    onClick={() => {
+                      playPawPop();
+                      setViewingCertificateDog(dog);
+                    }}
+                    className="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-xs cursor-pointer shrink-0"
+                  >
+                    <Award className="w-4 h-4 text-amber-600" />
+                    <span>View Certificate</span>
+                  </button>
                 </div>
               ))}
             </div>
@@ -195,83 +225,110 @@ export const MyDogsPage: React.FC = () => {
 
       {/* SUBTAB 2: LISTED DOGS */}
       {activeSubTab === 'listed' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listedDogs.map((dog: Dog) => (
-            <div
-              key={dog.id}
-              className="bg-white rounded-3xl overflow-hidden border border-obsidian-400/50 shadow-soft p-5 space-y-4"
-            >
-              <div className="flex items-center gap-3">
-                <img
-                  src={dog.coverPhoto}
-                  alt={dog.name}
-                  className="w-16 h-16 rounded-2xl object-cover ring-2 ring-coral-400 shrink-0"
-                />
-                <div>
-                  <h3 className="text-lg font-black text-obsidian-900">{dog.name}</h3>
-                  <p className="text-xs text-obsidian-600">{dog.breed} • {dog.age}</p>
-                  <div className="mt-1">
-                    <StatusBadge status={dog.status} size="sm" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-xs text-obsidian-700 bg-obsidian-300/40 p-3 rounded-2xl">
-                <div className="flex justify-between font-semibold">
-                  <span>Interested Inquiries:</span>
-                  <span className="font-bold text-coral-600">{dog.interestedCount} applicants</span>
-                </div>
-                <div className="flex justify-between font-semibold mt-1">
-                  <span>Community Likes:</span>
-                  <span>{dog.likesCount} ❤️</span>
-                </div>
-              </div>
-
+        <div className="space-y-4">
+          {listedDogs.length === 0 ? (
+            <div className="bg-white rounded-3xl p-12 text-center border border-obsidian-200 space-y-3">
+              <div className="text-4xl">🐾📝</div>
+              <h3 className="text-lg font-bold text-obsidian-900">No Dogs Listed Yet</h3>
+              <p className="text-xs text-obsidian-600 max-w-sm mx-auto">
+                Need to rehome a dog? List them with health records and review verified adoption requests.
+              </p>
               <button
-                onClick={() => {
-                  playPawPop();
-                  setActiveTab('adopt_flow');
-                }}
-                className="w-full py-2 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-xs shadow-xs cursor-pointer"
+                onClick={() => setIsListDogOpen(true)}
+                className="mt-2 text-xs font-bold text-coral-600 hover:underline cursor-pointer"
               >
-                Manage Inquiries & Applications ➔
+                + Post a Dog for Adoption ➔
               </button>
             </div>
-          ))}
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {listedDogs.map((dog: Dog) => (
+                <div
+                  key={dog.id}
+                  className="bg-white rounded-3xl p-5 border border-obsidian-200 shadow-card space-y-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={dog.coverPhoto}
+                      alt={dog.name}
+                      className="w-14 h-14 rounded-2xl object-cover ring-2 ring-coral-400"
+                    />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-base font-bold text-obsidian-900">{dog.name}</h4>
+                        <StatusBadge status={dog.status} size="sm" />
+                      </div>
+                      <p className="text-xs text-obsidian-500 font-medium">
+                        {dog.breed} • {dog.age}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-obsidian-200 flex items-center justify-between text-xs text-obsidian-600">
+                    <span>❤️ {dog.likesCount} Likes</span>
+                    <span>🐾 {dog.interestedCount} Inquiries</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
       {/* SUBTAB 3: MY APPLICATIONS */}
       {activeSubTab === 'applications' && (
         <div className="space-y-4">
-          {myApplications.map((app: AdoptionApplication) => (
-            <div
-              key={app.id}
-              className="bg-white rounded-3xl p-5 border border-obsidian-400/50 shadow-soft flex items-center justify-between gap-4"
-            >
-              <div className="flex items-center gap-4">
-                <img
-                  src={app.dogPhoto}
-                  alt={app.dogName}
-                  className="w-14 h-14 rounded-2xl object-cover ring-2 ring-coral-300"
-                />
-                <div>
-                  <h4 className="text-base font-black text-obsidian-900">{app.dogName}</h4>
-                  <p className="text-xs text-obsidian-600">{app.dogBreed} • Status: {app.status}</p>
-                </div>
-              </div>
-
+          {myApplications.length === 0 ? (
+            <div className="bg-white rounded-3xl p-12 text-center border border-obsidian-200 space-y-3">
+              <div className="text-4xl">📄🐕</div>
+              <h3 className="text-lg font-bold text-obsidian-900">No Submitted Applications</h3>
+              <p className="text-xs text-obsidian-600 max-w-sm mx-auto">
+                Explore pups looking for a forever family and submit your questionnaire.
+              </p>
               <button
-                onClick={() => {
-                  playPawPop();
-                  setActiveTab('adopt_flow');
-                }}
-                className="px-4 py-2 rounded-full bg-coral-50 text-coral-700 hover:bg-coral-100 font-bold text-xs border border-coral-200 cursor-pointer"
+                onClick={() => setActiveTab('discover')}
+                className="mt-2 text-xs font-bold text-coral-600 hover:underline cursor-pointer"
               >
-                View Pipeline ➔
+                Find Dogs to Adopt ➔
               </button>
             </div>
-          ))}
+          ) : (
+            <div className="space-y-3">
+              {myApplications.map((app: AdoptionApplication) => (
+                <div
+                  key={app.id}
+                  className="bg-white rounded-3xl p-5 border border-obsidian-200 shadow-card flex items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={app.dogPhoto}
+                      alt={app.dogName}
+                      className="w-14 h-14 rounded-2xl object-cover ring-2 ring-coral-400"
+                    />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-base font-bold text-obsidian-900">{app.dogName}</h4>
+                        <span className="px-2.5 py-0.5 rounded-full bg-coral-50 text-coral-600 text-xs font-bold capitalize">
+                          {app.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-obsidian-500 font-medium">
+                        Submitted: {app.submittedAt}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveTab('adopt_flow')}
+                    className="flex items-center gap-1 text-xs font-bold text-coral-600 hover:text-coral-700 cursor-pointer"
+                  >
+                    <span>View in Pipeline</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
