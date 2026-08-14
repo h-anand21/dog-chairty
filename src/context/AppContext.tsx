@@ -22,6 +22,7 @@ import {
   INITIAL_STORIES,
   INITIAL_NOTIFICATIONS,
 } from '../data/mockData';
+import { otpService } from '../services/otpService';
 
 interface AppContextType {
   // Authentication & Dynamic Users
@@ -387,22 +388,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return false;
   };
 
-  // Send OTP
+  // Send OTP via Dynamic OTP Service
   const sendOtp = (phone: string): string => {
-    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    const sessionResult = otpService.generateOtp(4);
     const session: OtpSession = {
       phone,
-      code,
+      code: sessionResult,
       expiresAt: Date.now() + 5 * 60 * 1000
     };
     setActiveOtpSession(session);
-    return code;
+    otpService.sendOtp(phone);
+    return sessionResult;
   };
 
-  // Verify OTP
+  // Verify OTP via Dynamic OTP Service
   const verifyOtp = (phone: string, code: string) => {
-    if (!activeOtpSession || activeOtpSession.code !== code) {
-      return { success: false, isNewUser: false, message: 'Invalid verification code. Please check the SMS banner.' };
+    const validation = otpService.verifyOtp(phone, code);
+    if (!validation.success) {
+      return { success: false, isNewUser: false, message: validation.message };
     }
 
     const cleanInput = cleanPhone(phone);
@@ -418,8 +421,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: true, isNewUser: false, message: `Welcome back, ${existing.name}!` };
     }
 
-    // New user -> prompt for profile details
-    return { success: true, isNewUser: true, message: 'OTP verified! Please complete your profile.' };
+    // New Indian mobile user -> proceed to profile registration
+    return { success: true, isNewUser: true, message: 'OTP verified! Complete your profile.' };
   };
 
   // Complete Registration for New User
