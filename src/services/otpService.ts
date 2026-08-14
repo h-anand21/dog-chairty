@@ -1,8 +1,10 @@
 /**
  * Real-Time OTP & SMS Verification Service
  * Handles cryptographic random OTP generation, session storage, rate-limiting,
- * browser push notification delivery, and optional Cloud SMS Gateway API dispatch.
+ * browser push notification delivery, and real Physical SMS Gateway dispatch.
  */
+
+import { smsGatewayService } from './smsGatewayService';
 
 export interface OtpSessionData {
   phone: string;
@@ -13,7 +15,6 @@ export interface OtpSessionData {
 }
 
 const OTP_SESSION_KEY = 'pawconnect_active_otp_session';
-const OTP_HISTORY_KEY = 'pawconnect_otp_history';
 
 class OtpService {
   /**
@@ -22,7 +23,6 @@ class OtpService {
   public generateOtp(digits: number = 4): string {
     const min = Math.pow(10, digits - 1);
     const max = Math.pow(10, digits) - 1;
-    // Use Web Crypto API for true randomness
     const array = new Uint32Array(1);
     window.crypto.getRandomValues(array);
     const randomNum = min + (array[0] % (max - min + 1));
@@ -30,9 +30,9 @@ class OtpService {
   }
 
   /**
-   * Dispatches OTP to the given Indian mobile number
+   * Dispatches OTP to the given Indian mobile number via Real SMS Gateway
    */
-  public async sendOtp(phone: string): Promise<{ success: boolean; code: string; message: string }> {
+  public async sendOtp(phone: string): Promise<{ success: boolean; code: string; message: string; provider?: string }> {
     const cleanedPhone = phone.replace(/\D/g, '');
     if (cleanedPhone.length < 10) {
       throw new Error('Invalid mobile number format. Please provide a 10-digit Indian number.');
@@ -54,7 +54,10 @@ class OtpService {
     // Store active session in memory and localStorage
     localStorage.setItem(OTP_SESSION_KEY, JSON.stringify(session));
 
-    // Deliver via Browser Native Notification if granted
+    // Dispatch via real physical SMS Gateway (Fast2SMS / Twilio / PawConnect Gateway)
+    const smsResult = await smsGatewayService.sendPhysicalSms(phone, code);
+
+    // Deliver via Browser Native Notification
     this.deliverBrowserNotification(phone, code);
 
     // Haptic vibration feedback on mobile
@@ -62,14 +65,15 @@ class OtpService {
       try {
         navigator.vibrate([100, 50, 100]);
       } catch (e) {
-        // ignore if not supported
+        // ignore
       }
     }
 
     return {
       success: true,
       code,
-      message: `OTP dispatched to +91 ${cleanedPhone.slice(-10)}`,
+      message: smsResult.message,
+      provider: smsResult.provider,
     };
   }
 
@@ -89,13 +93,13 @@ class OtpService {
       return { success: false, message: 'Corrupted OTP session. Please request a new code.' };
     }
 
-    // Check expiration
+    // Check expiration (5 minutes)
     if (Date.now() > session.expiresAt) {
       localStorage.removeItem(OTP_SESSION_KEY);
       return { success: false, message: 'OTP has expired (valid for 5 minutes). Please request a new code.' };
     }
 
-    // Check maximum wrong attempts
+    // Check maximum wrong attempts (max 3)
     if (session.attempts >= 3) {
       localStorage.removeItem(OTP_SESSION_KEY);
       return { success: false, message: 'Too many incorrect attempts. Please request a fresh OTP.' };
@@ -141,7 +145,7 @@ class OtpService {
           });
         }
       } catch (e) {
-        // Notification failed or blocked by browser settings
+        // Notification failed or blocked
       }
     }
   }

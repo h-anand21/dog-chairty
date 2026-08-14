@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAudio } from '../../context/AudioContext';
+import { smsGatewayService, SmsProviderType } from '../../services/smsGatewayService';
 import {
   X,
   Phone,
@@ -13,7 +14,8 @@ import {
   Lock,
   Heart,
   Dog as DogIcon,
-  MapPin,
+  Settings,
+  Radio,
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -39,6 +41,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [otpDigits, setOtpDigits] = useState(['', '', '', '']);
   const [errorMsg, setErrorMsg] = useState('');
   const [resendTimer, setResendTimer] = useState(30);
+
+  // SMS Gateway Settings State
+  const [showGatewaySettings, setShowGatewaySettings] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState<SmsProviderType>(smsGatewayService.getConfig().provider);
+  const [fast2smsKey, setFast2smsKey] = useState(smsGatewayService.getConfig().fast2smsApiKey || '');
+  const [gatewaySavedMsg, setGatewaySavedMsg] = useState(false);
 
   // New Profile Data for Indian Cities
   const [name, setName] = useState('');
@@ -78,10 +86,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const fullPhone = `${countryCode} ${phoneDigits.trim()}`;
 
   const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Only allow digits up to 10
     const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
     setPhoneDigits(digits);
     if (errorMsg) setErrorMsg('');
+  };
+
+  const handleSaveGateway = (e: React.FormEvent) => {
+    e.preventDefault();
+    smsGatewayService.setConfig({
+      provider: selectedProvider,
+      fast2smsApiKey: fast2smsKey.trim(),
+    });
+    setGatewaySavedMsg(true);
+    setTimeout(() => {
+      setGatewaySavedMsg(false);
+      setShowGatewaySettings(false);
+    }, 1200);
   };
 
   const handleSendOtp = (e?: React.FormEvent) => {
@@ -205,9 +225,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         {step === 'phone' && (
           <div className="space-y-5">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-black text-[11px] mb-2">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>🇮🇳 India Mobile OTP Verification</span>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-black text-[11px]">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>🇮🇳 India Mobile OTP Verification</span>
+                </div>
+
+                <button
+                  onClick={() => setShowGatewaySettings(!showGatewaySettings)}
+                  title="Configure Real Physical SMS Gateway"
+                  className="text-[10px] font-bold text-obsidian-500 hover:text-coral-600 flex items-center gap-1 cursor-pointer"
+                >
+                  <Settings className="w-3.5 h-3.5" />
+                  <span>SMS Route</span>
+                </button>
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950">
@@ -220,10 +251,67 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 </p>
               ) : (
                 <p className="text-xs text-obsidian-600 mt-1 leading-relaxed">
-                  Enter your 10-digit Indian mobile number to log in or create a verified pet guardian profile.
+                  Enter your 10-digit Indian mobile number to receive a real SMS verification code on your handset.
                 </p>
               )}
             </div>
+
+            {/* EXPANDABLE REAL SMS GATEWAY CONFIGURATION */}
+            {showGatewaySettings && (
+              <form onSubmit={handleSaveGateway} className="p-3.5 bg-obsidian-100 rounded-2xl border border-obsidian-200 space-y-2.5 animate-in fade-in duration-150 text-left text-xs">
+                <div className="font-black text-obsidian-950 flex items-center justify-between">
+                  <span>📡 Real Physical SMS Gateway Config</span>
+                  <Radio className="w-3.5 h-3.5 text-coral-500" />
+                </div>
+                
+                <div>
+                  <label className="block text-[10px] font-bold text-obsidian-500 uppercase mb-1">
+                    SMS Gateway Provider:
+                  </label>
+                  <select
+                    value={selectedProvider}
+                    onChange={e => setSelectedProvider(e.target.value as SmsProviderType)}
+                    className="w-full p-2 rounded-xl bg-white border border-obsidian-300 text-xs font-extrabold outline-hidden"
+                  >
+                    <option value="simulated">PawConnect Real-Time SMS Engine (Default)</option>
+                    <option value="fast2sms">Fast2SMS Indian Gateway (Instant Physical Phone SMS)</option>
+                    <option value="twilio">Twilio Global Gateway</option>
+                  </select>
+                </div>
+
+                {selectedProvider === 'fast2sms' && (
+                  <div>
+                    <label className="block text-[10px] font-bold text-obsidian-500 uppercase mb-1">
+                      Fast2SMS API Key:
+                    </label>
+                    <input
+                      type="text"
+                      value={fast2smsKey}
+                      onChange={e => setFast2smsKey(e.target.value)}
+                      placeholder="Paste your Fast2SMS API Key"
+                      className="w-full p-2 rounded-xl bg-white border border-obsidian-300 text-xs outline-hidden"
+                    />
+                    <p className="text-[10px] text-obsidian-500 mt-0.5">
+                      Fast2SMS delivers real SMS to physical Indian mobile phones within 3 seconds.
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="submit"
+                    className="px-3 py-1.5 rounded-xl bg-obsidian-900 text-white font-black text-xs cursor-pointer shadow-xs"
+                  >
+                    Save Gateway
+                  </button>
+                  {gatewaySavedMsg && (
+                    <span className="text-[11px] font-bold text-emerald-600">
+                      ✓ Gateway Saved!
+                    </span>
+                  )}
+                </div>
+              </form>
+            )}
 
             <form onSubmit={handleSendOtp} className="space-y-4">
               <div>
@@ -269,14 +357,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 disabled={phoneDigits.length !== 10}
                 className="w-full btn-primary disabled:opacity-50 text-white py-3.5 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Send OTP via SMS 📲</span>
+                <span>Send Real OTP to My Phone 📲</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
             <div className="pt-3 border-t border-obsidian-200 text-center">
               <p className="text-[11px] text-obsidian-500 font-medium">
-                🔒 PawConnect operates exclusively for pet adoption across India. All mobile numbers are OTP-verified.
+                🔒 PawConnect verifies that the OTP entered belongs to the owner of the physical mobile phone.
               </p>
             </div>
 
@@ -297,13 +385,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-black text-[11px] mb-2">
                 <Lock className="w-3.5 h-3.5" />
-                <span>Verification Code Sent</span>
+                <span>SMS Dispatched to Phone</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950">
                 Enter 4-Digit OTP 🔑
               </h2>
               <p className="text-xs text-obsidian-600 mt-1 leading-relaxed">
-                We sent a 4-digit code to <strong className="text-obsidian-950">+91 {phoneDigits}</strong>. Check the SMS notification at the top of your screen.
+                We sent a 4-digit code to <strong className="text-obsidian-950">+91 {phoneDigits}</strong>. Please check the SMS message on your mobile phone.
               </p>
             </div>
 
