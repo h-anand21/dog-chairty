@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Dog } from '../types';
 import { DogCard } from '../components/discover/DogCard';
 import { PawMap } from '../components/map/PawMap';
+import { CitySearchInput } from '../components/common/CitySearchInput';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
 import { mapService } from '../services/mapService';
@@ -184,20 +185,13 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 />
               </div>
 
-              {/* City Dropdown */}
-              <div className="sm:col-span-4 relative">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-coral-500" />
-                <select
+              {/* Dynamic Indian City Search Input */}
+              <div className="sm:col-span-4">
+                <CitySearchInput
                   value={selectedCity}
-                  onChange={e => setSelectedCity(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white border border-obsidian-200 text-xs sm:text-sm font-bold text-obsidian-900 focus:border-coral-500 focus:ring-4 focus:ring-coral-100 outline-hidden transition-all shadow-xs appearance-none cursor-pointer"
-                >
-                  {cityOptions.map(c => (
-                    <option key={c} value={c}>
-                      {c === 'All' ? '📍 All Indian Cities' : `📍 ${c}`}
-                    </option>
-                  ))}
-                </select>
+                  onSelectCity={city => setSelectedCity(city)}
+                  placeholder="Search Your City (e.g. Mumbai, Delhi, Kolkata, Pune)..."
+                />
               </div>
 
               {/* GPS Near Me Button */}

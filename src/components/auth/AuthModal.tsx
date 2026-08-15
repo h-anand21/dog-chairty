@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAudio } from '../../context/AudioContext';
 import { smsGatewayService, SmsProviderType } from '../../services/smsGatewayService';
+import { LocationPicker } from '../map/LocationPicker';
 import {
   X,
   Phone,
@@ -521,20 +522,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div>
-                <label className="block text-xs font-black text-obsidian-900 mb-1">
-                  City / Location in India *
-                </label>
-                <select
+                <LocationPicker
                   value={location}
-                  onChange={e => setLocation(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 text-xs font-bold outline-hidden bg-white cursor-pointer"
-                >
-                  {indianCities.map((city, idx) => (
-                    <option key={idx} value={city}>
-                      📍 {city}
-                    </option>
-                  ))}
-                </select>
+                  onChange={loc => {
+                    setLocation(loc.displayName);
+                  }}
+                  label="City / Area in India *"
+                  placeholder="Search your city, locality, or pincode..."
+                />
               </div>
 
               <div>
