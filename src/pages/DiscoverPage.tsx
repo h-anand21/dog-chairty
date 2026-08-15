@@ -3,6 +3,7 @@ import { Dog } from '../types';
 import { DogCard } from '../components/discover/DogCard';
 import { PawMap } from '../components/map/PawMap';
 import { CitySearchInput } from '../components/common/CitySearchInput';
+import { PillarDetailModal, PillarType } from '../components/common/PillarDetailModal';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
 import { mapService } from '../services/mapService';
@@ -45,6 +46,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   const [userGps, setUserGps] = useState<{ lat: number; lng: number } | null>(null);
+  const [selectedPillar, setSelectedPillar] = useState<PillarType>(null);
 
   // Indian Cities Filter List
   const cityOptions = ['All', 'Kolkata', 'Delhi', 'Mumbai', 'Bengaluru', 'Hyderabad', 'Pune', 'Chennai', 'Jaipur'];
@@ -248,48 +250,80 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
           </div>
 
-          {/* 4 Trust & Safety Pillars */}
+          {/* 4 Trust & Safety Pillars (Interactive Feature Explanations) */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto pt-2">
             
-            <div className="glass-card p-3.5 rounded-2xl text-left border border-white flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg shrink-0">
+            <button
+              onClick={() => {
+                playPawPop();
+                setSelectedPillar('medicals');
+              }}
+              className="glass-card p-3.5 rounded-2xl text-left border border-white hover:border-emerald-300 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
+            >
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
                 💉
               </div>
-              <div>
-                <h4 className="text-xs font-black text-obsidian-950">100% Medicals</h4>
-                <p className="text-[10px] text-obsidian-500 font-medium">Verified vet panels</p>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1">
+                  <h4 className="text-xs font-black text-obsidian-950 group-hover:text-emerald-700 transition-colors">100% Medicals</h4>
+                </div>
+                <p className="text-[10px] text-obsidian-500 font-medium truncate">Verified vet panels ➔</p>
               </div>
-            </div>
+            </button>
 
-            <div className="glass-card p-3.5 rounded-2xl text-left border border-white flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-coral-50 text-coral-600 flex items-center justify-center text-lg shrink-0">
+            <button
+              onClick={() => {
+                playPawPop();
+                setSelectedPillar('chat');
+              }}
+              className="glass-card p-3.5 rounded-2xl text-left border border-white hover:border-coral-300 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
+            >
+              <div className="w-10 h-10 rounded-xl bg-coral-50 text-coral-600 group-hover:bg-coral-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
                 💬
               </div>
-              <div>
-                <h4 className="text-xs font-black text-obsidian-950">Direct Chat</h4>
-                <p className="text-[10px] text-obsidian-500 font-medium">Message real owners</p>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1">
+                  <h4 className="text-xs font-black text-obsidian-950 group-hover:text-coral-700 transition-colors">Direct Chat</h4>
+                </div>
+                <p className="text-[10px] text-obsidian-500 font-medium truncate">Message real owners ➔</p>
               </div>
-            </div>
+            </button>
 
-            <div className="glass-card p-3.5 rounded-2xl text-left border border-white flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-lg shrink-0">
+            <button
+              onClick={() => {
+                playPawPop();
+                setSelectedPillar('park_meetup');
+              }}
+              className="glass-card p-3.5 rounded-2xl text-left border border-white hover:border-sky-300 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
+            >
+              <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
                 🌳
               </div>
-              <div>
-                <h4 className="text-xs font-black text-obsidian-950">Park Meetup</h4>
-                <p className="text-[10px] text-obsidian-500 font-medium">Safe in-person meet</p>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1">
+                  <h4 className="text-xs font-black text-obsidian-950 group-hover:text-sky-700 transition-colors">Park Meetup</h4>
+                </div>
+                <p className="text-[10px] text-obsidian-500 font-medium truncate">Safe in-person meet ➔</p>
               </div>
-            </div>
+            </button>
 
-            <div className="glass-card p-3.5 rounded-2xl text-left border border-white flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg shrink-0">
+            <button
+              onClick={() => {
+                playPawPop();
+                setSelectedPillar('dual_handover');
+              }}
+              className="glass-card p-3.5 rounded-2xl text-left border border-white hover:border-amber-300 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
+            >
+              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 group-hover:bg-amber-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
                 📜
               </div>
-              <div>
-                <h4 className="text-xs font-black text-obsidian-950">Dual Handover</h4>
-                <p className="text-[10px] text-obsidian-500 font-medium">Legal transfer cert</p>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1">
+                  <h4 className="text-xs font-black text-obsidian-950 group-hover:text-amber-700 transition-colors">Dual Handover</h4>
+                </div>
+                <p className="text-[10px] text-obsidian-500 font-medium truncate">Legal transfer cert ➔</p>
               </div>
-            </div>
+            </button>
 
           </div>
 
@@ -594,6 +628,12 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
         </div>
       </section>
+
+      {/* Trust Pillar Detail Modal */}
+      <PillarDetailModal
+        pillar={selectedPillar}
+        onClose={() => setSelectedPillar(null)}
+      />
 
     </div>
   );
