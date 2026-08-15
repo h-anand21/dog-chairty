@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAudio } from '../../context/AudioContext';
+import { LocationPicker } from '../map/LocationPicker';
 import { X, ArrowRight, ArrowLeft, CheckCircle2, Sparkles } from 'lucide-react';
 
 export const ListDogModal: React.FC = () => {
@@ -17,6 +18,9 @@ export const ListDogModal: React.FC = () => {
   const [size, setSize] = useState<'Small' | 'Medium' | 'Large' | 'Extra Large'>('Large');
   const [energy, setEnergy] = useState<'Low (Couch Potato)' | 'Moderate' | 'High Energy' | 'Zoomies Master'>('Moderate');
   const [location, setLocation] = useState('Kolkata, Salt Lake');
+  const [lat, setLat] = useState(22.5867);
+  const [lng, setLng] = useState(88.4178);
+  const [city, setCity] = useState('Kolkata');
   const [bio, setBio] = useState('');
   
   // Health & Care
@@ -67,6 +71,9 @@ export const ListDogModal: React.FC = () => {
       size,
       energy,
       location,
+      lat,
+      lng,
+      city,
       coverPhoto: coverPhoto || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=800',
       photos: [coverPhoto, additionalPhoto].filter(Boolean),
       bio: bio || 'Loves belly rubs, outdoor walks, and is very friendly with everyone!',
@@ -227,17 +234,19 @@ export const ListDogModal: React.FC = () => {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-obsidian-800 mb-1">
-                    Current City / Area *
-                  </label>
-                  <input
-                    type="text"
-                    required
+                <div className="sm:col-span-2">
+                  <LocationPicker
                     value={location}
-                    onChange={e => setLocation(e.target.value)}
-                    placeholder="e.g. Kolkata, Salt Lake Area"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden"
+                    initialLat={lat}
+                    initialLng={lng}
+                    onChange={loc => {
+                      setLocation(loc.displayName);
+                      setLat(loc.lat);
+                      setLng(loc.lng);
+                      setCity(loc.city);
+                    }}
+                    label="Current City & Area in India *"
+                    placeholder="Search your area, landmark, or pincode..."
                   />
                 </div>
               </div>

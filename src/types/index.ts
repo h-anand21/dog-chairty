@@ -8,6 +8,11 @@ export interface User {
   avatar: string;
   role: UserRole;
   location: string;
+  lat?: number;
+  lng?: number;
+  city?: string;
+  state?: string;
+  pincode?: string;
   isVerified: boolean;
   joinedDate: string;
   homeType: 'Apartment' | 'House' | 'Villa' | 'Farm';
@@ -34,6 +39,11 @@ export interface Dog {
   size: 'Small' | 'Medium' | 'Large' | 'Extra Large';
   energy: 'Low (Couch Potato)' | 'Moderate' | 'High Energy' | 'Zoomies Master';
   location: string;
+  lat: number;
+  lng: number;
+  city?: string;
+  state?: string;
+  pincode?: string;
   photos: string[];
   coverPhoto: string;
   bio: string;
@@ -90,6 +100,8 @@ export interface AdoptionApplication {
   applicantName: string;
   applicantAvatar: string;
   applicantLocation: string;
+  applicantLat?: number;
+  applicantLng?: number;
   applicantPhone: string;
   applicantEmail?: string;
   
@@ -120,6 +132,8 @@ export interface MeetAndGreet {
   time: string;
   locationName: string;
   locationAddress: string;
+  lat?: number;
+  lng?: number;
   notes?: string;
   status: 'scheduled' | 'completed' | 'rescheduled' | 'cancelled';
 }
@@ -202,6 +216,8 @@ export interface Post {
   image: string;
   caption: string;
   location: string;
+  lat?: number;
+  lng?: number;
   tags: string[];
   likes: number;
   likedBy: string[];
@@ -248,4 +264,13 @@ export interface OtpSession {
   phone: string;
   code: string;
   expiresAt: number;
+}
+
+export interface GeocodedLocation {
+  displayName: string;
+  city: string;
+  state: string;
+  pincode?: string;
+  lat: number;
+  lng: number;
 }
