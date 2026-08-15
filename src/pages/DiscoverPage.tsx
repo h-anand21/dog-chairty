@@ -169,9 +169,9 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
           </div>
 
           {/* 🔍 Hero Quick Match & Search Box */}
-          <div className="glass-card rounded-4xl p-4 sm:p-6 max-w-4xl mx-auto shadow-elevated border border-white space-y-4">
+          <div className="glass-card rounded-4xl p-4 sm:p-6 max-w-4xl mx-auto shadow-elevated border border-white space-y-4 relative z-30 overflow-visible">
             
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 relative z-30">
               
               {/* Search text */}
               <div className="sm:col-span-5 relative">
@@ -186,11 +186,11 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
               </div>
 
               {/* Dynamic Indian City Search Input */}
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-4 relative z-40">
                 <CitySearchInput
                   value={selectedCity}
                   onSelectCity={city => setSelectedCity(city)}
-                  placeholder="Search Your City (e.g. Mumbai, Delhi, Kolkata, Pune)..."
+                  placeholder="Search Your City (e.g. Mumbai, Delhi, Kolkata)..."
                 />
               </div>
 

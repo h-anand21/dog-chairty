@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { mapService } from '../../services/mapService';
 import { GeocodedLocation } from '../../types';
 import { useAudio } from '../../context/AudioContext';
-import { MapPin, Search, X, Loader2 } from 'lucide-react';
+import { MapPin, Search, X, Loader2, Compass } from 'lucide-react';
 
 interface CitySearchInputProps {
   value: string;
@@ -13,7 +13,7 @@ interface CitySearchInputProps {
 export const CitySearchInput: React.FC<CitySearchInputProps> = ({
   value,
   onSelectCity,
-  placeholder = 'Search Your City (e.g. Delhi, Kolkata, Mumbai, Pune, Patna)...',
+  placeholder = 'Search Your City (e.g. Mumbai, Delhi, Kolkata, Pune)...',
 }) => {
   const { playPawPop } = useAudio();
   const [query, setQuery] = useState(value === 'All' ? '' : value);
@@ -27,7 +27,7 @@ export const CitySearchInput: React.FC<CitySearchInputProps> = ({
     setQuery(value === 'All' ? '' : value);
   }, [value]);
 
-  // Click outside to close dropdown
+  // Click outside to dismiss dropdown
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -51,7 +51,7 @@ export const CitySearchInput: React.FC<CitySearchInputProps> = ({
         const results = await mapService.searchLocations(text);
         setSuggestions(results);
         setIsSearching(false);
-      }, 300);
+      }, 250);
     } else {
       setSuggestions([]);
       setIsSearching(false);
@@ -68,7 +68,8 @@ export const CitySearchInput: React.FC<CitySearchInputProps> = ({
     setIsOpen(false);
   };
 
-  const handleClear = () => {
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
     playPawPop();
     setQuery('');
     onSelectCity('All');
@@ -77,9 +78,11 @@ export const CitySearchInput: React.FC<CitySearchInputProps> = ({
   };
 
   return (
-    <div ref={containerRef} className="relative w-full text-left">
+    <div ref={containerRef} className="relative w-full text-left z-40">
+      
+      {/* Search Input Box */}
       <div className="relative">
-        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-coral-500" />
+        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-coral-500 pointer-events-none" />
         
         <input
           type="text"
@@ -93,54 +96,65 @@ export const CitySearchInput: React.FC<CitySearchInputProps> = ({
         />
 
         {isSearching && (
-          <Loader2 className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-obsidian-400 animate-spin" />
+          <Loader2 className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-obsidian-400 animate-spin pointer-events-none" />
         )}
 
         {!isSearching && query && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-obsidian-100 hover:bg-obsidian-200 text-obsidian-600 flex items-center justify-center text-xs transition-colors cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-obsidian-100 hover:bg-obsidian-200 text-obsidian-600 hover:text-obsidian-950 flex items-center justify-center text-xs transition-colors cursor-pointer"
+            title="Clear city filter"
           >
-            <X className="w-3 h-3" />
+            <X className="w-3.5 h-3.5" />
           </button>
         )}
       </div>
 
-      {/* Autocomplete Suggestions */}
+      {/* Clean Floating Suggestions Dropdown (Sits directly beneath the input) */}
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1.5 bg-white rounded-2xl shadow-2xl border border-obsidian-200 overflow-hidden max-h-64 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-white/98 backdrop-blur-2xl rounded-3xl shadow-2xl border border-obsidian-200/90 overflow-hidden max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 ring-1 ring-black/5">
           
-          <div className="px-4 py-2 bg-obsidian-50 border-b border-obsidian-100 flex items-center justify-between text-[10px] font-black uppercase text-obsidian-500">
-            <span>Select Indian City / Area</span>
+          {/* Dropdown Header */}
+          <div className="px-4 py-2.5 bg-obsidian-50/80 border-b border-obsidian-100 flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-obsidian-500">
+            <span>Matching Indian Cities / Areas</span>
             <button
+              type="button"
               onClick={() => handleSelect('All')}
-              className="text-coral-600 hover:underline cursor-pointer"
+              className="text-coral-600 hover:text-coral-700 font-extrabold hover:underline cursor-pointer"
             >
               Show All India 🇮🇳
             </button>
           </div>
 
-          {suggestions.map((loc, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => handleSelect(loc.city || loc.displayName.split(',')[0])}
-              className="w-full px-4 py-2.5 text-left hover:bg-coral-50 transition-colors flex items-start gap-2.5 border-b border-obsidian-100 last:border-0 cursor-pointer"
-            >
-              <MapPin className="w-4 h-4 text-coral-500 shrink-0 mt-0.5" />
-              <div className="min-w-0">
-                <div className="text-xs font-black text-obsidian-950 truncate">
-                  {loc.city || loc.displayName.split(',')[0]}
+          {/* List of Suggestions */}
+          <div className="py-1">
+            {suggestions.map((loc, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleSelect(loc.city || loc.displayName.split(',')[0])}
+                className="w-full px-4 py-3 text-left hover:bg-coral-50/80 transition-colors flex items-start gap-3 border-b border-obsidian-100/70 last:border-0 cursor-pointer group"
+              >
+                <div className="w-7 h-7 rounded-xl bg-coral-50 text-coral-600 group-hover:bg-coral-500 group-hover:text-white flex items-center justify-center shrink-0 transition-colors mt-0.5 shadow-2xs">
+                  <MapPin className="w-3.5 h-3.5" />
                 </div>
-                <div className="text-[10px] font-medium text-obsidian-500 truncate">
-                  {loc.displayName}
+                
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-black text-obsidian-950 group-hover:text-coral-600 transition-colors truncate">
+                    {loc.city || loc.displayName.split(',')[0]}
+                  </div>
+                  <div className="text-[11px] font-medium text-obsidian-500 truncate mt-0.5">
+                    {loc.displayName}
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            ))}
+          </div>
+
         </div>
       )}
+
     </div>
   );
 };
