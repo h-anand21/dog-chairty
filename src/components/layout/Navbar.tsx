@@ -22,6 +22,8 @@ import {
   Award,
   LogOut,
   LogIn,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -40,6 +42,8 @@ export const Navbar: React.FC = () => {
     applications,
     setIsAuthModalOpen,
     requireAuth,
+    theme,
+    toggleTheme,
   } = useApp();
 
   const { soundEnabled, toggleSound, playPawPop } = useAudio();
@@ -182,11 +186,11 @@ export const Navbar: React.FC = () => {
                 setShowNotifMenu(!showNotifMenu);
                 setShowProfileMenu(false);
               }}
-              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/90 border border-obsidian-200 text-obsidian-700 hover:text-coral-500 transition-all shadow-xs cursor-pointer"
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/90 dark:bg-obsidian-900 border border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-obsidian-200 hover:text-coral-500 transition-all shadow-xs cursor-pointer"
             >
               <Bell className="w-4 h-4" />
               {unreadNotifsCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 rounded-full bg-coral-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse ring-2 ring-white">
+                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 rounded-full bg-coral-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse ring-2 ring-white dark:ring-obsidian-900">
                   {unreadNotifsCount}
                 </span>
               )}
@@ -235,6 +239,22 @@ export const Navbar: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Theme Toggle Button (Light / Dark Mode) */}
+          <button
+            onClick={() => {
+              playPawPop();
+              toggleTheme();
+            }}
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-white/90 dark:bg-obsidian-900 border border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-amber-300 hover:text-coral-500 transition-all shadow-xs cursor-pointer hover:scale-105"
+            title={theme === 'dark' ? 'Switch to Light Mode ☀️' : 'Switch to Dark Mode 🌙'}
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-400 animate-in spin-in-180 duration-300" />
+            ) : (
+              <Moon className="w-4 h-4 text-obsidian-700 animate-in spin-in-180 duration-300" />
+            )}
+          </button>
 
           {/* User Account / Login Button */}
           {currentUser ? (
@@ -314,7 +334,7 @@ export const Navbar: React.FC = () => {
 
                     <button
                       onClick={toggleSound}
-                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 text-obsidian-800 text-xs font-extrabold transition-colors cursor-pointer text-left"
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-800 dark:text-obsidian-200 text-xs font-extrabold transition-colors cursor-pointer text-left"
                     >
                       <div className="flex items-center gap-2.5">
                         {soundEnabled ? (
@@ -324,14 +344,31 @@ export const Navbar: React.FC = () => {
                         )}
                         <span>Sound Effects</span>
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-obsidian-200">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-obsidian-200 dark:bg-white/10">
                         {soundEnabled ? 'ON' : 'OFF'}
+                      </span>
+                    </button>
+
+                    <button
+                      onClick={toggleTheme}
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-800 dark:text-obsidian-200 text-xs font-extrabold transition-colors cursor-pointer text-left"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        {theme === 'dark' ? (
+                          <Sun className="w-4 h-4 text-amber-400" />
+                        ) : (
+                          <Moon className="w-4 h-4 text-obsidian-600" />
+                        )}
+                        <span>Theme Mode</span>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-obsidian-200 dark:bg-white/10">
+                        {theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
                       </span>
                     </button>
                   </div>
 
                   {/* Switch to Another Mobile Number */}
-                  <div className="pt-2 border-t border-obsidian-200 space-y-2">
+                  <div className="pt-2 border-t border-obsidian-200 dark:border-white/10 space-y-2">
                     <button
                       onClick={() => {
                         setShowProfileMenu(false);
@@ -367,7 +404,7 @@ export const Navbar: React.FC = () => {
                 playPawPop();
                 setIsAuthModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-coral-400 hover:bg-coral-50 text-coral-600 font-black text-xs transition-all shadow-xs cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-obsidian-900 border border-coral-400 hover:bg-coral-50 text-coral-600 font-black text-xs transition-all shadow-xs cursor-pointer"
             >
               <LogIn className="w-4 h-4" />
               <span>Log In with OTP</span>
@@ -377,7 +414,7 @@ export const Navbar: React.FC = () => {
           {/* Mobile Hamburger Toggle */}
           <button
             onClick={() => setShowMobileDrawer(!showMobileDrawer)}
-            className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center bg-obsidian-100 border border-obsidian-200 text-obsidian-800 hover:text-coral-500 transition-colors cursor-pointer"
+            className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center bg-obsidian-100 dark:bg-obsidian-900 border border-obsidian-200 dark:border-white/10 text-obsidian-800 dark:text-obsidian-200 hover:text-coral-500 transition-colors cursor-pointer"
           >
             {showMobileDrawer ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -388,7 +425,30 @@ export const Navbar: React.FC = () => {
 
       {/* MOBILE FULL DRAWER MENU */}
       {showMobileDrawer && (
-        <div className="lg:hidden mt-2 max-w-7xl mx-auto glass-dropdown rounded-3xl p-4 shadow-2xl border border-white space-y-3 animate-in fade-in slide-in-from-top-4 duration-200">
+        <div className="lg:hidden mt-2 max-w-7xl mx-auto glass-dropdown rounded-3xl p-4 shadow-2xl border border-white dark:border-white/10 space-y-3 animate-in fade-in slide-in-from-top-4 duration-200">
+          
+          {/* Mobile Theme & Sound Row */}
+          <div className="flex items-center justify-between p-2.5 bg-obsidian-50 dark:bg-white/5 rounded-2xl border border-obsidian-200/60 dark:border-white/10">
+            <button
+              onClick={() => {
+                playPawPop();
+                toggleTheme();
+              }}
+              className="flex items-center gap-2 text-xs font-black text-obsidian-900 dark:text-obsidian-100 cursor-pointer"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-obsidian-700" />}
+              <span>{theme === 'dark' ? 'Dark Mode (Active)' : 'Light Mode (Active)'}</span>
+            </button>
+
+            <button
+              onClick={toggleSound}
+              className="p-1.5 rounded-xl bg-obsidian-200 dark:bg-white/10 text-xs font-bold text-obsidian-800 dark:text-obsidian-200 flex items-center gap-1 cursor-pointer"
+            >
+              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-coral-500" /> : <VolumeX className="w-3.5 h-3.5" />}
+              <span>{soundEnabled ? 'Sound ON' : 'Sound OFF'}</span>
+            </button>
+          </div>
+
           <div className="grid grid-cols-2 gap-2">
             {[
               { id: 'discover', label: 'Adopt Dogs', icon: Compass },
@@ -407,7 +467,7 @@ export const Navbar: React.FC = () => {
                   className={`flex items-center gap-2.5 p-3 rounded-2xl text-xs font-black transition-all text-left cursor-pointer ${
                     isActive
                       ? 'bg-coral-500 text-white shadow-glow-coral'
-                      : 'bg-obsidian-100 hover:bg-obsidian-200 text-obsidian-800'
+                      : 'bg-obsidian-100 dark:bg-white/5 hover:bg-obsidian-200 dark:hover:bg-white/10 text-obsidian-800 dark:text-obsidian-200'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />

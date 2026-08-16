@@ -94,6 +94,10 @@ interface AppContextType {
   markNotificationAsRead: (notifId: string) => void;
   unreadNotifsCount: number;
 
+  // Theme (Light / Dark Mode)
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+
   // Modals & Navigation Views
   activeTab: 'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin';
   setActiveTab: (tab: 'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin') => void;
@@ -147,10 +151,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [pendingAuthAction, setPendingAuthAction] = useState<(() => void) | null>(null);
   const [activeOtpSession, setActiveOtpSession] = useState<OtpSession | null>(null);
 
-  // 2. Navigation Tab
+  // 2. Theme State ('light' | 'dark')
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('pawconnect_theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('pawconnect_theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  // 3. Navigation Tab
   const [activeTab, setActiveTab] = useState<'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin'>('discover');
 
-  // 3. Dogs State
+  // 4. Dogs State
   const [dogs, setDogs] = useState<Dog[]>(() => {
     const saved = localStorage.getItem('pawconnect_dogs');
     if (saved) {
@@ -1110,6 +1134,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         notifications,
         markNotificationAsRead,
         unreadNotifsCount,
+        theme,
+        toggleTheme,
         activeTab,
         setActiveTab,
         isListDogOpen,
