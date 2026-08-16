@@ -143,7 +143,7 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
             </div>
           </div>
 
-          {dog.status === 'available' ? (
+          {dog.status !== 'adopted' ? (
             <button
               onClick={handleAdoptClick}
               className="bg-coral-50 hover:bg-coral-500 text-coral-600 hover:text-white border border-coral-200 hover:border-coral-500 px-4 py-2 rounded-full text-xs font-black transition-all shrink-0 hover:shadow-glow-coral flex items-center gap-1 cursor-pointer"
@@ -152,8 +152,8 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
           ) : (
-            <span className="text-[11px] font-bold text-obsidian-500 bg-obsidian-200/80 px-3 py-1.5 rounded-full shrink-0">
-              {dog.status === 'adopted' ? 'Adopted 🎉' : 'In Pipeline'}
+            <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full shrink-0">
+              Adopted 🎉
             </span>
           )}
 

@@ -329,19 +329,24 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
 
             {/* Adoption CTA */}
             <div className="pt-2">
-              {dog.status === 'available' ? (
-                <button
-                  onClick={handleApply}
-                  className="w-full btn-primary text-white py-4 px-6 rounded-2xl font-black text-base shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Heart className="w-5 h-5 fill-white" />
-                  <span>🐾 I Want to Adopt {dog.name}</span>
-                  <ArrowRight className="w-5 h-5" />
-                </button>
+              {dog.status !== 'adopted' ? (
+                <div className="space-y-2">
+                  <button
+                    onClick={handleApply}
+                    className="w-full btn-primary text-white py-4 px-6 rounded-2xl font-black text-base shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer hover:scale-102 active:scale-98 transition-all"
+                  >
+                    <Heart className="w-5 h-5 fill-white" />
+                    <span>🐾 I Want to Adopt {dog.name}</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                  <p className="text-[11px] text-center text-obsidian-500 font-semibold">
+                    ✓ Open for direct adoption applications • 100% Free • Verified Guardian Handover
+                  </p>
+                </div>
               ) : (
-                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-center">
-                  <span className="text-xs font-bold text-amber-900">
-                    This pup currently has an active adoption in pipeline ({dog.status.replace('_', ' ')}).
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-center">
+                  <span className="text-xs font-bold text-emerald-900">
+                    🎉 {dog.name} has found a loving forever home and has been successfully adopted!
                   </span>
                 </div>
               )}

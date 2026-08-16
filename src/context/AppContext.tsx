@@ -152,7 +152,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // 3. Dogs State
   const [dogs, setDogs] = useState<Dog[]>(() => {
     const saved = localStorage.getItem('pawconnect_dogs');
-    return saved ? JSON.parse(saved) : INITIAL_DOGS;
+    if (saved) {
+      try {
+        const parsed: Dog[] = JSON.parse(saved);
+        // Ensure all active dogs are open and available for adoption (unless fully adopted)
+        return parsed.map(d => (d.status === 'adopted' ? d : { ...d, status: 'available' as const }));
+      } catch (e) {
+        return INITIAL_DOGS;
+      }
+    }
+    return INITIAL_DOGS;
   });
   const [selectedDog, setSelectedDog] = useState<Dog | null>(null);
 
