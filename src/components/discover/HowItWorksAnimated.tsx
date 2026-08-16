@@ -122,7 +122,7 @@ export const HowItWorksAnimated: React.FC = () => {
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="glass-card rounded-5xl p-6 sm:p-12 border border-white shadow-elevated space-y-10 text-left relative overflow-hidden">
+      <div className="glass-card rounded-5xl p-6 sm:p-12 border border-white dark:border-white/10 shadow-elevated space-y-10 text-left relative overflow-hidden">
         
         {/* Ambient Top Glow */}
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-coral-400/15 rounded-full blur-3xl pointer-events-none" />
@@ -130,14 +130,14 @@ export const HowItWorksAnimated: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-black text-xs uppercase tracking-wider">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 font-black text-xs uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Interactive Adoption Journey</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-display text-obsidian-950">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-display text-obsidian-950 dark:text-white">
               How Adoption Works on PawConnect
             </h2>
-            <p className="text-xs sm:text-sm text-obsidian-600 font-normal leading-relaxed">
+            <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-300 font-normal leading-relaxed">
               We eliminated adoption scams, shelter bureaucracy, and commercial breeders with our 4-step verified flow. Click any step to test the live interactive preview!
             </p>
           </div>
@@ -148,7 +148,7 @@ export const HowItWorksAnimated: React.FC = () => {
               playPawPop();
               setIsAutoPlay(!isAutoPlay);
             }}
-            className="self-start sm:self-auto px-4 py-2 rounded-full glass-card border border-obsidian-200 text-xs font-bold text-obsidian-700 hover:text-obsidian-950 flex items-center gap-2 transition-all shadow-xs cursor-pointer"
+            className="self-start sm:self-auto px-4 py-2 rounded-full glass-card border border-obsidian-200 dark:border-white/10 text-xs font-bold text-obsidian-700 dark:text-slate-200 hover:text-obsidian-950 dark:hover:text-white flex items-center gap-2 transition-all shadow-xs cursor-pointer"
           >
             {isAutoPlay ? (
               <>
@@ -176,8 +176,8 @@ export const HowItWorksAnimated: React.FC = () => {
                 whileTap={{ scale: 0.98 }}
                 className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col justify-between space-y-4 ${
                   isActive
-                    ? 'bg-white border-coral-500 shadow-xl ring-4 ring-coral-100/80 -translate-y-1'
-                    : 'bg-white/80 border-obsidian-200/80 hover:bg-white hover:border-obsidian-300 shadow-sm opacity-80 hover:opacity-100'
+                    ? 'bg-white dark:bg-[#131C2E] border-coral-500 shadow-xl ring-4 ring-coral-100/80 dark:ring-coral-500/20 -translate-y-1'
+                    : 'bg-white/80 dark:bg-white/5 border-obsidian-200/80 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 shadow-sm opacity-80 hover:opacity-100'
                 }`}
               >
                 {/* Step Active Progress Beam */}
@@ -191,7 +191,7 @@ export const HowItWorksAnimated: React.FC = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black shadow-inner ${
-                      isActive ? 'bg-coral-50 text-coral-600 scale-110' : 'bg-obsidian-100 text-obsidian-700'
+                      isActive ? 'bg-coral-50 dark:bg-coral-950/80 text-coral-600 dark:text-coral-400 scale-110' : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-700 dark:text-slate-300'
                     } transition-transform`}>
                       {s.stepNum} {s.icon}
                     </div>
@@ -202,20 +202,20 @@ export const HowItWorksAnimated: React.FC = () => {
                   </div>
 
                   <div>
-                    <h3 className={`text-base font-black transition-colors ${isActive ? 'text-obsidian-950' : 'text-obsidian-800'}`}>
+                    <h3 className={`text-base font-black transition-colors ${isActive ? 'text-obsidian-950 dark:text-white' : 'text-obsidian-800 dark:text-slate-200'}`}>
                       {s.title}
                     </h3>
-                    <p className="text-xs text-obsidian-600 mt-1 leading-relaxed font-normal line-clamp-3">
+                    <p className="text-xs text-obsidian-600 dark:text-slate-400 mt-1 leading-relaxed font-normal line-clamp-3">
                       {s.desc}
                     </p>
                   </div>
                 </div>
 
                 <div className="pt-2 flex items-center justify-between text-[11px] font-bold">
-                  <span className={isActive ? 'text-coral-600 font-black' : 'text-obsidian-400'}>
+                  <span className={isActive ? 'text-coral-600 dark:text-coral-400 font-black' : 'text-obsidian-400 dark:text-slate-500'}>
                     {isActive ? '⚡ Testing in Simulator' : 'Click to preview'}
                   </span>
-                  <ArrowRight className={`w-3.5 h-3.5 transition-transform ${isActive ? 'translate-x-1 text-coral-500' : 'text-obsidian-300'}`} />
+                  <ArrowRight className={`w-3.5 h-3.5 transition-transform ${isActive ? 'translate-x-1 text-coral-500' : 'text-obsidian-300 dark:text-slate-600'}`} />
                 </div>
               </motion.div>
             );
@@ -223,7 +223,7 @@ export const HowItWorksAnimated: React.FC = () => {
         </div>
 
         {/* 🎬 LIVE INTERACTIVE MICRO-DEMO SIMULATOR */}
-        <div className="rounded-4xl bg-obsidian-950 text-white p-6 sm:p-10 border border-white/10 shadow-2xl relative overflow-hidden">
+        <div className="rounded-4xl bg-obsidian-950 dark:bg-[#080D18] text-white p-6 sm:p-10 border border-white/10 shadow-2xl relative overflow-hidden">
           
           {/* Background Ambient Glow */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-coral-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -259,7 +259,7 @@ export const HowItWorksAnimated: React.FC = () => {
             </div>
 
             {/* Right: Dynamic Interactive Simulation Box */}
-            <div className="w-full lg:max-w-lg bg-white text-obsidian-950 rounded-3xl p-5 sm:p-6 shadow-2xl border border-white/20 min-h-[260px] flex flex-col justify-center">
+            <div className="w-full lg:max-w-lg bg-white dark:bg-[#101726] text-obsidian-950 dark:text-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-white/20 dark:border-white/10 min-h-[260px] flex flex-col justify-center">
               
               <AnimatePresence mode="wait">
                 
@@ -281,17 +281,17 @@ export const HowItWorksAnimated: React.FC = () => {
                       />
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-base font-black text-obsidian-950">Bruno (2 Yrs)</h4>
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-black">
+                          <h4 className="text-base font-black text-obsidian-950 dark:text-white">Bruno (2 Yrs)</h4>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-black border border-emerald-200 dark:border-emerald-800/60">
                             ✓ 100% Vaccinated
                           </span>
                         </div>
-                        <p className="text-xs text-obsidian-500 font-semibold">Golden Retriever • Kolkata, Salt Lake</p>
+                        <p className="text-xs text-obsidian-500 dark:text-slate-400 font-semibold">Golden Retriever • Kolkata, Salt Lake</p>
                       </div>
                     </div>
 
                     {/* Audio Bark Player */}
-                    <div className="p-3.5 rounded-2xl bg-coral-50 border border-coral-200 flex items-center justify-between gap-3">
+                    <div className="p-3.5 rounded-2xl bg-coral-50 dark:bg-coral-950/60 border border-coral-200 dark:border-coral-800/60 flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2.5">
                         <div className="flex items-center gap-1">
                           <div className={`w-1 bg-coral-500 rounded-full transition-all ${isPlayingBark ? 'h-6 animate-bounce' : 'h-3'}`} />
@@ -299,7 +299,7 @@ export const HowItWorksAnimated: React.FC = () => {
                           <div className={`w-1 bg-coral-500 rounded-full transition-all ${isPlayingBark ? 'h-5 animate-bounce delay-150' : 'h-2'}`} />
                           <div className={`w-1 bg-coral-500 rounded-full transition-all ${isPlayingBark ? 'h-7 animate-bounce delay-100' : 'h-3'}`} />
                         </div>
-                        <span className="text-xs font-black text-coral-900">
+                        <span className="text-xs font-black text-coral-900 dark:text-coral-200">
                           {isPlayingBark ? 'Barking! 🐾' : 'Audio Note: Bruno Greeting'}
                         </span>
                       </div>
@@ -313,7 +313,7 @@ export const HowItWorksAnimated: React.FC = () => {
                       </button>
                     </div>
 
-                    <p className="text-[11px] text-obsidian-500">
+                    <p className="text-[11px] text-obsidian-500 dark:text-slate-400">
                       💡 Every dog profile includes real vocal audio notes and vet records so you understand their personality before applying.
                     </p>
                   </motion.div>
@@ -330,10 +330,10 @@ export const HowItWorksAnimated: React.FC = () => {
                     className="space-y-3 text-left"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-obsidian-950 uppercase tracking-wider">
+                      <span className="text-xs font-black text-obsidian-950 dark:text-white uppercase tracking-wider">
                         2-Minute Direct Application
                       </span>
-                      <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-bold text-sky-600 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/60 px-2 py-0.5 rounded-full">
                         Fast & Transparent
                       </span>
                     </div>
@@ -346,7 +346,7 @@ export const HowItWorksAnimated: React.FC = () => {
                           className={`p-2 rounded-xl border text-xs font-black transition-all cursor-pointer ${
                             demoHomeType === 'House with Yard'
                               ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
-                              : 'bg-obsidian-50 border-obsidian-200 text-obsidian-700'
+                              : 'bg-obsidian-50 dark:bg-white/5 border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-slate-300'
                           }`}
                         >
                           🏡 Fenced Yard
@@ -357,14 +357,14 @@ export const HowItWorksAnimated: React.FC = () => {
                           className={`p-2 rounded-xl border text-xs font-black transition-all cursor-pointer ${
                             demoHomeType === 'Apartment'
                               ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
-                              : 'bg-obsidian-50 border-obsidian-200 text-obsidian-700'
+                              : 'bg-obsidian-50 dark:bg-white/5 border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-slate-300'
                           }`}
                         >
                           🏢 Apartment
                         </button>
                       </div>
 
-                      <div className="p-2 rounded-xl bg-obsidian-50 border border-obsidian-200 text-xs font-medium text-obsidian-700">
+                      <div className="p-2 rounded-xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200 dark:border-white/10 text-xs font-medium text-obsidian-700 dark:text-slate-300">
                         ✓ Commitment: Lifelong veterinary care & daily walks
                       </div>
 
@@ -389,7 +389,7 @@ export const HowItWorksAnimated: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="space-y-3 text-left"
                   >
-                    <div className="p-2.5 rounded-2xl bg-obsidian-50 border border-obsidian-200 space-y-2 text-xs">
+                    <div className="p-2.5 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200 dark:border-white/10 space-y-2 text-xs">
                       
                       {/* Message 1 */}
                       <div className="flex items-start gap-2">
@@ -398,7 +398,7 @@ export const HowItWorksAnimated: React.FC = () => {
                           alt="Alex"
                           className="w-6 h-6 rounded-full object-cover shrink-0 mt-0.5"
                         />
-                        <div className="bg-white p-2 rounded-2xl shadow-xs border border-obsidian-200 text-obsidian-900">
+                        <div className="bg-white dark:bg-[#152033] p-2 rounded-2xl shadow-xs border border-obsidian-200 dark:border-white/10 text-obsidian-900 dark:text-white">
                           Hi Sarah! Bruno loves swimming and tennis balls. He’s excited to meet you! 🎾
                         </div>
                       </div>
@@ -413,12 +413,12 @@ export const HowItWorksAnimated: React.FC = () => {
                     </div>
 
                     {/* Park Meetup Badge */}
-                    <div className="p-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs">
+                    <div className="p-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-emerald-600" />
-                        <span className="font-black text-emerald-950">Eco Park Meetup Confirmed</span>
+                        <span className="font-black text-emerald-950 dark:text-emerald-200">Eco Park Meetup Confirmed</span>
                       </div>
-                      <span className="text-[10px] font-bold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-bold bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-100 px-2 py-0.5 rounded-full">
                         Sun 5:00 PM
                       </span>
                     </div>
@@ -435,18 +435,18 @@ export const HowItWorksAnimated: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="space-y-3 text-left"
                   >
-                    <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
+                    <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 space-y-2">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-xs font-black text-amber-950">
+                        <div className="flex items-center gap-1.5 text-xs font-black text-amber-950 dark:text-amber-200">
                           <Award className="w-4 h-4 text-amber-600" />
                           <span>Official Adoption Gold Certificate</span>
                         </div>
-                        <span className="text-[10px] font-black text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded-md">
+                        <span className="text-[10px] font-black text-amber-800 dark:text-amber-200 bg-amber-200/80 dark:bg-amber-900/60 px-2 py-0.5 rounded-md">
                           #CERT-PAW-849201
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-amber-200 font-semibold text-amber-900">
+                      <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-amber-200 dark:border-amber-800/60 font-semibold text-amber-900 dark:text-amber-200">
                         <div>Guardian: <strong>Alex Rivera ✓</strong></div>
                         <div>Adopter: <strong>{demoSigned ? 'Sarah Jenkins ✓' : 'Pending Sign'}</strong></div>
                       </div>

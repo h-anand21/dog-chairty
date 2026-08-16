@@ -105,10 +105,10 @@ export const ChatView: React.FC = () => {
   ];
 
   return (
-    <div className="glass-card rounded-4xl border border-white shadow-elevated flex flex-col h-[700px] overflow-hidden">
+    <div className="glass-card rounded-4xl border border-white dark:border-white/10 shadow-elevated flex flex-col h-[700px] overflow-hidden">
       
       {/* CHAT HEADER WITH SPECIFIC DOG CONTEXT */}
-      <div className="p-4 sm:px-6 bg-white/95 border-b border-obsidian-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0 backdrop-blur-md">
+      <div className="p-4 sm:px-6 bg-white/95 dark:bg-[#0F172A]/95 border-b border-obsidian-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0 backdrop-blur-md">
         <div className="flex items-center gap-3 text-left">
           <div className="relative shrink-0">
             <img
@@ -116,20 +116,20 @@ export const ChatView: React.FC = () => {
               alt={activeConv.dogName}
               className="w-13 h-13 rounded-2xl object-cover ring-2 ring-coral-400 shadow-sm"
             />
-            <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full ring-1 ring-emerald-200" />
+            <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-obsidian-900 rounded-full ring-1 ring-emerald-200" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base font-black text-obsidian-950 leading-tight">
+              <h3 className="text-base font-black text-obsidian-950 dark:text-white leading-tight">
                 {activeConv.dogName}&apos;s Dedicated Adoption Chat
               </h3>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-black border border-emerald-200">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-black border border-emerald-200 dark:border-emerald-800/60">
                 🟢 Direct Thread
               </span>
             </div>
-            <p className="text-[11px] text-obsidian-500 font-medium mt-0.5 flex items-center gap-1.5 flex-wrap">
+            <p className="text-[11px] text-obsidian-500 dark:text-slate-400 font-medium mt-0.5 flex items-center gap-1.5 flex-wrap">
               <span>{targetDog ? `${targetDog.breed} • ${targetDog.age} • 📍 ${targetDog.location}` : 'Verified Companion'}</span>
-              <span className="text-emerald-600 font-bold">✓ 100% Medical Clear</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓ 100% Medical Clear</span>
             </p>
           </div>
         </div>
@@ -149,7 +149,7 @@ export const ChatView: React.FC = () => {
               playPawPop();
               setIsMeetModalOpen(true);
             }}
-            className="flex items-center gap-1.5 bg-sky-50 hover:bg-sky-500 text-sky-700 hover:text-white border border-sky-200 hover:border-sky-500 px-3.5 py-2 rounded-full text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
+            className="flex items-center gap-1.5 bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-500 text-sky-700 dark:text-sky-300 hover:text-white border border-sky-200 dark:border-sky-800/60 hover:border-sky-500 px-3.5 py-2 rounded-full text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Park Meetup</span>
@@ -159,7 +159,7 @@ export const ChatView: React.FC = () => {
       </div>
 
       {/* SAFETY & DOG DETAIL STRIP */}
-      <div className="bg-amber-50/90 px-4 py-2 border-b border-amber-200 text-left flex items-center justify-between gap-2 text-xs text-amber-900 shrink-0 font-medium">
+      <div className="bg-amber-50/90 dark:bg-amber-950/40 px-4 py-2 border-b border-amber-200 dark:border-amber-800/60 text-left flex items-center justify-between gap-2 text-xs text-amber-900 dark:text-amber-200 shrink-0 font-medium">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>
@@ -169,7 +169,7 @@ export const ChatView: React.FC = () => {
 
         <button
           onClick={handleSendDogBark}
-          className="text-[11px] font-black text-coral-700 hover:text-coral-900 flex items-center gap-1 bg-coral-100/80 px-2 py-0.5 rounded-full cursor-pointer hover:bg-coral-200 transition-colors"
+          className="text-[11px] font-black text-coral-700 dark:text-coral-300 hover:text-coral-900 flex items-center gap-1 bg-coral-100/80 dark:bg-coral-950/60 px-2 py-0.5 rounded-full cursor-pointer hover:bg-coral-200 transition-colors border border-coral-200 dark:border-coral-800/60"
         >
           <Volume2 className="w-3 h-3" />
           <span>Hear {activeConv.dogName} Bark 🔊</span>
@@ -177,24 +177,24 @@ export const ChatView: React.FC = () => {
       </div>
 
       {/* MESSAGES FEED */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#FAF9F6] text-left">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#FAF9F6] dark:bg-[#090E1A] text-left">
         
         {/* Active Meet & Greet Status Card */}
         {activeMeet && (
-          <div className="max-w-md mx-auto bg-gradient-to-r from-sky-50 to-sky-100/90 rounded-3xl p-5 border border-sky-200 shadow-card space-y-3">
+          <div className="max-w-md mx-auto bg-gradient-to-r from-sky-50 to-sky-100/90 dark:from-sky-950/60 dark:to-sky-900/60 rounded-3xl p-5 border border-sky-200 dark:border-sky-800/60 shadow-card space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase text-sky-900 flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-sky-600" />
+              <span className="text-xs font-black uppercase text-sky-900 dark:text-sky-200 flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                 <span>Upcoming Meet & Greet</span>
               </span>
-              <span className="text-[10px] font-black bg-sky-200 text-sky-900 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-black bg-sky-200 dark:bg-sky-800 text-sky-900 dark:text-sky-100 px-2.5 py-0.5 rounded-full">
                 Scheduled
               </span>
             </div>
             
-            <div className="space-y-1 text-xs text-obsidian-800">
-              <div className="flex items-center gap-2 font-black text-obsidian-950 text-sm">
-                <Clock className="w-4 h-4 text-sky-600" />
+            <div className="space-y-1 text-xs text-obsidian-800 dark:text-slate-300">
+              <div className="flex items-center gap-2 font-black text-obsidian-950 dark:text-white text-sm">
+                <Clock className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                 <span>{activeMeet.date} • {activeMeet.time}</span>
               </div>
               <div className="flex items-center gap-2 font-medium">
@@ -202,7 +202,7 @@ export const ChatView: React.FC = () => {
                 <span>{activeMeet.locationName}</span>
               </div>
               {activeMeet.notes && (
-                <p className="text-[11px] text-obsidian-600 italic pt-1">
+                <p className="text-[11px] text-obsidian-600 dark:text-slate-400 italic pt-1">
                   &ldquo;{activeMeet.notes}&rdquo;
                 </p>
               )}
@@ -242,18 +242,18 @@ export const ChatView: React.FC = () => {
                 className={`max-w-xs sm:max-w-md rounded-3xl p-4 shadow-card text-left ${
                   isMine
                     ? 'bg-gradient-to-tr from-coral-600 to-coral-500 text-white rounded-br-xs shadow-glow-coral'
-                    : 'bg-white text-obsidian-900 border border-obsidian-200 rounded-bl-xs'
+                    : 'bg-white dark:bg-[#152033] text-obsidian-900 dark:text-white border border-obsidian-200 dark:border-white/10 rounded-bl-xs'
                 }`}
               >
                 {!isMine && (
-                  <div className="text-[10px] font-black text-obsidian-400 mb-1 uppercase tracking-wider">
+                  <div className="text-[10px] font-black text-obsidian-400 dark:text-slate-400 mb-1 uppercase tracking-wider">
                     {msg.senderName}
                   </div>
                 )}
 
                 {msg.isDogBark ? (
                   <div className={`flex items-center gap-2 py-1 px-3 rounded-full font-black text-xs ${
-                    isMine ? 'bg-white/20 text-white' : 'bg-coral-50 text-coral-700'
+                    isMine ? 'bg-white/20 text-white' : 'bg-coral-50 dark:bg-coral-950/60 text-coral-700 dark:text-coral-300'
                   }`}>
                     <Volume2 className="w-4 h-4 animate-bounce" />
                     <span>🐾 Playful Dog Bark (0:03)</span>
@@ -270,7 +270,7 @@ export const ChatView: React.FC = () => {
 
                 <div
                   className={`flex items-center justify-end gap-1 mt-1.5 text-[10px] font-semibold ${
-                    isMine ? 'text-white/80' : 'text-obsidian-400'
+                    isMine ? 'text-white/80' : 'text-obsidian-400 dark:text-slate-400'
                   }`}
                 >
                   <span>{msg.timestamp}</span>
@@ -284,8 +284,8 @@ export const ChatView: React.FC = () => {
       </div>
 
       {/* QUICK SUGGESTIONS */}
-      <div className="px-4 py-2 bg-white border-t border-obsidian-200 flex items-center gap-2 overflow-x-auto shrink-0">
-        <span className="text-[10px] font-black uppercase tracking-wider text-obsidian-400 shrink-0">
+      <div className="px-4 py-2 bg-white dark:bg-[#0F172A] border-t border-obsidian-200 dark:border-white/10 flex items-center gap-2 overflow-x-auto shrink-0">
+        <span className="text-[10px] font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400 shrink-0">
           Quick Prompts:
         </span>
         {quickPrompts.map((p, i) => (
@@ -295,7 +295,7 @@ export const ChatView: React.FC = () => {
               playPawPop();
               sendMessage(activeConv.id, p);
             }}
-            className="text-xs font-bold px-3.5 py-1 rounded-full bg-obsidian-100 hover:bg-coral-50 text-obsidian-700 hover:text-coral-600 border border-obsidian-200 shrink-0 transition-colors cursor-pointer"
+            className="text-xs font-bold px-3.5 py-1 rounded-full bg-obsidian-100 dark:bg-white/5 hover:bg-coral-50 dark:hover:bg-coral-950/50 text-obsidian-700 dark:text-slate-300 hover:text-coral-600 border border-obsidian-200 dark:border-white/10 shrink-0 transition-colors cursor-pointer"
           >
             {p}
           </button>
@@ -305,13 +305,13 @@ export const ChatView: React.FC = () => {
       {/* INPUT TOOLBAR */}
       <form
         onSubmit={handleSend}
-        className="p-3 sm:p-4 bg-white border-t border-obsidian-200 flex items-center gap-2 shrink-0"
+        className="p-3 sm:p-4 bg-white dark:bg-[#0F172A] border-t border-obsidian-200 dark:border-white/10 flex items-center gap-2 shrink-0"
       >
         <button
           type="button"
           onClick={handleSendSamplePhoto}
           title="Share photo"
-          className="w-11 h-11 rounded-2xl flex items-center justify-center bg-obsidian-100 hover:bg-coral-50 text-obsidian-700 hover:text-coral-500 transition-colors cursor-pointer"
+          className="w-11 h-11 rounded-2xl flex items-center justify-center bg-obsidian-100 dark:bg-white/5 hover:bg-coral-50 dark:hover:bg-coral-950/50 text-obsidian-700 dark:text-slate-300 hover:text-coral-500 transition-colors cursor-pointer border border-obsidian-200 dark:border-white/10"
         >
           <ImageIcon className="w-5 h-5" />
         </button>
@@ -320,7 +320,7 @@ export const ChatView: React.FC = () => {
           type="button"
           onClick={handleSendDogBark}
           title="Send dog bark audio note"
-          className="w-11 h-11 rounded-2xl flex items-center justify-center bg-coral-50 hover:bg-coral-100 text-coral-600 transition-colors cursor-pointer"
+          className="w-11 h-11 rounded-2xl flex items-center justify-center bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-100 text-coral-600 dark:text-coral-400 transition-colors cursor-pointer border border-coral-200 dark:border-coral-800/60"
         >
           <Volume2 className="w-5 h-5" />
         </button>
@@ -330,7 +330,7 @@ export const ChatView: React.FC = () => {
           value={inputMessage}
           onChange={e => setInputMessage(e.target.value)}
           placeholder={`Type a message to ${activeConv.dogName}'s guardian...`}
-          className="flex-1 px-4 py-3 rounded-2xl bg-obsidian-100 border border-obsidian-200 focus:bg-white focus:border-coral-500 focus:ring-4 focus:ring-coral-100 text-xs sm:text-sm outline-hidden font-semibold"
+          className="flex-1 px-4 py-3 rounded-2xl bg-obsidian-100 dark:bg-[#152033] border border-obsidian-200 dark:border-white/15 focus:bg-white dark:focus:bg-[#152033] focus:border-coral-500 focus:ring-4 focus:ring-coral-100 dark:focus:ring-coral-500/20 text-obsidian-900 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 text-xs sm:text-sm outline-hidden font-semibold"
         />
 
         <button

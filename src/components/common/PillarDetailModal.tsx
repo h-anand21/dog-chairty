@@ -142,32 +142,32 @@ export const PillarDetailModal: React.FC<PillarDetailModalProps> = ({ pillar, on
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-obsidian-950/80 backdrop-blur-xl overflow-y-auto">
-      <div className="relative w-full max-w-lg bg-white rounded-5xl p-6 sm:p-8 shadow-2xl border border-obsidian-200 animate-in fade-in zoom-in-95 duration-200 text-left my-6">
+      <div className="relative w-full max-w-lg bg-white dark:bg-[#0E1525] rounded-5xl p-6 sm:p-8 shadow-2xl border border-obsidian-200 dark:border-white/10 animate-in fade-in zoom-in-95 duration-200 text-left my-6">
         
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-obsidian-100 hover:bg-obsidian-200 flex items-center justify-center text-obsidian-700 transition-colors cursor-pointer"
+          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-obsidian-100 dark:bg-white/10 hover:bg-obsidian-200 dark:hover:bg-white/20 flex items-center justify-center text-obsidian-700 dark:text-slate-300 transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Header */}
-        <div className="space-y-3 pb-4 border-b border-obsidian-100">
+        <div className="space-y-3 pb-4 border-b border-obsidian-100 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-obsidian-100 flex items-center justify-center text-2xl shadow-inner">
+            <div className="w-12 h-12 rounded-2xl bg-obsidian-100 dark:bg-white/5 flex items-center justify-center text-2xl shadow-inner">
               {active.icon}
             </div>
             <div>
               <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase border ${active.badgeColor}`}>
                 {active.badge}
               </span>
-              <h3 className="text-xl sm:text-2xl font-black font-display text-obsidian-950 mt-0.5">
+              <h3 className="text-xl sm:text-2xl font-black font-display text-obsidian-950 dark:text-white mt-0.5">
                 {active.title}
               </h3>
             </div>
           </div>
-          <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
+          <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
             {active.subtitle}
           </p>
         </div>
@@ -175,13 +175,13 @@ export const PillarDetailModal: React.FC<PillarDetailModalProps> = ({ pillar, on
         {/* Feature List */}
         <div className="py-4 space-y-3">
           {active.features.map((f, i) => (
-            <div key={i} className="flex items-start gap-3 p-3 rounded-2xl bg-obsidian-50 border border-obsidian-200/80">
+            <div key={i} className="flex items-start gap-3 p-3 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10">
               <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs shrink-0 mt-0.5">
                 ✓
               </div>
               <div>
-                <h4 className="text-xs font-black text-obsidian-950">{f.title}</h4>
-                <p className="text-[11px] text-obsidian-600 mt-0.5 leading-relaxed font-medium">{f.desc}</p>
+                <h4 className="text-xs font-black text-obsidian-950 dark:text-white">{f.title}</h4>
+                <p className="text-[11px] text-obsidian-600 dark:text-slate-400 mt-0.5 leading-relaxed font-medium">{f.desc}</p>
               </div>
             </div>
           ))}

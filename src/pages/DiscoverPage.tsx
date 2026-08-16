@@ -172,19 +172,19 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
           </div>
 
           {/* 🔍 Hero Quick Match & Search Box */}
-          <div className="glass-card rounded-4xl p-4 sm:p-6 max-w-4xl mx-auto shadow-elevated border border-white space-y-4 relative z-30 overflow-visible">
+          <div className="glass-card rounded-4xl p-4 sm:p-6 max-w-4xl mx-auto shadow-elevated border border-white dark:border-white/10 space-y-4 relative z-30 overflow-visible">
             
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 relative z-30">
               
               {/* Search text */}
               <div className="sm:col-span-5 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-obsidian-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-obsidian-400 dark:text-slate-400" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Search breed, name, area, traits..."
-                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white border border-obsidian-200 text-xs sm:text-sm font-semibold text-obsidian-900 placeholder:text-obsidian-400 focus:border-coral-500 focus:ring-4 focus:ring-coral-100 outline-hidden transition-all shadow-xs"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white dark:bg-[#121A2B] border border-obsidian-200 dark:border-white/15 text-xs sm:text-sm font-semibold text-obsidian-900 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-4 focus:ring-coral-100 dark:focus:ring-coral-500/20 outline-hidden transition-all shadow-xs"
                 />
               </div>
 
@@ -202,7 +202,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 <button
                   type="button"
                   onClick={handleGpsDetect}
-                  className="w-full h-full py-3.5 px-4 rounded-2xl bg-obsidian-100 hover:bg-obsidian-200 text-obsidian-900 border border-obsidian-300 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                  className="w-full h-full py-3.5 px-4 rounded-2xl bg-obsidian-100 dark:bg-white/10 hover:bg-obsidian-200 dark:hover:bg-white/20 text-obsidian-900 dark:text-white border border-obsidian-300 dark:border-white/10 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
                 >
                   <Navigation className="w-3.5 h-3.5 text-coral-500" />
                   <span>Use My GPS</span>
@@ -212,10 +212,10 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
             </div>
 
             {/* Quick Category Pills & Count */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-obsidian-200/80">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-obsidian-200/80 dark:border-white/10">
               
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-[11px] font-black uppercase text-obsidian-400 mr-1 flex items-center gap-1">
+                <span className="text-[11px] font-black uppercase text-obsidian-400 dark:text-slate-400 mr-1 flex items-center gap-1">
                   <Flame className="w-3.5 h-3.5 text-coral-500" />
                   Filter:
                 </span>
@@ -236,7 +236,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     className={`px-3 py-1.5 rounded-full font-extrabold text-xs transition-all cursor-pointer ${
                       selectedCategory === cat.id
                         ? 'bg-coral-500 text-white shadow-glow-coral'
-                        : 'bg-obsidian-100 hover:bg-obsidian-200 text-obsidian-700'
+                        : 'bg-obsidian-100 dark:bg-white/5 hover:bg-obsidian-200 dark:hover:bg-white/15 text-obsidian-700 dark:text-slate-300'
                     }`}
                   >
                     {cat.label}
@@ -244,8 +244,8 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 ))}
               </div>
 
-              <div className="text-xs font-bold text-obsidian-600">
-                <span className="text-coral-600 font-black">{filteredDogs.length}</span> pup{filteredDogs.length === 1 ? '' : 's'} available
+              <div className="text-xs font-bold text-obsidian-600 dark:text-slate-300">
+                <span className="text-coral-600 dark:text-coral-400 font-black">{filteredDogs.length}</span> pup{filteredDogs.length === 1 ? '' : 's'} available
               </div>
             </div>
 
@@ -259,16 +259,16 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 playPawPop();
                 setSelectedPillar('medicals');
               }}
-              className="glass-card p-3.5 rounded-2xl text-left border border-white hover:border-emerald-300 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
+              className="glass-card p-3.5 rounded-2xl text-left border border-white dark:border-white/10 hover:border-emerald-300 dark:hover:border-emerald-500/50 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
             >
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
                 💉
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1">
-                  <h4 className="text-xs font-black text-obsidian-950 group-hover:text-emerald-700 transition-colors">100% Medicals</h4>
+                  <h4 className="text-xs font-black text-obsidian-950 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">100% Medicals</h4>
                 </div>
-                <p className="text-[10px] text-obsidian-500 font-medium truncate">Verified vet panels ➔</p>
+                <p className="text-[10px] text-obsidian-500 dark:text-slate-400 font-medium truncate">Verified vet panels ➔</p>
               </div>
             </button>
 
@@ -277,16 +277,16 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 playPawPop();
                 setSelectedPillar('chat');
               }}
-              className="glass-card p-3.5 rounded-2xl text-left border border-white hover:border-coral-300 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
+              className="glass-card p-3.5 rounded-2xl text-left border border-white dark:border-white/10 hover:border-coral-300 dark:hover:border-coral-500/50 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
             >
-              <div className="w-10 h-10 rounded-xl bg-coral-50 text-coral-600 group-hover:bg-coral-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 group-hover:bg-coral-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
                 💬
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1">
-                  <h4 className="text-xs font-black text-obsidian-950 group-hover:text-coral-700 transition-colors">Direct Chat</h4>
+                  <h4 className="text-xs font-black text-obsidian-950 dark:text-white group-hover:text-coral-700 dark:group-hover:text-coral-400 transition-colors">Direct Chat</h4>
                 </div>
-                <p className="text-[10px] text-obsidian-500 font-medium truncate">Message real owners ➔</p>
+                <p className="text-[10px] text-obsidian-500 dark:text-slate-400 font-medium truncate">Message real owners ➔</p>
               </div>
             </button>
 
@@ -295,16 +295,16 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 playPawPop();
                 setSelectedPillar('park_meetup');
               }}
-              className="glass-card p-3.5 rounded-2xl text-left border border-white hover:border-sky-300 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
+              className="glass-card p-3.5 rounded-2xl text-left border border-white dark:border-white/10 hover:border-sky-300 dark:hover:border-sky-500/50 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
             >
-              <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
                 🌳
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1">
-                  <h4 className="text-xs font-black text-obsidian-950 group-hover:text-sky-700 transition-colors">Park Meetup</h4>
+                  <h4 className="text-xs font-black text-obsidian-950 dark:text-white group-hover:text-sky-700 dark:group-hover:text-sky-400 transition-colors">Park Meetup</h4>
                 </div>
-                <p className="text-[10px] text-obsidian-500 font-medium truncate">Safe in-person meet ➔</p>
+                <p className="text-[10px] text-obsidian-500 dark:text-slate-400 font-medium truncate">Safe in-person meet ➔</p>
               </div>
             </button>
 
@@ -313,16 +313,16 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 playPawPop();
                 setSelectedPillar('dual_handover');
               }}
-              className="glass-card p-3.5 rounded-2xl text-left border border-white hover:border-amber-300 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
+              className="glass-card p-3.5 rounded-2xl text-left border border-white dark:border-white/10 hover:border-amber-300 dark:hover:border-amber-500/50 hover:shadow-card flex items-center gap-3 transition-all cursor-pointer group hover:-translate-y-0.5"
             >
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 group-hover:bg-amber-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-colors shadow-2xs">
                 📜
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1">
-                  <h4 className="text-xs font-black text-obsidian-950 group-hover:text-amber-700 transition-colors">Dual Handover</h4>
+                  <h4 className="text-xs font-black text-obsidian-950 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">Dual Handover</h4>
                 </div>
-                <p className="text-[10px] text-obsidian-500 font-medium truncate">Legal transfer cert ➔</p>
+                <p className="text-[10px] text-obsidian-500 dark:text-slate-400 font-medium truncate">Legal transfer cert ➔</p>
               </div>
             </button>
 
@@ -339,10 +339,10 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
         
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-left">
           <div>
-            <h2 className="text-3xl sm:text-4xl font-black font-display text-obsidian-950">
+            <h2 className="text-3xl sm:text-4xl font-black font-display text-obsidian-950 dark:text-white">
               Dogs Waiting for a Home 🐕
             </h2>
-            <p className="text-xs sm:text-sm text-obsidian-600 mt-1">
+            <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-400 mt-1">
               Click on any pup to hear their bark, view health records, or submit an adoption request.
             </p>
           </div>
@@ -350,7 +350,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
           <div className="flex items-center gap-3 self-start sm:self-auto">
             
             {/* View Mode Toggle: Grid vs Interactive Map */}
-            <div className="p-1 bg-obsidian-200 rounded-2xl flex items-center gap-1 shadow-inner border border-obsidian-300">
+            <div className="p-1 bg-obsidian-100 dark:bg-white/10 rounded-2xl flex items-center gap-1 shadow-inner border border-obsidian-200 dark:border-white/10">
               <button
                 onClick={() => {
                   playPawPop();
@@ -358,8 +358,8 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 }}
                 className={`px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-white text-obsidian-950 shadow-md'
-                    : 'text-obsidian-600 hover:text-obsidian-950'
+                    ? 'bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white shadow-md'
+                    : 'text-obsidian-600 dark:text-slate-400 hover:text-obsidian-950 dark:hover:text-white'
                 }`}
               >
                 <Grid className="w-3.5 h-3.5" />
@@ -373,11 +373,11 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 }}
                 className={`px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
                   viewMode === 'map'
-                    ? 'bg-coral-500 text-white shadow-glow-coral'
-                    : 'text-obsidian-600 hover:text-obsidian-950'
+                    ? 'bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white shadow-md'
+                    : 'text-obsidian-600 dark:text-slate-400 hover:text-obsidian-950 dark:hover:text-white'
                 }`}
               >
-                <MapIcon className="w-3.5 h-3.5" />
+                <MapPin className="w-3.5 h-3.5" />
                 <span>Live Map 🗺️</span>
               </button>
             </div>

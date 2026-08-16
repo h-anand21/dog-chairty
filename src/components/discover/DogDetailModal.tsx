@@ -158,38 +158,38 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
           </div>
 
           {/* RIGHT: Profile Content (7 cols) */}
-          <div className="lg:col-span-7 p-6 sm:p-10 space-y-6 text-left bg-white">
+          <div className="lg:col-span-7 p-6 sm:p-10 space-y-6 text-left bg-white dark:bg-[#0E1525]">
             
             {/* Header: Name, Breed, Location */}
             <div>
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-3">
-                    <h2 className="text-3xl sm:text-4xl font-black font-display text-obsidian-950">
+                    <h2 className="text-3xl sm:text-4xl font-black font-display text-obsidian-950 dark:text-white">
                       {dog.name}
                     </h2>
-                    <span className="px-3 py-1 rounded-full bg-coral-50 border border-coral-200 text-coral-600 font-extrabold text-xs">
+                    <span className="px-3 py-1 rounded-full bg-coral-50 dark:bg-coral-950/60 border border-coral-200 dark:border-coral-800/60 text-coral-600 dark:text-coral-400 font-extrabold text-xs">
                       {dog.adoptionType}
                     </span>
                   </div>
-                  <p className="text-sm font-semibold text-obsidian-600 mt-1">
+                  <p className="text-sm font-semibold text-obsidian-600 dark:text-slate-400 mt-1">
                     {dog.breed} • {dog.age} • {dog.gender}
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <div className="text-xs text-obsidian-500 font-bold flex items-center gap-1">
+                  <div className="text-xs text-obsidian-500 dark:text-slate-400 font-bold flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-coral-500" />
                     <span>{dog.location}</span>
                   </div>
-                  <div className="text-[11px] text-obsidian-500 mt-1 font-semibold">
+                  <div className="text-[11px] text-obsidian-500 dark:text-slate-400 mt-1 font-semibold">
                     ❤️ {dog.likesCount} Likes • 🐾 {dog.interestedCount} Inquiries
                   </div>
                 </div>
               </div>
 
               {copiedLink && (
-                <div className="mt-2 text-xs text-emerald-700 font-bold bg-emerald-50 p-2 rounded-xl text-center border border-emerald-200">
+                <div className="mt-2 text-xs text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-950/60 p-2 rounded-xl text-center border border-emerald-200 dark:border-emerald-800/60">
                   ✓ Profile link copied to clipboard!
                 </div>
               )}
@@ -197,39 +197,39 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
 
             {/* Quick Metrics */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="p-3.5 rounded-2xl bg-obsidian-100 border border-obsidian-200 text-center">
-                <div className="text-[10px] uppercase font-bold text-obsidian-400">Size</div>
-                <div className="text-xs font-black text-obsidian-900 mt-0.5">{dog.size}</div>
+              <div className="p-3.5 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/10 text-center">
+                <div className="text-[10px] uppercase font-bold text-obsidian-400 dark:text-slate-400">Size</div>
+                <div className="text-xs font-black text-obsidian-900 dark:text-white mt-0.5">{dog.size}</div>
               </div>
-              <div className="p-3.5 rounded-2xl bg-obsidian-100 border border-obsidian-200 text-center">
-                <div className="text-[10px] uppercase font-bold text-obsidian-400">Energy</div>
-                <div className="text-xs font-black text-obsidian-900 mt-0.5">{dog.energy.split(' ')[0]}</div>
+              <div className="p-3.5 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/10 text-center">
+                <div className="text-[10px] uppercase font-bold text-obsidian-400 dark:text-slate-400">Energy</div>
+                <div className="text-xs font-black text-obsidian-900 dark:text-white mt-0.5">{dog.energy.split(' ')[0]}</div>
               </div>
-              <div className="p-3.5 rounded-2xl bg-obsidian-100 border border-obsidian-200 text-center">
-                <div className="text-[10px] uppercase font-bold text-obsidian-400">Adoption Type</div>
-                <div className="text-xs font-black text-coral-600 mt-0.5">{dog.adoptionType}</div>
+              <div className="p-3.5 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/10 text-center">
+                <div className="text-[10px] uppercase font-bold text-obsidian-400 dark:text-slate-400">Adoption Type</div>
+                <div className="text-xs font-black text-coral-600 dark:text-coral-400 mt-0.5">{dog.adoptionType}</div>
               </div>
             </div>
 
             {/* About Bio */}
             <div>
-              <h4 className="text-xs font-black uppercase tracking-wider text-obsidian-400 mb-1.5 flex items-center gap-1.5">
+              <h4 className="text-xs font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-coral-500" />
                 <span>About {dog.name}</span>
               </h4>
-              <p className="text-xs sm:text-sm text-obsidian-800 leading-relaxed bg-obsidian-100/80 p-4 rounded-2xl border border-obsidian-200">
+              <p className="text-xs sm:text-sm text-obsidian-800 dark:text-slate-300 leading-relaxed bg-obsidian-100/80 dark:bg-white/5 p-4 rounded-2xl border border-obsidian-200 dark:border-white/10">
                 {dog.bio}
               </p>
             </div>
 
             {/* Reason for Rehoming */}
             {dog.reasonForAdoption && (
-              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
-                <h4 className="text-xs font-bold text-amber-900 mb-1 flex items-center gap-1.5">
+              <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60">
+                <h4 className="text-xs font-bold text-amber-900 dark:text-amber-300 mb-1 flex items-center gap-1.5">
                   <Info className="w-3.5 h-3.5 text-amber-600" />
                   <span>Reason for Rehoming</span>
                 </h4>
-                <p className="text-xs text-amber-900/90 leading-relaxed font-medium">
+                <p className="text-xs text-amber-900/90 dark:text-amber-200/90 leading-relaxed font-medium">
                   &ldquo;{dog.reasonForAdoption}&rdquo;
                 </p>
               </div>
@@ -238,14 +238,14 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
             {/* Favorite Things & Personality */}
             <div className="space-y-2">
               <div>
-                <span className="text-[11px] font-bold text-obsidian-400 uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-obsidian-400 dark:text-slate-400 uppercase tracking-wider">
                   Favorite Things:
                 </span>
                 <div className="flex flex-wrap gap-1.5 mt-1">
                   {dog.favoriteThings.map((fav, i) => (
                     <span
                       key={i}
-                      className="text-xs font-bold px-3 py-1 rounded-full bg-coral-50 text-coral-700 border border-coral-200"
+                      className="text-xs font-bold px-3 py-1 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-700 dark:text-coral-300 border border-coral-200 dark:border-coral-800/60"
                     >
                       {fav}
                     </span>
@@ -254,14 +254,14 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
               </div>
 
               <div>
-                <span className="text-[11px] font-bold text-obsidian-400 uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-obsidian-400 dark:text-slate-400 uppercase tracking-wider">
                   Personality & Traits:
                 </span>
                 <div className="flex flex-wrap gap-1.5 mt-1">
                   {dog.personalityTraits.map((trait, i) => (
                     <span
                       key={i}
-                      className="text-xs font-bold px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200"
+                      className="text-xs font-bold px-3 py-1 rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800/60"
                     >
                       ✨ {trait}
                     </span>
@@ -271,18 +271,18 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
             </div>
 
             {/* Health & Veterinary Clearance Panel */}
-            <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 space-y-2">
+            <div className="p-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
+                <span className="text-xs font-bold text-emerald-950 dark:text-emerald-200 flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   <span>Verified Medical & Vet Clearance</span>
                 </span>
-                <span className="text-[10px] font-black bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-black bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-100 px-2 py-0.5 rounded-full">
                   100% Cleared
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 text-xs font-bold text-emerald-900 pt-1">
+              <div className="grid grid-cols-3 gap-2 text-xs font-bold text-emerald-900 dark:text-emerald-300 pt-1">
                 <div className="flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                   <span>Vaccinated</span>
@@ -298,14 +298,14 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
               </div>
 
               {dog.medicalNotes && (
-                <p className="text-[11px] text-emerald-900 pt-1 border-t border-emerald-200 leading-relaxed">
+                <p className="text-[11px] text-emerald-900 dark:text-emerald-300 pt-1 border-t border-emerald-200 dark:border-emerald-800/60 leading-relaxed">
                   Notes: {dog.medicalNotes}
                 </p>
               )}
             </div>
 
             {/* Guardian Footer */}
-            <div className="p-4 rounded-2xl bg-obsidian-100 border border-obsidian-200 flex items-center justify-between gap-3">
+            <div className="p-4 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/10 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <img
                   src={dog.currentOwnerAvatar}
@@ -313,15 +313,15 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
                   className="w-10 h-10 rounded-full object-cover ring-2 ring-coral-300"
                 />
                 <div>
-                  <div className="text-xs font-black text-obsidian-950 flex items-center gap-1">
+                  <div className="text-xs font-black text-obsidian-950 dark:text-white flex items-center gap-1">
                     <span>Listed by {dog.currentOwnerName}</span>
                     {dog.isOwnerVerified && (
-                      <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-sm">
+                      <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-sm">
                         ✓ Verified Guardian
                       </span>
                     )}
                   </div>
-                  <div className="text-[10px] text-obsidian-500">
+                  <div className="text-[10px] text-obsidian-500 dark:text-slate-400">
                     Kolkata Verified Member • 24h Response Rate
                   </div>
                 </div>
@@ -330,7 +330,7 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleMessageGuardian}
-                  className="bg-coral-50 hover:bg-coral-500 text-coral-600 hover:text-white border border-coral-200 hover:border-coral-500 px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                  className="bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-500 text-coral-600 dark:text-coral-400 hover:text-white border border-coral-200 dark:border-coral-800/60 hover:border-coral-500 px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
                   title="Message guardian directly"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
@@ -339,7 +339,7 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
 
                 <button
                   onClick={handleReport}
-                  className="text-obsidian-500 hover:text-rose-600 text-xs font-bold flex items-center gap-1 p-1 rounded-lg transition-colors cursor-pointer"
+                  className="text-obsidian-500 dark:text-slate-400 hover:text-rose-600 text-xs font-bold flex items-center gap-1 p-1 rounded-lg transition-colors cursor-pointer"
                   title="Report this listing for safety review"
                 >
                   <Flag className="w-3.5 h-3.5" />

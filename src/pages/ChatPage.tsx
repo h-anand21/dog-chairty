@@ -52,26 +52,26 @@ export const ChatPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* CONVERSATIONS SIDEBAR (Visible on Desktop OR when mobileView === 'list') */}
-        <div className={`lg:col-span-4 bg-white rounded-4xl p-4 sm:p-5 border border-obsidian-200 shadow-card h-[600px] sm:h-[700px] flex flex-col ${
+        <div className={`lg:col-span-4 bg-white dark:bg-[#0F172A] rounded-4xl p-4 sm:p-5 border border-obsidian-200 dark:border-white/10 shadow-card h-[600px] sm:h-[700px] flex flex-col ${
           mobileView === 'chat' ? 'hidden lg:flex' : 'flex'
         }`}>
           
-          <div className="flex items-center justify-between pb-3 border-b border-obsidian-200">
-            <h3 className="font-black text-sm text-obsidian-950 flex items-center gap-2">
+          <div className="flex items-center justify-between pb-3 border-b border-obsidian-200 dark:border-white/10">
+            <h3 className="font-black text-sm text-obsidian-950 dark:text-white flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-coral-500" />
               <span>Dog Threads ({conversations.length})</span>
             </h3>
-            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-coral-50 text-coral-600">
+            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 border border-coral-200 dark:border-coral-800/60">
               1-on-1 Chats
             </span>
           </div>
 
           <div className="mt-3 flex-1 overflow-y-auto space-y-2 pr-1">
             {conversations.length === 0 ? (
-              <div className="text-center py-16 text-xs text-obsidian-500 space-y-2">
+              <div className="text-center py-16 text-xs text-obsidian-500 dark:text-slate-400 space-y-2">
                 <div className="text-4xl">🐾💬</div>
-                <p className="font-bold text-obsidian-800">No active chats yet.</p>
-                <p className="text-[11px] text-obsidian-500">
+                <p className="font-bold text-obsidian-800 dark:text-slate-200">No active chats yet.</p>
+                <p className="text-[11px] text-obsidian-500 dark:text-slate-400">
                   Click &ldquo;Message Guardian&rdquo; on any dog in Discover to start a chat!
                 </p>
               </div>
@@ -85,8 +85,8 @@ export const ChatPage: React.FC = () => {
                     onClick={() => handleSelectConv(conv.id)}
                     className={`p-3 rounded-2xl cursor-pointer transition-all flex items-center gap-3 text-left ${
                       isActive
-                        ? 'bg-coral-50 border-2 border-coral-400 shadow-xs ring-2 ring-coral-100'
-                        : 'hover:bg-obsidian-100 border border-obsidian-100'
+                        ? 'bg-coral-50 dark:bg-coral-950/60 border-2 border-coral-400 shadow-xs ring-2 ring-coral-100 dark:ring-coral-500/20'
+                        : 'hover:bg-obsidian-100 dark:hover:bg-white/5 border border-obsidian-100 dark:border-white/5'
                     }`}
                   >
                     <div className="relative shrink-0">
@@ -95,36 +95,37 @@ export const ChatPage: React.FC = () => {
                         alt={conv.dogName}
                         className="w-13 h-13 rounded-2xl object-cover ring-2 ring-coral-300 shadow-2xs"
                       />
-                      <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
+                      <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-obsidian-900 rounded-full" />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-black text-obsidian-950 truncate flex items-center gap-1">
+                        <h4 className="text-xs font-black text-obsidian-950 dark:text-white truncate flex items-center gap-1">
                           <span>{conv.dogName}</span>
-                          <span className="text-[10px] text-obsidian-500 font-semibold truncate">
+                          <span className="text-[10px] text-obsidian-500 dark:text-slate-400 font-semibold truncate">
                             • {matchingDog?.breed || 'Pup'}
                           </span>
                         </h4>
-                        <span className="text-[10px] text-obsidian-400 shrink-0 font-medium">
+                        <span className="text-[10px] text-obsidian-400 dark:text-slate-500 shrink-0 font-medium">
                           {conv.lastMessageTimestamp}
                         </span>
                       </div>
 
-                      <div className="text-[10px] text-coral-600 font-bold truncate mt-0.5">
-                        Guardian: {matchingDog?.currentOwnerName || 'Verified Guardian'}
-                      </div>
-
-                      <p className="text-[11px] text-obsidian-600 truncate mt-0.5 font-medium">
-                        {conv.lastMessage || 'Say hi to the guardian!'}
+                      <p className="text-[11px] text-obsidian-600 dark:text-slate-300 truncate mt-0.5 font-normal">
+                        {conv.lastMessage}
                       </p>
-                    </div>
 
-                    {conv.unreadCount > 0 && (
-                      <span className="w-5 h-5 rounded-full bg-coral-500 text-white text-[10px] font-black flex items-center justify-center shrink-0">
-                        {conv.unreadCount}
-                      </span>
-                    )}
+                      <div className="flex items-center justify-between mt-1 pt-1 border-t border-obsidian-100 dark:border-white/5">
+                        <span className="text-[10px] text-coral-600 dark:text-coral-400 font-bold truncate">
+                          Guardian: {matchingDog?.currentOwnerName || 'Alex Rivera'}
+                        </span>
+                        {conv.unreadCount > 0 && (
+                          <span className="px-1.5 py-0.2 text-[9px] font-black bg-coral-500 text-white rounded-full">
+                            {conv.unreadCount}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 );
               })
@@ -133,7 +134,7 @@ export const ChatPage: React.FC = () => {
 
         </div>
 
-        {/* ACTIVE CHAT WINDOW (Visible on Desktop OR when mobileView === 'chat') */}
+        {/* RIGHT CHAT WINDOW (Visible on Desktop OR when mobileView === 'chat') */}
         <div className={`lg:col-span-8 ${mobileView === 'list' ? 'hidden lg:block' : 'block'}`}>
           <ChatView />
         </div>
