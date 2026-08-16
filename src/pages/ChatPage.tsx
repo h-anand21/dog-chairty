@@ -6,7 +6,7 @@ import { Conversation } from '../types';
 import { MessageCircle, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 export const ChatPage: React.FC = () => {
-  const { conversations, activeConversationId, setActiveConversationId } = useApp();
+  const { conversations, activeConversationId, setActiveConversationId, dogs } = useApp();
   const { playPawPop } = useAudio();
 
   // Mobile navigation state: 'list' or 'chat'
@@ -31,6 +31,9 @@ export const ChatPage: React.FC = () => {
           <h1 className="text-2xl sm:text-4xl font-black font-display text-obsidian-950">
             Adoption Messages & Chats
           </h1>
+          <p className="text-xs text-obsidian-600 font-medium">
+            Dedicated private threads for each dog connecting you directly with their verified pet guardian.
+          </p>
         </div>
 
         {/* Mobile Back to List Button */}
@@ -56,10 +59,10 @@ export const ChatPage: React.FC = () => {
           <div className="flex items-center justify-between pb-3 border-b border-obsidian-200">
             <h3 className="font-black text-sm text-obsidian-950 flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-coral-500" />
-              <span>Active Dog Chats</span>
+              <span>Dog Threads ({conversations.length})</span>
             </h3>
-            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-coral-50 text-coral-600">
-              {conversations.length} total
+            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-coral-50 text-coral-600">
+              1-on-1 Chats
             </span>
           </div>
 
@@ -69,40 +72,49 @@ export const ChatPage: React.FC = () => {
                 <div className="text-4xl">🐾💬</div>
                 <p className="font-bold text-obsidian-800">No active chats yet.</p>
                 <p className="text-[11px] text-obsidian-500">
-                  Submit an application on the Discover page to get started!
+                  Click &ldquo;Message Guardian&rdquo; on any dog in Discover to start a chat!
                 </p>
               </div>
             ) : (
               conversations.map((conv: Conversation) => {
                 const isActive = conv.id === activeConversationId;
+                const matchingDog = dogs.find(d => d.id === conv.dogId);
                 return (
                   <div
                     key={conv.id}
                     onClick={() => handleSelectConv(conv.id)}
                     className={`p-3 rounded-2xl cursor-pointer transition-all flex items-center gap-3 text-left ${
                       isActive
-                        ? 'bg-coral-50 border-2 border-coral-400 shadow-xs'
-                        : 'hover:bg-obsidian-100 border border-transparent'
+                        ? 'bg-coral-50 border-2 border-coral-400 shadow-xs ring-2 ring-coral-100'
+                        : 'hover:bg-obsidian-100 border border-obsidian-100'
                     }`}
                   >
                     <div className="relative shrink-0">
                       <img
                         src={conv.dogAvatar}
                         alt={conv.dogName}
-                        className="w-12 h-12 rounded-2xl object-cover ring-2 ring-coral-300"
+                        className="w-13 h-13 rounded-2xl object-cover ring-2 ring-coral-300 shadow-2xs"
                       />
-                      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
+                      <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-black text-obsidian-950 truncate">
-                          {conv.dogName}
+                        <h4 className="text-xs font-black text-obsidian-950 truncate flex items-center gap-1">
+                          <span>{conv.dogName}</span>
+                          <span className="text-[10px] text-obsidian-500 font-semibold truncate">
+                            • {matchingDog?.breed || 'Pup'}
+                          </span>
                         </h4>
-                        <span className="text-[10px] text-obsidian-400 shrink-0">
+                        <span className="text-[10px] text-obsidian-400 shrink-0 font-medium">
                           {conv.lastMessageTimestamp}
                         </span>
                       </div>
+
+                      <div className="text-[10px] text-coral-600 font-bold truncate mt-0.5">
+                        Guardian: {matchingDog?.currentOwnerName || 'Verified Guardian'}
+                      </div>
+
                       <p className="text-[11px] text-obsidian-600 truncate mt-0.5 font-medium">
                         {conv.lastMessage || 'Say hi to the guardian!'}
                       </p>

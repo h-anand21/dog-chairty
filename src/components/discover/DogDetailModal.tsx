@@ -15,6 +15,7 @@ import {
   Sparkles,
   Info,
   ArrowRight,
+  MessageSquare,
 } from 'lucide-react';
 
 interface DogDetailModalProps {
@@ -23,7 +24,7 @@ interface DogDetailModalProps {
 }
 
 export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) => {
-  const { toggleLikeDog, setIsApplyModalOpen, setIsReportModalOpen, setSelectedDog, requireAuth } = useApp();
+  const { toggleLikeDog, setIsApplyModalOpen, setIsReportModalOpen, setSelectedDog, requireAuth, openChatForDog } = useApp();
   const { playDogBark, playPawPop } = useAudio();
 
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
@@ -54,6 +55,15 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
     requireAuth('Please verify your mobile number to report a listing.', () => {
       setSelectedDog(dog);
       setIsReportModalOpen(true);
+    });
+  };
+
+  const handleMessageGuardian = () => {
+    if (!dog) return;
+    playPawPop();
+    onClose();
+    requireAuth(`Please verify your mobile number to chat directly with ${dog.currentOwnerName} about ${dog.name}.`, () => {
+      openChatForDog(dog);
     });
   };
 
@@ -317,28 +327,50 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
                 </div>
               </div>
 
-              <button
-                onClick={handleReport}
-                className="text-obsidian-500 hover:text-rose-600 text-xs font-bold flex items-center gap-1 p-1 rounded-lg transition-colors cursor-pointer"
-                title="Report this listing for safety review"
-              >
-                <Flag className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Report</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleMessageGuardian}
+                  className="bg-coral-50 hover:bg-coral-500 text-coral-600 hover:text-white border border-coral-200 hover:border-coral-500 px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                  title="Message guardian directly"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>Chat</span>
+                </button>
+
+                <button
+                  onClick={handleReport}
+                  className="text-obsidian-500 hover:text-rose-600 text-xs font-bold flex items-center gap-1 p-1 rounded-lg transition-colors cursor-pointer"
+                  title="Report this listing for safety review"
+                >
+                  <Flag className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Report</span>
+                </button>
+              </div>
             </div>
 
             {/* Adoption CTA */}
             <div className="pt-2">
               {dog.status !== 'adopted' ? (
-                <div className="space-y-2">
-                  <button
-                    onClick={handleApply}
-                    className="w-full btn-primary text-white py-4 px-6 rounded-2xl font-black text-base shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer hover:scale-102 active:scale-98 transition-all"
-                  >
-                    <Heart className="w-5 h-5 fill-white" />
-                    <span>🐾 I Want to Adopt {dog.name}</span>
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
+                <div className="space-y-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                    <button
+                      onClick={handleApply}
+                      className="sm:col-span-8 btn-primary text-white py-4 px-6 rounded-2xl font-black text-sm sm:text-base shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer hover:scale-102 active:scale-98 transition-all"
+                    >
+                      <Heart className="w-5 h-5 fill-white" />
+                      <span>🐾 I Want to Adopt {dog.name}</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </button>
+
+                    <button
+                      onClick={handleMessageGuardian}
+                      className="sm:col-span-4 bg-obsidian-100 hover:bg-obsidian-200 text-obsidian-900 border border-obsidian-300 py-4 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs"
+                    >
+                      <MessageSquare className="w-4 h-4 text-coral-500" />
+                      <span>Message Guardian</span>
+                    </button>
+                  </div>
+
                   <p className="text-[11px] text-center text-obsidian-500 font-semibold">
                     ✓ Open for direct adoption applications • 100% Free • Verified Guardian Handover
                   </p>

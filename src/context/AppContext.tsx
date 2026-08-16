@@ -73,6 +73,7 @@ interface AppContextType {
   activeConversationId: string | null;
   setActiveConversationId: (convId: string | null) => void;
   sendMessage: (convId: string, text: string, image?: string, isDogBark?: boolean) => void;
+  openChatForDog: (dog: Dog, initialMessage?: string) => void;
 
   // Social Feed & Stories
   posts: Post[];
@@ -231,9 +232,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   // 8. Chat Conversations
+  // 8. Chat Conversations
   const [conversations, setConversations] = useState<Conversation[]>(() => {
     const saved = localStorage.getItem('pawconnect_conversations');
-    return saved ? JSON.parse(saved) : [
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        // fallback
+      }
+    }
+    return [
       {
         id: 'conv_alex_sarah_bruno',
         dogId: 'dog_bruno',
@@ -243,13 +253,51 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         lastMessage: 'Sure! Bruno loves playing with tennis balls at Eco Park.',
         lastMessageTimestamp: '10:45 AM',
         unreadCount: 0
+      },
+      {
+        id: 'conv_david_sarah_luna',
+        dogId: 'dog_luna',
+        dogName: 'Luna',
+        dogAvatar: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=400&auto=format&fit=crop&q=80',
+        participants: ['user_david', 'user_sarah'],
+        lastMessage: 'Luna is completely vaccinated and loves agility courses & swimming!',
+        lastMessageTimestamp: '9:30 AM',
+        unreadCount: 0
+      },
+      {
+        id: 'conv_david_sarah_milo',
+        dogId: 'dog_milo',
+        dogName: 'Milo',
+        dogAvatar: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=400&auto=format&fit=crop&q=80',
+        participants: ['user_david', 'user_sarah'],
+        lastMessage: 'Milo is fully house-trained and super gentle with children.',
+        lastMessageTimestamp: 'Yesterday',
+        unreadCount: 0
+      },
+      {
+        id: 'conv_david_sarah_rocky',
+        dogId: 'dog_rocky',
+        dogName: 'Rocky',
+        dogAvatar: 'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=400&auto=format&fit=crop&q=80',
+        participants: ['user_david', 'user_sarah'],
+        lastMessage: 'Rocky knows 8 commands and would love an active outdoor parent!',
+        lastMessageTimestamp: 'Yesterday',
+        unreadCount: 0
       }
     ];
   });
 
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>(() => {
     const saved = localStorage.getItem('pawconnect_messages');
-    return saved ? JSON.parse(saved) : {
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) return parsed;
+      } catch (e) {
+        // fallback
+      }
+    }
+    return {
       'conv_alex_sarah_bruno': [
         {
           id: 'm1',
@@ -283,6 +331,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           text: 'Sure! Bruno loves playing with tennis balls at Eco Park. Let us schedule a Meet & Greet!',
           image: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&auto=format&fit=crop&q=80',
           timestamp: '10:45 AM',
+          read: true
+        }
+      ],
+      'conv_david_sarah_luna': [
+        {
+          id: 'm_luna_1',
+          conversationId: 'conv_david_sarah_luna',
+          senderId: 'user_david',
+          senderName: 'Dr. David Chen',
+          senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+          recipientId: 'user_sarah',
+          text: 'Hello! Luna is a 1.5-year-old Chocolate Labrador who is 100% vaccinated, spayed, and loves swimming. Let me know if you would like to meet her!',
+          timestamp: '9:30 AM',
+          read: true
+        }
+      ],
+      'conv_david_sarah_milo': [
+        {
+          id: 'm_milo_1',
+          conversationId: 'conv_david_sarah_milo',
+          senderId: 'user_david',
+          senderName: 'Dr. David Chen',
+          senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+          recipientId: 'user_sarah',
+          text: 'Hi there! Milo is a sweet 1-year-old Beagle in Mumbai. He is potty-trained, vaccinated, and loves squeaky toys.',
+          timestamp: 'Yesterday',
+          read: true
+        }
+      ],
+      'conv_david_sarah_rocky': [
+        {
+          id: 'm_rocky_1',
+          conversationId: 'conv_david_sarah_rocky',
+          senderId: 'user_david',
+          senderName: 'Dr. David Chen',
+          senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+          recipientId: 'user_sarah',
+          text: 'Rocky is an energetic German Shepherd in Bengaluru. Strong health records and knows all basic agility commands.',
+          timestamp: 'Yesterday',
           read: true
         }
       ]
@@ -832,6 +919,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const openChatForDog = (dog: Dog, initialMessage?: string) => {
+    const currentUserId = currentUser?.id || 'user_guest';
+    const existingConv = conversations.find(c => c.dogId === dog.id);
+
+    if (existingConv) {
+      setActiveConversationId(existingConv.id);
+      setActiveTab('chat');
+      return;
+    }
+
+    // Create a new dedicated thread for this dog
+    const convId = `conv_${dog.id}_${currentUserId}`;
+    const newConv: Conversation = {
+      id: convId,
+      dogId: dog.id,
+      dogName: dog.name,
+      dogAvatar: dog.coverPhoto,
+      participants: [dog.currentOwnerId, currentUserId],
+      lastMessage: initialMessage || `Hi ${dog.currentOwnerName}! I am interested in adopting ${dog.name}.`,
+      lastMessageTimestamp: 'Just now',
+      unreadCount: 0
+    };
+
+    const initialMsg: ChatMessage = {
+      id: `msg_${Date.now()}`,
+      conversationId: convId,
+      senderId: currentUserId,
+      senderName: currentUser?.name || 'Interested Adopter',
+      senderAvatar: currentUser?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
+      recipientId: dog.currentOwnerId,
+      text: initialMessage || `Hi ${dog.currentOwnerName}! I am interested in learning more about ${dog.name} and would love to ask a few questions about their daily routine.`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      read: true
+    };
+
+    setConversations(prev => [newConv, ...prev]);
+    setMessages(prev => ({
+      ...prev,
+      [convId]: [initialMsg]
+    }));
+    setActiveConversationId(convId);
+    setActiveTab('chat');
+  };
+
   const likePost = (postId: string) => {
     const userId = currentUser?.id || 'user_guest';
     setPosts(prev =>
@@ -965,6 +1096,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         activeConversationId,
         setActiveConversationId,
         sendMessage,
+        openChatForDog,
         posts,
         stories,
         likePost,

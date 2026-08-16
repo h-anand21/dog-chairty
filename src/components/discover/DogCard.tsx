@@ -3,7 +3,7 @@ import { Dog } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { useAudio } from '../../context/AudioContext';
 import { StatusBadge } from '../common/StatusBadge';
-import { Heart, MapPin, Sparkles, UserCheck, Flame, ArrowUpRight } from 'lucide-react';
+import { Heart, MapPin, Sparkles, UserCheck, Flame, ArrowUpRight, MessageSquare } from 'lucide-react';
 
 interface DogCardProps {
   dog: Dog;
@@ -11,13 +11,21 @@ interface DogCardProps {
 }
 
 export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
-  const { toggleLikeDog, setIsApplyModalOpen, setSelectedDog, requireAuth } = useApp();
+  const { toggleLikeDog, setIsApplyModalOpen, setSelectedDog, requireAuth, openChatForDog } = useApp();
   const { playPawPop } = useAudio();
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
     playPawPop();
     toggleLikeDog(dog.id);
+  };
+
+  const handleChatClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    playPawPop();
+    requireAuth(`Please verify your mobile number to message ${dog.currentOwnerName} about ${dog.name}.`, () => {
+      openChatForDog(dog);
+    });
   };
 
   const handleAdoptClick = (e: React.MouseEvent) => {
@@ -144,13 +152,23 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
           </div>
 
           {dog.status !== 'adopted' ? (
-            <button
-              onClick={handleAdoptClick}
-              className="bg-coral-50 hover:bg-coral-500 text-coral-600 hover:text-white border border-coral-200 hover:border-coral-500 px-4 py-2 rounded-full text-xs font-black transition-all shrink-0 hover:shadow-glow-coral flex items-center gap-1 cursor-pointer"
-            >
-              <span>I Want to Adopt</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                onClick={handleChatClick}
+                className="w-8 h-8 rounded-full bg-obsidian-100 hover:bg-coral-50 text-obsidian-700 hover:text-coral-600 border border-obsidian-200 hover:border-coral-300 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                title={`Chat with ${dog.currentOwnerName} about ${dog.name}`}
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+              </button>
+
+              <button
+                onClick={handleAdoptClick}
+                className="bg-coral-50 hover:bg-coral-500 text-coral-600 hover:text-white border border-coral-200 hover:border-coral-500 px-3.5 py-2 rounded-full text-xs font-black transition-all shrink-0 hover:shadow-glow-coral flex items-center gap-1 cursor-pointer"
+              >
+                <span>Adopt</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           ) : (
             <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full shrink-0">
               Adopted 🎉
