@@ -3,6 +3,7 @@ import { Dog } from '../types';
 import { DogCard } from '../components/discover/DogCard';
 import { PawMap } from '../components/map/PawMap';
 import { CitySearchInput } from '../components/common/CitySearchInput';
+import { HowItWorksAnimated } from '../components/discover/HowItWorksAnimated';
 import { PillarDetailModal, PillarType } from '../components/common/PillarDetailModal';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
@@ -330,81 +331,8 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
         </div>
       </section>
 
-      {/* 🐾 2. HOW PAWCONNECT WORKS (Interactive 4-Step Visual Journey) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="glass-card rounded-5xl p-6 sm:p-12 border border-white shadow-card space-y-8">
-          
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-black text-xs uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Simple & Transparent Process</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black font-display text-obsidian-950">
-              How Adoption Works on PawConnect
-            </h2>
-            <p className="text-xs sm:text-sm text-obsidian-600 font-normal">
-              We eliminated adoption scams, shelter bureaucracy, and commercial breeders with our 4-step verified flow.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            
-            {/* Step 1 */}
-            <div className="p-6 rounded-3xl bg-white border border-obsidian-200 shadow-sm text-left space-y-3 relative group hover:border-coral-300 transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-coral-50 text-coral-600 flex items-center justify-center text-xl font-black">
-                1 🐶
-              </div>
-              <h3 className="text-base font-black text-obsidian-950">
-                Browse & Hear Bark
-              </h3>
-              <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
-                Explore real dog photos, listen to audio bark notes, review size, energy, and verified health clearances.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="p-6 rounded-3xl bg-white border border-obsidian-200 shadow-sm text-left space-y-3 relative group hover:border-coral-300 transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl font-black">
-                2 📄
-              </div>
-              <h3 className="text-base font-black text-obsidian-950">
-                Submit Simple Form
-              </h3>
-              <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
-                Tell the guardian about your home, yard, and family routine in a transparent, 2-minute questionnaire.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="p-6 rounded-3xl bg-white border border-obsidian-200 shadow-sm text-left space-y-3 relative group hover:border-coral-300 transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-black">
-                3 💬
-              </div>
-              <h3 className="text-base font-black text-obsidian-950">
-                Chat & Park Meetup
-              </h3>
-              <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
-                Connect via private chat, ask lifestyle questions, and schedule a public park meet & greet to test bonding.
-              </p>
-            </div>
-
-            {/* Step 4 */}
-            <div className="p-6 rounded-3xl bg-white border border-obsidian-200 shadow-sm text-left space-y-3 relative group hover:border-coral-300 transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-black">
-                4 📜
-              </div>
-              <h3 className="text-base font-black text-obsidian-950">
-                Dual Handover & Cert
-              </h3>
-              <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
-                Sign legal digital custody terms and dual-confirm physical handover to receive official Gold Certificate.
-              </p>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
+      {/* 🐾 2. HOW PAWCONNECT WORKS (Interactive Animated Journey & Live Simulator) */}
+      <HowItWorksAnimated />
 
       {/* 🐶 3. DOGS MARKETPLACE (GRID / INTERACTIVE MAP SWITCHER) */}
       <section id="marketplace-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28 space-y-6">
