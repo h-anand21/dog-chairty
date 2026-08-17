@@ -138,12 +138,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const saved = localStorage.getItem('pawconnect_current_user');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // If it's a seed/mock demo user, discard it and start logged out
+        if (!parsed || parsed.id === 'user_sarah' || parsed.id === 'user_alex' || parsed.id === 'user_priya' || parsed.name === 'Sarah Jenkins') {
+          localStorage.removeItem('pawconnect_current_user');
+          return null;
+        }
+        return parsed;
       } catch (e) {
         return null;
       }
     }
-    return INITIAL_USERS[0]; // Seeded with Sarah Jenkins
+    return null; // Start logged out as guest
   });
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
