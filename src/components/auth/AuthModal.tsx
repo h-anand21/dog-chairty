@@ -358,7 +358,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   >
                     <option value="firebase">🔥 Google Firebase (10,000 Free Physical SMS / Month)</option>
                     <option value="fast2sms">⚡ Fast2SMS Indian Gateway (Instant Physical Phone SMS)</option>
-                    <option value="simulated">🐾 PawConnect Real-Time SMS Engine (Simulated Demo)</option>
                     <option value="twilio">🌐 Twilio Global Gateway</option>
                   </select>
                 </div>

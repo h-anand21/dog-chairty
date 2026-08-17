@@ -54,11 +54,8 @@ class OtpService {
     // Store active session in memory and localStorage
     localStorage.setItem(OTP_SESSION_KEY, JSON.stringify(session));
 
-    // Dispatch via real physical SMS Gateway (Fast2SMS / Twilio / PawConnect Gateway)
+    // Dispatch via real physical SMS Gateway (Firebase Phone Auth / Fast2SMS / Twilio)
     const smsResult = await smsGatewayService.sendPhysicalSms(phone, code);
-
-    // Deliver via Browser Native Notification
-    this.deliverBrowserNotification(phone, code);
 
     // Haptic vibration feedback on mobile
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
@@ -127,27 +124,6 @@ class OtpService {
     // Correct OTP -> clear session & return success
     localStorage.removeItem(OTP_SESSION_KEY);
     return { success: true, message: 'Mobile number verified successfully!' };
-  }
-
-  /**
-   * Request native browser notification permission & deliver alert
-   */
-  private async deliverBrowserNotification(phone: string, code: string) {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      try {
-        if (Notification.permission === 'default') {
-          await Notification.requestPermission();
-        }
-        if (Notification.permission === 'granted') {
-          new Notification('PawConnect SMS Verification', {
-            body: `Your OTP for ${phone} is ${code}. Do not share this code with anyone. (Valid for 5 mins)`,
-            icon: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100',
-          });
-        }
-      } catch (e) {
-        // Notification failed or blocked
-      }
-    }
   }
 
   /**
