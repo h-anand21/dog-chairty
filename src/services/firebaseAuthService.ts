@@ -105,24 +105,17 @@ class FirebaseAuthService {
         document.body.appendChild(containerEl);
       }
 
-      if (this.recaptchaVerifier) {
-        try {
-          this.recaptchaVerifier.clear();
-        } catch (e) {
-          // ignore
-        }
-        this.recaptchaVerifier = null;
+      if (!this.recaptchaVerifier) {
+        this.recaptchaVerifier = new RecaptchaVerifier(this.auth, containerEl, {
+          size: 'normal',
+          callback: (response: any) => {
+            console.log('Google reCAPTCHA token verified successfully:', response);
+          },
+          'expired-callback': () => {
+            console.warn('reCAPTCHA expired, please check again.');
+          },
+        });
       }
-
-      this.recaptchaVerifier = new RecaptchaVerifier(this.auth, containerEl, {
-        size: 'invisible',
-        callback: () => {
-          // reCAPTCHA solved automatically
-        },
-        'expired-callback': () => {
-          console.warn('reCAPTCHA expired, please try again.');
-        },
-      });
 
       return this.recaptchaVerifier;
     } catch (err) {
@@ -136,7 +129,7 @@ class FirebaseAuthService {
    */
   public async sendPhoneOtp(
     phone10Digits: string,
-    recaptchaContainerId = 'recaptcha-container'
+    recaptchaContainerId = 'recaptcha-box'
   ): Promise<{ success: boolean; message: string }> {
     const cleanNumber = phone10Digits.replace(/\D/g, '').slice(-10);
     const fullPhoneNumber = `+91${cleanNumber}`;

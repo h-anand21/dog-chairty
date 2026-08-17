@@ -66,6 +66,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     return () => clearInterval(interval);
   }, [step, resendTimer]);
 
+  useEffect(() => {
+    if (isOpen && step === 'phone') {
+      const timer = setTimeout(() => {
+        const verifier = firebaseAuthService.setupRecaptcha('recaptcha-box');
+        if (verifier) {
+          verifier.render().catch(() => {});
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, step]);
+
   if (!isOpen) return null;
 
   const fullPhone = `${countryCode} ${phoneDigits.trim()}`;
@@ -249,9 +261,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               )}
             </div>
 
-            {/* Invisible reCAPTCHA container for Google Firebase Phone Auth */}
-            <div id="recaptcha-container" className="my-1 flex justify-center"></div>
-
             <form onSubmit={handleSendOtp} className="space-y-4">
               <div>
                 <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1.5">
@@ -284,6 +293,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   Must be 10 digits starting with 6, 7, 8, or 9
                 </p>
               </div>
+
+              {/* Google reCAPTCHA Verification Checkbox Widget */}
+              <div id="recaptcha-box" className="flex justify-center my-3 min-h-[78px]"></div>
 
               {errorMsg && (
                 <div className="text-xs font-bold text-rose-600 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 p-2.5 rounded-xl border border-rose-200 dark:border-rose-800/60">
