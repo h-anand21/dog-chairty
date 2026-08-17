@@ -33,8 +33,7 @@ interface AppContextType {
   authPromptReason: string;
   setAuthPromptReason: (reason: string) => void;
   requireAuth: (reason: string, action?: () => void) => boolean;
-  activeOtpSession: OtpSession | null;
-  sendOtp: (phone: string) => string;
+  sendOtp: (phone: string) => Promise<{ success: boolean; message: string; code?: string }>;
   verifyOtp: (phone: string, code: string) => { success: boolean; isNewUser: boolean; message: string };
   completeRegistration: (userData: Omit<User, 'id' | 'joinedDate'>) => User;
   switchUser: (userId: string) => void;
@@ -515,16 +514,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Send OTP via Dynamic OTP Service
-  const sendOtp = (phone: string): string => {
-    const sessionResult = otpService.generateOtp(4);
-    const session: OtpSession = {
-      phone,
-      code: sessionResult,
-      expiresAt: Date.now() + 5 * 60 * 1000
-    };
-    setActiveOtpSession(session);
-    otpService.sendOtp(phone);
-    return sessionResult;
+  const sendOtp = async (phone: string): Promise<{ success: boolean; message: string; code?: string }> => {
+    try {
+      return await otpService.sendOtp(phone);
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.message || 'Failed to dispatch OTP.',
+      };
+    }
   };
 
   // Verify OTP via Dynamic OTP Service
@@ -1097,7 +1095,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         authPromptReason,
         setAuthPromptReason,
         requireAuth,
-        activeOtpSession,
         sendOtp,
         verifyOtp,
         completeRegistration,

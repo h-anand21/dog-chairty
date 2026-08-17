@@ -89,7 +89,7 @@ class FirebaseAuthService {
   /**
    * Initializes reCAPTCHA on the given container ID (invisible)
    */
-  public setupRecaptcha(containerId: string): RecaptchaVerifier | null {
+  public setupRecaptcha(containerId = 'recaptcha-container'): RecaptchaVerifier | null {
     if (!this.auth) {
       const cfg = this.getSavedConfig();
       if (cfg) this.initApp(cfg);
@@ -98,18 +98,26 @@ class FirebaseAuthService {
     if (!this.auth) return null;
 
     try {
+      let containerEl = document.getElementById(containerId);
+      if (!containerEl) {
+        containerEl = document.createElement('div');
+        containerEl.id = containerId;
+        document.body.appendChild(containerEl);
+      }
+
       if (this.recaptchaVerifier) {
         try {
           this.recaptchaVerifier.clear();
         } catch (e) {
           // ignore
         }
+        this.recaptchaVerifier = null;
       }
 
-      this.recaptchaVerifier = new RecaptchaVerifier(this.auth, containerId, {
+      this.recaptchaVerifier = new RecaptchaVerifier(this.auth, containerEl, {
         size: 'invisible',
         callback: () => {
-          // reCAPTCHA solved
+          // reCAPTCHA solved automatically
         },
         'expired-callback': () => {
           console.warn('reCAPTCHA expired, please try again.');
@@ -138,7 +146,7 @@ class FirebaseAuthService {
       if (!cfg) {
         return {
           success: false,
-          message: 'Firebase is not configured yet. Please enter your Firebase Project Keys in Gateway Settings.',
+          message: 'Firebase is not configured yet. Please check your .env configuration.',
         };
       }
       this.initApp(cfg);
@@ -147,7 +155,7 @@ class FirebaseAuthService {
     if (!this.auth) {
       return {
         success: false,
-        message: 'Could not initialize Firebase Auth. Check your API Key & Project ID.',
+        message: 'Could not initialize Firebase Auth. Check your API Key & Project ID in .env.',
       };
     }
 
@@ -160,6 +168,7 @@ class FirebaseAuthService {
         };
       }
 
+      await verifier.render();
       const confirmation = await signInWithPhoneNumber(this.auth, fullPhoneNumber, verifier);
       this.confirmationResult = confirmation;
 
@@ -169,9 +178,21 @@ class FirebaseAuthService {
       };
     } catch (err: any) {
       console.error('Firebase signInWithPhoneNumber failed:', err);
+      let errorText = err.message || 'Firebase Phone Auth dispatch failed.';
+      if (err.code === 'auth/invalid-app-credential') {
+        errorText = 'Firebase Phone Auth not active or domain blocked. Please add your number in Firebase Console > Authentication > Sign-in method > Phone > "Phone numbers for testing" for instant verification.';
+      } else if (err.code === 'auth/operation-not-allowed') {
+        errorText = 'SMS for India (+91) needs to be enabled in Firebase Console: Go to Authentication > Settings > SMS Region Policy > Enable India (+91), or enable Phone provider under Sign-in method.';
+      } else if (err.code === 'auth/invalid-phone-number') {
+        errorText = 'Invalid Indian phone number format.';
+      } else if (err.code === 'auth/quota-exceeded') {
+        errorText = 'Daily SMS quota reached. Please add test phone numbers in Firebase Console.';
+      } else if (err.code === 'auth/too-many-requests') {
+        errorText = 'Too many attempts. Please try again in a few minutes.';
+      }
       return {
         success: false,
-        message: err.message || 'Firebase Phone Auth dispatch failed. Check console for details.',
+        message: errorText,
       };
     }
   }

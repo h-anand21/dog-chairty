@@ -35,7 +35,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     sendOtp,
     verifyOtp,
     completeRegistration,
-    activeOtpSession,
     authPromptReason,
   } = useApp();
 
@@ -47,6 +46,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
   const [errorMsg, setErrorMsg] = useState('');
   const [resendTimer, setResendTimer] = useState(30);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
 
   // New Profile Data for Indian Cities
@@ -76,7 +76,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     if (errorMsg) setErrorMsg('');
   };
 
-  const handleSendOtp = (e?: React.FormEvent) => {
+  const handleSendOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setErrorMsg('');
     const cleaned = phoneDigits.replace(/\D/g, '');
@@ -93,10 +93,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
 
     playPawPop();
-    sendOtp(fullPhone);
-    setStep('otp');
-    setResendTimer(30);
-    setOtpDigits(['', '', '', '', '', '']);
+    setIsSendingOtp(true);
+
+    try {
+      const result = await sendOtp(fullPhone);
+      if (!result.success) {
+        setErrorMsg(result.message || 'Failed to dispatch SMS OTP. Check your connection.');
+        setIsSendingOtp(false);
+        return;
+      }
+
+      setStep('otp');
+      setResendTimer(30);
+      setOtpDigits(['', '', '', '', '', '']);
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to send SMS OTP.');
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
   const handleOtpChange = (index: number, val: string) => {
@@ -279,11 +293,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
               <button
                 type="submit"
-                disabled={phoneDigits.length !== 10}
+                disabled={isSendingOtp || phoneDigits.length !== 10}
                 className="w-full btn-primary disabled:opacity-50 text-white py-3.5 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] transition-transform"
               >
-                <span>Send Real OTP to My Phone 📲</span>
-                <ArrowRight className="w-4 h-4" />
+                {isSendingOtp ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Connecting Google Telecom & Sending SMS...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Send Real OTP to My Phone 📲</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </form>
 
