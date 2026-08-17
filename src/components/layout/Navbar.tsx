@@ -61,8 +61,30 @@ export const Navbar: React.FC = () => {
 
   const handleTabClick = (tab: typeof activeTab) => {
     playPawPop();
-    setActiveTab(tab);
     setShowMobileDrawer(false);
+
+    if (tab === 'adopt_flow') {
+      requireAuth('Please log in with your mobile number to access the Adoption Pipeline.', () => {
+        setActiveTab('adopt_flow');
+      });
+      return;
+    }
+
+    if (tab === 'chat') {
+      requireAuth('Please log in with your mobile number to view your private adoption chats.', () => {
+        setActiveTab('chat');
+      });
+      return;
+    }
+
+    if (tab === 'my_dogs') {
+      requireAuth('Please log in to manage your dogs, applications, and certificates.', () => {
+        setActiveTab('my_dogs');
+      });
+      return;
+    }
+
+    setActiveTab(tab);
   };
 
   const handlePostDog = () => {

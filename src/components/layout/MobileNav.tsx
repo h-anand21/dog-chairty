@@ -11,7 +11,7 @@ interface NavItem {
 }
 
 export const MobileNav: React.FC = () => {
-  const { activeTab, setActiveTab, conversations, applications, currentUser } = useApp();
+  const { activeTab, setActiveTab, conversations, applications, currentUser, requireAuth } = useApp();
   const { playPawPop } = useAudio();
 
   const unreadMessagesCount = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
@@ -23,6 +23,21 @@ export const MobileNav: React.FC = () => {
 
   const handleTab = (tab: NavItem['id']) => {
     playPawPop();
+
+    if (tab === 'adopt_flow') {
+      requireAuth('Please log in with your mobile number to access the Adoption Pipeline.', () => {
+        setActiveTab('adopt_flow');
+      });
+      return;
+    }
+
+    if (tab === 'chat') {
+      requireAuth('Please log in with your mobile number to view your private adoption chats.', () => {
+        setActiveTab('chat');
+      });
+      return;
+    }
+
     setActiveTab(tab);
   };
 

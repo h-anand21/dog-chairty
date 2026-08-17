@@ -223,25 +223,25 @@ export const HowItWorksAnimated: React.FC = () => {
         </div>
 
         {/* 🎬 LIVE INTERACTIVE MICRO-DEMO SIMULATOR */}
-        <div className="rounded-4xl bg-obsidian-950 dark:bg-[#080D18] text-white p-6 sm:p-10 border border-white/10 shadow-2xl relative overflow-hidden">
+        <div className="rounded-4xl bg-white dark:bg-[#080D18] text-obsidian-950 dark:text-white p-6 sm:p-10 border border-obsidian-200/90 dark:border-white/10 shadow-elevated relative overflow-hidden">
           
           {/* Background Ambient Glow */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-coral-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-coral-500/10 dark:bg-coral-500/20 rounded-full blur-3xl pointer-events-none" />
 
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8 relative z-10">
             
             {/* Left: Step Context */}
-            <div className="space-y-4 max-w-md">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-coral-400 text-xs font-black uppercase tracking-wider backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5" />
+            <div className="space-y-4 max-w-md text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-coral-50 dark:bg-white/10 text-coral-600 dark:text-coral-400 border border-coral-200 dark:border-white/10 text-xs font-black uppercase tracking-wider backdrop-blur-md">
+                <Sparkles className="w-3.5 h-3.5 text-coral-500" />
                 <span>Live Interactive Simulator • Step {activeStep + 1}</span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
+              <h3 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950 dark:text-white">
                 {steps[activeStep].title}
               </h3>
 
-              <p className="text-xs sm:text-sm text-white/80 leading-relaxed font-normal">
+              <p className="text-xs sm:text-sm text-obsidian-600 dark:text-white/80 leading-relaxed font-normal">
                 {steps[activeStep].desc}
               </p>
 
@@ -251,7 +251,7 @@ export const HowItWorksAnimated: React.FC = () => {
                     key={i}
                     onClick={() => handleStepClick(i)}
                     className={`h-2 rounded-full transition-all cursor-pointer ${
-                      activeStep === i ? 'w-8 bg-coral-500' : 'w-2 bg-white/30 hover:bg-white/60'
+                      activeStep === i ? 'w-8 bg-coral-500' : 'w-2 bg-obsidian-200 dark:bg-white/30 hover:bg-obsidian-400 dark:hover:bg-white/60'
                     }`}
                   />
                 ))}
@@ -259,7 +259,7 @@ export const HowItWorksAnimated: React.FC = () => {
             </div>
 
             {/* Right: Dynamic Interactive Simulation Box */}
-            <div className="w-full lg:max-w-lg bg-white dark:bg-[#101726] text-obsidian-950 dark:text-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-white/20 dark:border-white/10 min-h-[260px] flex flex-col justify-center">
+            <div className="w-full lg:max-w-lg bg-obsidian-50/70 dark:bg-[#101726] text-obsidian-950 dark:text-white rounded-3xl p-5 sm:p-6 shadow-card border border-obsidian-200/80 dark:border-white/10 min-h-[260px] flex flex-col justify-center">
               
               <AnimatePresence mode="wait">
                 
