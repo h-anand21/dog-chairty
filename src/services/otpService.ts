@@ -18,9 +18,9 @@ const OTP_SESSION_KEY = 'pawconnect_active_otp_session';
 
 class OtpService {
   /**
-   * Generates a cryptographically random 4-digit or 6-digit OTP
+   * Generates a cryptographically random 6-digit OTP
    */
-  public generateOtp(digits: number = 4): string {
+  public generateOtp(digits: number = 6): string {
     const min = Math.pow(10, digits - 1);
     const max = Math.pow(10, digits) - 1;
     const array = new Uint32Array(1);
@@ -38,8 +38,8 @@ class OtpService {
       throw new Error('Invalid mobile number format. Please provide a 10-digit Indian number.');
     }
 
-    // Generate fresh cryptographically random 4-digit code
-    const code = this.generateOtp(4);
+    // Generate fresh cryptographically random 6-digit code
+    const code = this.generateOtp(6);
     const now = Date.now();
     const expiresAt = now + 5 * 60 * 1000; // 5 minutes validity
 

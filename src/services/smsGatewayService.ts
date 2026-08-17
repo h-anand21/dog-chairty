@@ -1,10 +1,12 @@
 /**
  * Real Physical SMS Gateway Service for Indian Mobile Numbers (+91)
- * Connects to Fast2SMS (India), Twilio, or Google Firebase Phone Auth
- * to deliver real physical SMS text messages to actual mobile handsets.
+ * Connects to Google Firebase Phone Auth (10,000 Free SMS/Month),
+ * Fast2SMS (India), Twilio, or Simulated Instant Delivery
  */
 
-export type SmsProviderType = 'fast2sms' | 'twilio' | 'firebase' | 'simulated';
+import { firebaseAuthService, FirebaseClientConfig } from './firebaseAuthService';
+
+export type SmsProviderType = 'firebase' | 'fast2sms' | 'twilio' | 'simulated';
 
 export interface SmsGatewayConfig {
   provider: SmsProviderType;
@@ -12,7 +14,7 @@ export interface SmsGatewayConfig {
   twilioAccountSid?: string;
   twilioAuthToken?: string;
   twilioFromNumber?: string;
-  firebaseApiKey?: string;
+  firebaseConfig?: FirebaseClientConfig;
 }
 
 const GATEWAY_CONFIG_KEY = 'pawconnect_sms_gateway_config';
@@ -26,10 +28,10 @@ class SmsGatewayService {
       try {
         this.config = JSON.parse(saved);
       } catch (e) {
-        this.config = { provider: 'simulated' };
+        this.config = { provider: 'firebase' };
       }
     } else {
-      this.config = { provider: 'simulated' };
+      this.config = { provider: 'firebase' };
     }
   }
 
@@ -40,15 +42,43 @@ class SmsGatewayService {
   public setConfig(newConfig: Partial<SmsGatewayConfig>) {
     this.config = { ...this.config, ...newConfig };
     localStorage.setItem(GATEWAY_CONFIG_KEY, JSON.stringify(this.config));
+
+    if (newConfig.firebaseConfig) {
+      firebaseAuthService.saveConfig(newConfig.firebaseConfig);
+    }
   }
 
   /**
    * Dispatches a real physical SMS to the user's actual phone handset
    */
-  public async sendPhysicalSms(phone: string, otpCode: string): Promise<{ success: boolean; provider: string; message: string }> {
+  public async sendPhysicalSms(
+    phone: string,
+    otpCode: string,
+    recaptchaContainerId = 'recaptcha-container'
+  ): Promise<{ success: boolean; provider: string; message: string }> {
     const cleanNumber = phone.replace(/\D/g, '').slice(-10);
 
-    // 1. FAST2SMS (India's #1 Instant OTP SMS Gateway)
+    // 1. GOOGLE FIREBASE PHONE AUTH (10,000 FREE SMS / MONTH)
+    if (this.config.provider === 'firebase') {
+      const fbResult = await firebaseAuthService.sendPhoneOtp(cleanNumber, recaptchaContainerId);
+      if (fbResult.success) {
+        return {
+          success: true,
+          provider: 'Google Firebase Telecom (10,000 Free/Mo)',
+          message: `Real SMS OTP dispatched to +91 ${cleanNumber} via Google Firebase!`,
+        };
+      } else {
+        console.warn('Firebase SMS warning:', fbResult.message);
+        // If not yet configured or error, provide transparent fallback message
+        return {
+          success: false,
+          provider: 'Google Firebase',
+          message: fbResult.message,
+        };
+      }
+    }
+
+    // 2. FAST2SMS (India's #1 Instant OTP SMS Gateway)
     if (this.config.provider === 'fast2sms' && this.config.fast2smsApiKey) {
       try {
         const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
@@ -72,7 +102,6 @@ class SmsGatewayService {
             message: `Real SMS delivered to +91 ${cleanNumber} via Fast2SMS Indian Gateway!`,
           };
         } else {
-          console.warn('Fast2SMS returned error:', data.message);
           return {
             success: false,
             provider: 'Fast2SMS',
@@ -84,7 +113,7 @@ class SmsGatewayService {
       }
     }
 
-    // 2. TWILIO SMS GATEWAY
+    // 3. TWILIO SMS GATEWAY
     if (
       this.config.provider === 'twilio' &&
       this.config.twilioAccountSid &&
@@ -126,7 +155,7 @@ class SmsGatewayService {
       }
     }
 
-    // 3. High-Fidelity Direct Delivery & Browser Push Fallback
+    // 4. Built-in Instant Delivery Fallback
     return {
       success: true,
       provider: 'PawConnect SMS Gateway',
