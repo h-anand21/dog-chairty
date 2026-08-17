@@ -47,20 +47,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
   const [errorMsg, setErrorMsg] = useState('');
   const [resendTimer, setResendTimer] = useState(30);
-
-  // SMS Gateway Settings State
-  const [showGatewaySettings, setShowGatewaySettings] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState<SmsProviderType>(smsGatewayService.getConfig().provider);
-  const [fast2smsKey, setFast2smsKey] = useState(smsGatewayService.getConfig().fast2smsApiKey || '');
-  const [gatewaySavedMsg, setGatewaySavedMsg] = useState(false);
-
-  // Firebase Config State
-  const [fbApiKey, setFbApiKey] = useState(firebaseAuthService.getSavedConfig()?.apiKey || '');
-  const [fbAuthDomain, setFbAuthDomain] = useState(firebaseAuthService.getSavedConfig()?.authDomain || '');
-  const [fbProjectId, setFbProjectId] = useState(firebaseAuthService.getSavedConfig()?.projectId || '');
-  const [fbAppId, setFbAppId] = useState(firebaseAuthService.getSavedConfig()?.appId || '');
-  const [rawFbJson, setRawFbJson] = useState('');
-  const [showFirebaseGuide, setShowFirebaseGuide] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
 
   // New Profile Data for Indian Cities
@@ -69,22 +55,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [location, setLocation] = useState('Kolkata, Salt Lake');
   const [bio, setBio] = useState('Loving dog parent seeking a furry companion to give a caring home!');
   const [avatar, setAvatar] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80');
-
-  const indianCities = [
-    'Kolkata, Salt Lake',
-    'Kolkata, New Town',
-    'Delhi NCR, South Extension',
-    'Delhi NCR, GK-2',
-    'Mumbai, Bandra West',
-    'Mumbai, Andheri East',
-    'Bengaluru, Indiranagar',
-    'Bengaluru, Koramangala',
-    'Hyderabad, Jubilee Hills',
-    'Pune, Koregaon Park',
-    'Chennai, Anna Nagar',
-    'Ahmedabad, Bodakdev',
-    'Jaipur, C-Scheme',
-  ];
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -104,59 +74,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
     setPhoneDigits(digits);
     if (errorMsg) setErrorMsg('');
-  };
-
-  const handleSaveGateway = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Check if user pasted a raw JSON block
-    let finalApiKey = fbApiKey.trim();
-    let finalAuthDomain = fbAuthDomain.trim();
-    let finalProjectId = fbProjectId.trim();
-    let finalAppId = fbAppId.trim();
-
-    if (rawFbJson.trim()) {
-      try {
-        const cleanedJson = rawFbJson.replace(/const\s+firebaseConfig\s*=\s*/, '').replace(/;\s*$/, '').trim();
-        const parsed = Function(`"use strict"; return (${cleanedJson})`)();
-        if (parsed.apiKey) {
-          finalApiKey = parsed.apiKey;
-          setFbApiKey(parsed.apiKey);
-        }
-        if (parsed.authDomain) {
-          finalAuthDomain = parsed.authDomain;
-          setFbAuthDomain(parsed.authDomain);
-        }
-        if (parsed.projectId) {
-          finalProjectId = parsed.projectId;
-          setFbProjectId(parsed.projectId);
-        }
-        if (parsed.appId) {
-          finalAppId = parsed.appId;
-          setFbAppId(parsed.appId);
-        }
-        setRawFbJson('');
-      } catch (err) {
-        console.warn('Could not parse raw Firebase JSON string', err);
-      }
-    }
-
-    smsGatewayService.setConfig({
-      provider: selectedProvider,
-      fast2smsApiKey: fast2smsKey.trim(),
-      firebaseConfig: {
-        apiKey: finalApiKey,
-        authDomain: finalAuthDomain,
-        projectId: finalProjectId,
-        appId: finalAppId,
-      },
-    });
-
-    setGatewaySavedMsg(true);
-    setTimeout(() => {
-      setGatewaySavedMsg(false);
-      setShowGatewaySettings(false);
-    }, 1200);
   };
 
   const handleSendOtp = (e?: React.FormEvent) => {
@@ -220,7 +137,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     setIsVerifying(true);
 
     try {
-      if (selectedProvider === 'firebase' && firebaseAuthService.isConfigured()) {
+      if (firebaseAuthService.isConfigured()) {
         const fbResult = await firebaseAuthService.verifyOtp(code);
         if (!fbResult.success) {
           setErrorMsg(fbResult.message);
@@ -230,7 +147,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       }
 
       const result = verifyOtp(fullPhone, code);
-      if (!result.success && selectedProvider !== 'firebase') {
+      if (!result.success && !firebaseAuthService.isConfigured()) {
         setErrorMsg(result.message);
         setIsVerifying(false);
         return;
@@ -298,168 +215,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         {step === 'phone' && (
           <div className="space-y-5">
             <div>
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-black text-[11px]">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>🇮🇳 India Mobile OTP Verification</span>
-                </div>
-
-                <button
-                  onClick={() => setShowGatewaySettings(!showGatewaySettings)}
-                  title="Configure Real Physical SMS Gateway"
-                  className="text-[10px] font-bold text-obsidian-500 hover:text-coral-600 flex items-center gap-1 cursor-pointer"
-                >
-                  <Settings className="w-3.5 h-3.5" />
-                  <span>SMS Route</span>
-                </button>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 font-black text-[11px] mb-2 border border-coral-200 dark:border-coral-800/60">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>🇮🇳 Verified Mobile OTP Login</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950">
+              <h2 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950 dark:text-white">
                 Log In to PawConnect
               </h2>
 
               {authPromptReason ? (
-                <p className="text-xs text-coral-700 bg-coral-50 p-2.5 rounded-xl border border-coral-200 mt-2 font-semibold">
+                <p className="text-xs text-coral-700 dark:text-coral-300 bg-coral-50 dark:bg-coral-950/60 p-2.5 rounded-xl border border-coral-200 dark:border-coral-800/60 mt-2 font-semibold">
                   {authPromptReason}
                 </p>
               ) : (
-                <p className="text-xs text-obsidian-600 mt-1 leading-relaxed">
-                  Enter your 10-digit Indian mobile number to receive a real SMS verification code on your handset.
+                <p className="text-xs text-obsidian-600 dark:text-slate-300 mt-1 leading-relaxed">
+                  Enter your 10-digit Indian mobile number to receive a secure SMS verification code on your handset.
                 </p>
               )}
             </div>
 
-            {/* EXPANDABLE REAL SMS GATEWAY CONFIGURATION */}
-            {showGatewaySettings && (
-              <form onSubmit={handleSaveGateway} className="p-4 bg-obsidian-50 dark:bg-white/5 rounded-3xl border border-obsidian-200 dark:border-white/10 space-y-3 animate-in fade-in duration-150 text-left text-xs">
-                <div className="font-black text-obsidian-950 dark:text-white flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <Flame className="w-4 h-4 text-coral-500" />
-                    <span>Real Physical SMS Gateway Route</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowFirebaseGuide(!showFirebaseGuide)}
-                    className="text-[10px] font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    <HelpCircle className="w-3.5 h-3.5" />
-                    <span>Firebase Setup Guide</span>
-                  </button>
-                </div>
-                
-                <div>
-                  <label className="block text-[10px] font-bold text-obsidian-500 dark:text-slate-400 uppercase mb-1">
-                    Select SMS Provider:
-                  </label>
-                  <select
-                    value={selectedProvider}
-                    onChange={e => setSelectedProvider(e.target.value as SmsProviderType)}
-                    className="w-full p-2.5 rounded-xl bg-white dark:bg-[#121A2B] border border-obsidian-300 dark:border-white/15 text-obsidian-900 dark:text-white text-xs font-extrabold outline-hidden"
-                  >
-                    <option value="firebase">🔥 Google Firebase (10,000 Free Physical SMS / Month)</option>
-                    <option value="fast2sms">⚡ Fast2SMS Indian Gateway (Instant Physical Phone SMS)</option>
-                    <option value="twilio">🌐 Twilio Global Gateway</option>
-                  </select>
-                </div>
-
-                {/* FIREBASE CONFIGURATION FORM */}
-                {selectedProvider === 'firebase' && (
-                  <div className="space-y-2.5 p-3 rounded-2xl bg-white dark:bg-[#101725] border border-obsidian-200 dark:border-white/10">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-black text-obsidian-950 dark:text-white flex items-center gap-1">
-                        <span>🔥 Firebase Web Config</span>
-                        <span className="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.2 rounded-md font-bold">10,000 Free/Mo</span>
-                      </span>
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-bold text-obsidian-500 dark:text-slate-400 mb-0.5">
-                        Quick Paste Firebase Config (JSON / Code block):
-                      </label>
-                      <textarea
-                        rows={2}
-                        value={rawFbJson}
-                        onChange={e => setRawFbJson(e.target.value)}
-                        placeholder="Paste const firebaseConfig = { apiKey: '...', projectId: '...' };"
-                        className="w-full p-2 rounded-xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200 dark:border-white/10 text-[11px] font-mono outline-hidden text-obsidian-900 dark:text-white"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 text-[10px]">
-                      <div>
-                        <span className="font-bold text-obsidian-500 dark:text-slate-400">API Key:</span>
-                        <input
-                          type="text"
-                          value={fbApiKey}
-                          onChange={e => setFbApiKey(e.target.value)}
-                          placeholder="AIzaSy..."
-                          className="w-full p-1.5 rounded-lg bg-obsidian-50 dark:bg-white/5 border border-obsidian-200 dark:border-white/10 font-mono text-[11px] outline-hidden text-obsidian-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <span className="font-bold text-obsidian-500 dark:text-slate-400">Project ID:</span>
-                        <input
-                          type="text"
-                          value={fbProjectId}
-                          onChange={e => setFbProjectId(e.target.value)}
-                          placeholder="pawconnect-app"
-                          className="w-full p-1.5 rounded-lg bg-obsidian-50 dark:bg-white/5 border border-obsidian-200 dark:border-white/10 font-mono text-[11px] outline-hidden text-obsidian-900 dark:text-white"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* FAST2SMS CONFIGURATION FORM */}
-                {selectedProvider === 'fast2sms' && (
-                  <div>
-                    <label className="block text-[10px] font-bold text-obsidian-500 dark:text-slate-400 uppercase mb-1">
-                      Fast2SMS API Key:
-                    </label>
-                    <input
-                      type="text"
-                      value={fast2smsKey}
-                      onChange={e => setFast2smsKey(e.target.value)}
-                      placeholder="Paste your Fast2SMS API Key"
-                      className="w-full p-2 rounded-xl bg-white dark:bg-[#121A2B] border border-obsidian-300 dark:border-white/15 text-xs outline-hidden text-obsidian-900 dark:text-white"
-                    />
-                    <p className="text-[10px] text-obsidian-500 dark:text-slate-400 mt-0.5">
-                      Fast2SMS delivers real SMS to physical Indian mobile phones within 3 seconds.
-                    </p>
-                  </div>
-                )}
-
-                {/* FIREBASE STEP-BY-STEP GUIDE ACCORDION */}
-                {showFirebaseGuide && (
-                  <div className="p-3 rounded-2xl bg-sky-50 dark:bg-sky-950/50 border border-sky-200 dark:border-sky-800 text-[11px] space-y-1.5 text-sky-950 dark:text-sky-200">
-                    <div className="font-black text-xs flex items-center gap-1">
-                      <span>🚀 3-Step Free Firebase Phone Setup:</span>
-                    </div>
-                    <ol className="list-decimal list-inside space-y-1 font-medium leading-relaxed">
-                      <li>Open <strong><a href="https://console.firebase.google.com" target="_blank" rel="noreferrer" className="underline font-bold">console.firebase.google.com</a></strong> & create a project.</li>
-                      <li>Go to <strong>Authentication</strong> ➔ <strong>Sign-in method</strong> ➔ Enable <strong>Phone</strong>.</li>
-                      <li>Go to <strong>Project Settings (⚙️)</strong> ➔ <strong>Your Apps</strong> ➔ Web (&lt;/&gt;) ➔ Copy <code>firebaseConfig</code> & paste above!</li>
-                    </ol>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between pt-1">
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-obsidian-900 dark:bg-coral-500 text-white font-black text-xs cursor-pointer shadow-xs hover:scale-105 transition-all"
-                  >
-                    Save Gateway Settings
-                  </button>
-                  {gatewaySavedMsg && (
-                    <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 animate-in fade-in">
-                      ✓ Gateway Saved!
-                    </span>
-                  )}
-                </div>
-              </form>
-            )}
-
-            {/* Invisible reCAPTCHA container for Firebase Phone Auth */}
+            {/* Invisible reCAPTCHA container for Google Firebase Phone Auth */}
             <div id="recaptcha-container" className="my-1 flex justify-center"></div>
 
             <form onSubmit={handleSendOtp} className="space-y-4">
@@ -504,7 +280,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <button
                 type="submit"
                 disabled={phoneDigits.length !== 10}
-                className="w-full btn-primary disabled:opacity-50 text-white py-3.5 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full btn-primary disabled:opacity-50 text-white py-3.5 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] transition-transform"
               >
                 <span>Send Real OTP to My Phone 📲</span>
                 <ArrowRight className="w-4 h-4" />
