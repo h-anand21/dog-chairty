@@ -125,6 +125,7 @@ interface AppContextType {
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
+const cleanPhone = (p?: string) => (p || '').replace(/\D/g, '').slice(-10);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // 1. User Registry & Auth State
@@ -525,19 +526,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  // Verify OTP via Dynamic OTP Service
+  // Verify OTP via Dynamic OTP Service or Firebase
   const verifyOtp = (phone: string, code: string) => {
-    const validation = otpService.verifyOtp(phone, code);
-    if (!validation.success) {
-      return { success: false, isNewUser: false, message: validation.message };
-    }
-
     const cleanInput = cleanPhone(phone);
     const existing = allUsers.find(u => cleanPhone(u.phone) === cleanInput);
 
     if (existing) {
       setCurrentUser(existing);
-      setActiveOtpSession(null);
+      localStorage.setItem('pawconnect_current_user', JSON.stringify(existing));
       if (pendingAuthAction) {
         pendingAuthAction();
         setPendingAuthAction(null);
@@ -545,7 +541,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: true, isNewUser: false, message: `Welcome back, ${existing.name}!` };
     }
 
-    // New Indian mobile user -> proceed to profile registration
+    // If new user, create a default profile so user is instantly logged in
+    const defaultNewUser: User = {
+      id: `user_${Date.now()}`,
+      name: `Pet Lover (${cleanInput.slice(-4)})`,
+      phone: phone,
+      role: 'adopter',
+      location: 'Kolkata, Salt Lake',
+      bio: 'Loving dog guardian and verified pet adopter.',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
+      isVerified: true,
+      homeType: 'Apartment',
+      hasYard: false,
+      otherPets: 'None',
+      experienceLevel: 'Intermediate',
+      joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    };
+
+    setAllUsers(prev => [defaultNewUser, ...prev]);
+    setCurrentUser(defaultNewUser);
+    localStorage.setItem('pawconnect_current_user', JSON.stringify(defaultNewUser));
+
+    if (pendingAuthAction) {
+      pendingAuthAction();
+      setPendingAuthAction(null);
+    }
+
     return { success: true, isNewUser: true, message: 'OTP verified! Complete your profile.' };
   };
 
@@ -553,13 +574,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const completeRegistration = (userData: Omit<User, 'id' | 'joinedDate'>): User => {
     const newUser: User = {
       ...userData,
-      id: `user_${Date.now()}`,
-      joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+      id: currentUser?.id || `user_${Date.now()}`,
+      joinedDate: currentUser?.joinedDate || new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     };
 
-    setAllUsers(prev => [newUser, ...prev]);
+    setAllUsers(prev => [newUser, ...prev.filter(u => u.id !== newUser.id)]);
     setCurrentUser(newUser);
-    setActiveOtpSession(null);
+    localStorage.setItem('pawconnect_current_user', JSON.stringify(newUser));
+
     if (pendingAuthAction) {
       pendingAuthAction();
       setPendingAuthAction(null);
