@@ -147,9 +147,9 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
       <div className="overflow-x-auto pb-3">
         <div className="flex items-center justify-between min-w-[650px] relative px-4">
           
-          <div className="absolute top-5 left-10 right-10 h-1.5 bg-obsidian-200 dark:bg-white/10 -z-0 rounded-full" />
+          <div className="absolute top-[22px] left-12 right-12 h-1 bg-obsidian-200 dark:bg-white/10 -z-0 rounded-full" />
           <div
-            className="absolute top-5 left-10 h-1.5 bg-gradient-to-r from-coral-500 via-sky-500 to-emerald-500 transition-all duration-500 -z-0 rounded-full shadow-glow-coral"
+            className="absolute top-[22px] left-12 h-1 bg-gradient-to-r from-emerald-500 via-coral-500 to-sky-500 transition-all duration-500 -z-0 rounded-full shadow-xs"
             style={{ width: `${Math.min(((currentStep - 1) / 5) * 100, 100)}%` }}
           />
 
@@ -159,15 +159,15 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
             return (
               <div key={stage.num} className="flex flex-col items-center text-center relative z-10 w-24">
                 <div
-                  className={`w-11 h-11 rounded-full flex items-center justify-center font-black text-xs transition-all shadow-md ${
+                  className={`w-11 h-11 rounded-full flex items-center justify-center font-black text-xs transition-all ${
                     isCompleted
-                      ? 'bg-emerald-500 text-white ring-4 ring-emerald-100 dark:ring-emerald-950'
+                      ? 'bg-emerald-500 text-white border-2 border-emerald-300 dark:border-emerald-400 shadow-md shadow-emerald-500/30'
                       : isCurrent
-                      ? 'bg-coral-500 text-white ring-4 ring-coral-200 dark:ring-coral-950 scale-110 shadow-glow-coral'
-                      : 'bg-white dark:bg-[#121A2B] border-2 border-obsidian-300 dark:border-white/20 text-obsidian-400 dark:text-slate-400'
+                      ? 'bg-coral-500 text-white border-2 border-white dark:border-coral-300 shadow-glow-coral'
+                      : 'bg-[#101726] border-2 border-obsidian-300 dark:border-white/15 text-obsidian-400 dark:text-slate-500 shadow-inner'
                   }`}
                 >
-                  {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : stage.num}
+                  {isCompleted ? <CheckCircle2 className="w-5 h-5 text-white" /> : stage.num}
                 </div>
                 <div className="mt-2.5 text-xs font-extrabold text-obsidian-950 dark:text-white leading-tight">
                   {stage.label}
