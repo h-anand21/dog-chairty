@@ -50,7 +50,7 @@ export const MobileNav: React.FC = () => {
 
   return (
     <div className="lg:hidden fixed bottom-3 left-3 right-3 z-40">
-      <div className="max-w-md mx-auto glass-dropdown rounded-full px-4 py-2.5 shadow-2xl border border-white/90 flex items-center justify-around">
+      <div className="max-w-md mx-auto glass-dropdown rounded-full px-4 py-2.5 shadow-2xl border border-white/90 dark:border-white/10 flex items-center justify-around">
         {navItems.map(item => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -60,14 +60,14 @@ export const MobileNav: React.FC = () => {
               onClick={() => handleTab(item.id)}
               className={`flex flex-col items-center gap-0.5 py-1 px-3.5 rounded-full transition-all relative cursor-pointer ${
                 isActive
-                  ? 'text-coral-600 scale-105 font-black'
-                  : 'text-obsidian-600 font-bold hover:text-obsidian-900'
+                  ? 'text-coral-600 dark:text-coral-400 scale-105 font-black'
+                  : 'text-obsidian-600 dark:text-slate-300 font-bold hover:text-obsidian-900 dark:hover:text-white'
               }`}
             >
               <div className="relative">
                 <Icon className="w-5 h-5" />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 w-4.5 h-4.5 rounded-full bg-coral-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white animate-pulse">
+                  <span className="absolute -top-1.5 -right-2.5 w-4.5 h-4.5 rounded-full bg-coral-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white dark:ring-[#0B0F19] animate-pulse">
                     {item.badge}
                   </span>
                 )}

@@ -122,15 +122,15 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* CENTER PRIMARY NAVIGATION (Clean, spacious, full words) */}
-        <nav className="hidden lg:flex items-center gap-1.5 bg-obsidian-100/90 p-1.5 rounded-full border border-obsidian-200 shadow-inner">
+        <nav className="hidden lg:flex items-center gap-1.5 bg-obsidian-100/90 dark:bg-white/10 p-1.5 rounded-full border border-obsidian-200 dark:border-white/10 shadow-inner">
           
           {/* Discover Dogs */}
           <button
             onClick={() => handleTabClick('discover')}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all duration-200 cursor-pointer ${
               activeTab === 'discover'
-                ? 'bg-white text-obsidian-950 shadow-sm'
-                : 'text-obsidian-600 hover:text-obsidian-950 hover:bg-white/60'
+                ? 'bg-white dark:bg-white/20 text-obsidian-950 dark:text-white shadow-sm'
+                : 'text-obsidian-600 dark:text-slate-300 hover:text-obsidian-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/10'
             }`}
           >
             <Compass className={`w-4 h-4 ${activeTab === 'discover' ? 'text-coral-500' : ''}`} />
@@ -142,8 +142,8 @@ export const Navbar: React.FC = () => {
             onClick={() => handleTabClick('adopt_flow')}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all duration-200 relative cursor-pointer ${
               activeTab === 'adopt_flow'
-                ? 'bg-white text-obsidian-950 shadow-sm'
-                : 'text-obsidian-600 hover:text-obsidian-950 hover:bg-white/60'
+                ? 'bg-white dark:bg-white/20 text-obsidian-950 dark:text-white shadow-sm'
+                : 'text-obsidian-600 dark:text-slate-300 hover:text-obsidian-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/10'
             }`}
           >
             <HeartHandshake className={`w-4 h-4 ${activeTab === 'adopt_flow' ? 'text-coral-500' : ''}`} />
@@ -160,8 +160,8 @@ export const Navbar: React.FC = () => {
             onClick={() => handleTabClick('chat')}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all duration-200 relative cursor-pointer ${
               activeTab === 'chat'
-                ? 'bg-white text-obsidian-950 shadow-sm'
-                : 'text-obsidian-600 hover:text-obsidian-950 hover:bg-white/60'
+                ? 'bg-white dark:bg-white/20 text-obsidian-950 dark:text-white shadow-sm'
+                : 'text-obsidian-600 dark:text-slate-300 hover:text-obsidian-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/10'
             }`}
           >
             <MessageCircle className={`w-4 h-4 ${activeTab === 'chat' ? 'text-coral-500' : ''}`} />
@@ -178,8 +178,8 @@ export const Navbar: React.FC = () => {
             onClick={() => handleTabClick('feed')}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold transition-all duration-200 cursor-pointer ${
               activeTab === 'feed'
-                ? 'bg-white text-obsidian-950 shadow-sm'
-                : 'text-obsidian-600 hover:text-obsidian-950 hover:bg-white/60'
+                ? 'bg-white dark:bg-white/20 text-obsidian-950 dark:text-white shadow-sm'
+                : 'text-obsidian-600 dark:text-slate-300 hover:text-obsidian-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/10'
             }`}
           >
             <Camera className={`w-4 h-4 ${activeTab === 'feed' ? 'text-coral-500' : ''}`} />

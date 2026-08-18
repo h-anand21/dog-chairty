@@ -103,40 +103,40 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
   ];
 
   return (
-    <div className="glass-card rounded-4xl p-6 sm:p-8 border border-white shadow-elevated space-y-7 text-left">
+    <div className="glass-card rounded-4xl p-6 sm:p-8 border border-white dark:border-white/10 shadow-elevated space-y-7 text-left">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-obsidian-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-obsidian-200 dark:border-white/10">
         <div className="flex items-center gap-4">
           <img
             src={application.dogPhoto}
             alt={application.dogName}
-            className="w-16 h-16 rounded-3xl object-cover ring-4 ring-coral-300 shadow-md shrink-0"
+            className="w-16 h-16 rounded-3xl object-cover ring-4 ring-coral-300 dark:ring-coral-500/40 shadow-md shrink-0"
           />
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-xl sm:text-2xl font-black font-display text-obsidian-950">
+              <h3 className="text-xl sm:text-2xl font-black font-display text-obsidian-950 dark:text-white">
                 {application.dogName}&apos;s Adoption Journey
               </h3>
-              <span className="px-3 py-0.5 rounded-full bg-coral-50 text-coral-600 text-xs font-black border border-coral-200">
+              <span className="px-3 py-0.5 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 text-xs font-black border border-coral-200 dark:border-coral-800/60">
                 {application.dogBreed}
               </span>
             </div>
-            <p className="text-xs text-obsidian-500 font-medium mt-0.5">
-              Applicant: <strong className="text-obsidian-900">{application.applicantName}</strong> • Submitted: {application.submittedAt}
+            <p className="text-xs text-obsidian-500 dark:text-slate-400 font-medium mt-0.5">
+              Applicant: <strong className="text-obsidian-900 dark:text-white">{application.applicantName}</strong> • Submitted: {application.submittedAt}
             </p>
           </div>
         </div>
 
         <div>
           {currentStep >= 7 ? (
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-800 font-black text-xs border border-emerald-300 shadow-xs">
-              <Award className="w-4 h-4 text-emerald-600" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-black text-xs border border-emerald-300 dark:border-emerald-800/60 shadow-xs">
+              <Award className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>Adoption Completed 🎉</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-sky-50 text-sky-800 font-extrabold text-xs border border-sky-200">
-              <Clock className="w-4 h-4 text-sky-600 animate-spin" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 font-extrabold text-xs border border-sky-200 dark:border-sky-800/60">
+              <Clock className="w-4 h-4 text-sky-600 dark:text-sky-400 animate-spin" />
               <span>Stage {Math.min(currentStep, 6)} of 6 Active</span>
             </div>
           )}
@@ -147,7 +147,7 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
       <div className="overflow-x-auto pb-3">
         <div className="flex items-center justify-between min-w-[650px] relative px-4">
           
-          <div className="absolute top-5 left-10 right-10 h-1.5 bg-obsidian-200 -z-0 rounded-full" />
+          <div className="absolute top-5 left-10 right-10 h-1.5 bg-obsidian-200 dark:bg-white/10 -z-0 rounded-full" />
           <div
             className="absolute top-5 left-10 h-1.5 bg-gradient-to-r from-coral-500 via-sky-500 to-emerald-500 transition-all duration-500 -z-0 rounded-full shadow-glow-coral"
             style={{ width: `${Math.min(((currentStep - 1) / 5) * 100, 100)}%` }}
@@ -161,18 +161,18 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
                 <div
                   className={`w-11 h-11 rounded-full flex items-center justify-center font-black text-xs transition-all shadow-md ${
                     isCompleted
-                      ? 'bg-emerald-500 text-white ring-4 ring-emerald-100'
+                      ? 'bg-emerald-500 text-white ring-4 ring-emerald-100 dark:ring-emerald-950'
                       : isCurrent
-                      ? 'bg-coral-500 text-white ring-4 ring-coral-200 scale-110 shadow-glow-coral'
-                      : 'bg-white border-2 border-obsidian-300 text-obsidian-400'
+                      ? 'bg-coral-500 text-white ring-4 ring-coral-200 dark:ring-coral-950 scale-110 shadow-glow-coral'
+                      : 'bg-white dark:bg-[#121A2B] border-2 border-obsidian-300 dark:border-white/20 text-obsidian-400 dark:text-slate-400'
                   }`}
                 >
                   {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : stage.num}
                 </div>
-                <div className="mt-2.5 text-xs font-extrabold text-obsidian-950 leading-tight">
+                <div className="mt-2.5 text-xs font-extrabold text-obsidian-950 dark:text-white leading-tight">
                   {stage.label}
                 </div>
-                <div className="text-[10px] text-obsidian-400 font-semibold mt-0.5">
+                <div className="text-[10px] text-obsidian-400 dark:text-slate-400 font-semibold mt-0.5">
                   {stage.desc}
                 </div>
               </div>
@@ -186,40 +186,40 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
         
         {/* LEFT: Application Questionnaire Summary */}
-        <div className="p-5 rounded-3xl bg-obsidian-100/90 border border-obsidian-200 space-y-3.5">
+        <div className="p-5 rounded-3xl bg-obsidian-100/90 dark:bg-[#101726] border border-obsidian-200 dark:border-white/10 space-y-3.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-wider text-obsidian-400">
+            <span className="text-xs font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400">
               Verified Application
             </span>
-            <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-              <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-emerald-200 dark:border-emerald-800/60">
+              <UserCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Screened Profile</span>
             </span>
           </div>
 
-          <div className="space-y-2.5 text-xs text-obsidian-800">
+          <div className="space-y-2.5 text-xs text-obsidian-800 dark:text-slate-200">
             <div>
-              <span className="font-bold text-obsidian-950">Why Adopt:</span>
-              <p className="italic text-obsidian-700 mt-0.5 font-medium leading-relaxed">&ldquo;{application.reason}&rdquo;</p>
+              <span className="font-bold text-obsidian-950 dark:text-white">Why Adopt:</span>
+              <p className="italic text-obsidian-700 dark:text-slate-300 mt-0.5 font-medium leading-relaxed">&ldquo;{application.reason}&rdquo;</p>
             </div>
             <div className="grid grid-cols-2 gap-2 pt-1">
               <div>
-                <span className="text-obsidian-400 text-[11px] font-bold">Home Type:</span>
-                <div className="font-extrabold text-obsidian-900">{application.homeType} (Yard: {application.hasYard ? 'Yes ✓' : 'No'})</div>
+                <span className="text-obsidian-400 dark:text-slate-400 text-[11px] font-bold">Home Type:</span>
+                <div className="font-extrabold text-obsidian-900 dark:text-white">{application.homeType} (Yard: {application.hasYard ? 'Yes ✓' : 'No'})</div>
               </div>
               <div>
-                <span className="text-obsidian-400 text-[11px] font-bold">Other Pets:</span>
-                <div className="font-extrabold text-obsidian-900">{application.otherPets}</div>
+                <span className="text-obsidian-400 dark:text-slate-400 text-[11px] font-bold">Other Pets:</span>
+                <div className="font-extrabold text-obsidian-900 dark:text-white">{application.otherPets}</div>
               </div>
             </div>
             <div className="pt-1">
-              <span className="text-obsidian-400 text-[11px] font-bold">Work Routine:</span>
-              <div className="font-bold text-obsidian-900">{application.workSchedule}</div>
+              <span className="text-obsidian-400 dark:text-slate-400 text-[11px] font-bold">Work Routine:</span>
+              <div className="font-bold text-obsidian-900 dark:text-white">{application.workSchedule}</div>
             </div>
           </div>
 
           {application.status === 'submitted' && isOwner && (
-            <div className="pt-3 border-t border-obsidian-200 flex items-center gap-2">
+            <div className="pt-3 border-t border-obsidian-200 dark:border-white/10 flex items-center gap-2">
               <button
                 onClick={() => {
                   playSuccessChime();
@@ -234,7 +234,7 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
                   playPawPop();
                   declineApplication(application.id);
                 }}
-                className="px-4 py-3 rounded-2xl border border-obsidian-300 hover:bg-obsidian-200 text-obsidian-700 font-bold text-xs cursor-pointer"
+                className="px-4 py-3 rounded-2xl border border-obsidian-300 dark:border-white/15 hover:bg-obsidian-200 dark:hover:bg-white/10 text-obsidian-700 dark:text-slate-300 font-bold text-xs cursor-pointer"
               >
                 Decline
               </button>
@@ -243,11 +243,11 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
         </div>
 
         {/* RIGHT: Active Action Step */}
-        <div className="p-5 rounded-3xl bg-gradient-to-br from-coral-50/70 via-white to-amber-50/50 border border-coral-200 flex flex-col justify-between space-y-4">
+        <div className="p-5 rounded-3xl bg-gradient-to-br from-coral-50/70 via-white to-amber-50/50 dark:from-[#151D30] dark:via-[#131B2C] dark:to-[#171F33] border border-coral-200 dark:border-coral-500/30 flex flex-col justify-between space-y-4 shadow-sm">
           
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-black uppercase tracking-wider text-coral-600 flex items-center gap-1.5">
+              <span className="text-xs font-black uppercase tracking-wider text-coral-600 dark:text-coral-400 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Next Immediate Action</span>
               </span>
@@ -256,10 +256,10 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
             {/* Stage 3: Chat */}
             {currentStep === 3 && (
               <div className="space-y-2.5">
-                <h4 className="font-black text-base text-obsidian-950">
+                <h4 className="font-black text-base text-obsidian-950 dark:text-white">
                   Private Chat Unlocked!
                 </h4>
-                <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
+                <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
                   Coordinate directly with the guardian, ask questions, and prepare for the park Meet & Greet.
                 </p>
                 <button
@@ -275,10 +275,10 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
             {/* Stage 4: Meet & Greet */}
             {currentStep === 4 && (
               <div className="space-y-2.5">
-                <h4 className="font-black text-base text-obsidian-950">
+                <h4 className="font-black text-base text-obsidian-950 dark:text-white">
                   Meet & Greet Protocol
                 </h4>
-                <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
+                <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
                   {activeMeet ? `Scheduled for ${activeMeet.date} at ${activeMeet.locationName}.` : 'Schedule a public dog park meetup.'}
                 </p>
                 <div className="flex gap-2">
@@ -291,7 +291,7 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
                   </button>
                   <button
                     onClick={handleOpenChat}
-                    className="px-4 py-3 rounded-2xl border border-obsidian-300 bg-white font-bold text-xs text-obsidian-800 cursor-pointer"
+                    className="px-4 py-3 rounded-2xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-white/10 font-bold text-xs text-obsidian-800 dark:text-white cursor-pointer"
                   >
                     Chat
                   </button>
@@ -302,10 +302,10 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
             {/* Stage 5: Agreement Signing */}
             {currentStep === 5 && (
               <div className="space-y-2.5">
-                <h4 className="font-black text-base text-obsidian-950">
+                <h4 className="font-black text-base text-obsidian-950 dark:text-white">
                   Digital Adoption Agreement
                 </h4>
-                <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
+                <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
                   Review legal welfare terms, vet care commitments, and provide digital signature.
                 </p>
                 <button
@@ -323,24 +323,24 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
             {/* Stage 6: Dual Handover Confirmation */}
             {currentStep === 6 && (
               <div className="space-y-3">
-                <h4 className="font-black text-base text-obsidian-950 flex items-center gap-2">
-                  <HeartHandshake className="w-5 h-5 text-coral-600" />
+                <h4 className="font-black text-base text-obsidian-950 dark:text-white flex items-center gap-2">
+                  <HeartHandshake className="w-5 h-5 text-coral-600 dark:text-coral-400" />
                   <span>Dual Confirmation Handover</span>
                 </h4>
-                <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
+                <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
                   Both original guardian and adopter must click confirm upon physical handover to execute digital ownership transfer.
                 </p>
 
-                <div className="space-y-1.5 text-xs bg-white p-3.5 rounded-2xl border border-coral-200">
-                  <div className="flex items-center justify-between font-bold">
+                <div className="space-y-1.5 text-xs bg-white dark:bg-[#0E1524] p-3.5 rounded-2xl border border-coral-200 dark:border-white/10">
+                  <div className="flex items-center justify-between font-bold text-obsidian-900 dark:text-white">
                     <span>Owner Handover Confirmation:</span>
-                    <span className={handover.ownerConfirmed ? 'text-emerald-600' : 'text-amber-600'}>
+                    <span className={handover.ownerConfirmed ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}>
                       {handover.ownerConfirmed ? 'Confirmed ✓' : 'Pending...'}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between font-bold">
+                  <div className="flex items-center justify-between font-bold text-obsidian-900 dark:text-white">
                     <span>Adopter Received Confirmation:</span>
-                    <span className={handover.adopterConfirmed ? 'text-emerald-600' : 'text-amber-600'}>
+                    <span className={handover.adopterConfirmed ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}>
                       {handover.adopterConfirmed ? 'Confirmed ✓' : 'Pending...'}
                     </span>
                   </div>
@@ -370,10 +370,10 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
             {currentStep >= 7 && (
               <div className="space-y-2 text-center py-2">
                 <div className="text-4xl animate-bounce">🏆✨</div>
-                <h4 className="font-black text-base text-emerald-950">
+                <h4 className="font-black text-base text-emerald-950 dark:text-emerald-300">
                   Official Adoption Completed!
                 </h4>
-                <p className="text-xs text-obsidian-600 font-medium">
+                <p className="text-xs text-obsidian-600 dark:text-slate-300 font-medium">
                   {application.dogName} is now officially registered under {application.applicantName}.
                 </p>
                 <button
@@ -391,8 +391,8 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
 
           </div>
 
-          <div className="text-[11px] text-obsidian-500 pt-2 border-t border-coral-200 flex items-center gap-1.5 font-semibold">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+          <div className="text-[11px] text-obsidian-500 dark:text-slate-400 pt-2 border-t border-coral-200 dark:border-white/10 flex items-center gap-1.5 font-semibold">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>Protected by PawConnect Verified Adoption Registry</span>
           </div>
 

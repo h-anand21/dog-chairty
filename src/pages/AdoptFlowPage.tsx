@@ -27,14 +27,14 @@ export const AdoptFlowPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-bold text-xs mb-1.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 border border-coral-200 dark:border-coral-800/60 font-bold text-xs mb-1.5">
             <HeartHandshake className="w-3.5 h-3.5" />
             <span>Real-Time Adoption Handover Pipeline</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black font-display text-obsidian-900">
+          <h1 className="text-3xl sm:text-4xl font-black font-display text-obsidian-950 dark:text-white">
             Adoption Journey Tracker
           </h1>
-          <p className="text-xs sm:text-sm text-obsidian-600 mt-1">
+          <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-300 mt-1">
             Track applications from questionnaire review to physical dual-confirmation transfer.
           </p>
         </div>
@@ -44,21 +44,21 @@ export const AdoptFlowPage: React.FC = () => {
             playPawPop();
             setActiveTab('discover');
           }}
-          className="flex items-center gap-2 bg-obsidian-900 hover:bg-obsidian-800 text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer"
+          className="flex items-center gap-2 bg-obsidian-900 dark:bg-white/10 hover:bg-obsidian-800 dark:hover:bg-white/20 text-white border border-transparent dark:border-white/15 px-5 py-2.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm"
         >
-          <DogIcon className="w-4 h-4" />
+          <DogIcon className="w-4 h-4 text-coral-400" />
           <span>Browse More Dogs</span>
         </button>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-obsidian-400/40 pb-2">
+      <div className="flex items-center gap-2 border-b border-obsidian-200 dark:border-white/10 pb-2">
         <button
           onClick={() => setActiveFilter('all')}
           className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
             activeFilter === 'all'
               ? 'bg-coral-500 text-white shadow-xs'
-              : 'text-obsidian-600 hover:bg-obsidian-300/60'
+              : 'text-obsidian-600 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
           }`}
         >
           All Applications ({applications.length})
@@ -68,7 +68,7 @@ export const AdoptFlowPage: React.FC = () => {
           className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
             activeFilter === 'my_requests'
               ? 'bg-coral-500 text-white shadow-xs'
-              : 'text-obsidian-600 hover:bg-obsidian-300/60'
+              : 'text-obsidian-600 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
           }`}
         >
           My Submitted Requests
@@ -78,7 +78,7 @@ export const AdoptFlowPage: React.FC = () => {
           className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
             activeFilter === 'incoming_requests'
               ? 'bg-coral-500 text-white shadow-xs'
-              : 'text-obsidian-600 hover:bg-obsidian-300/60'
+              : 'text-obsidian-600 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
           }`}
         >
           Incoming Guardian Requests
@@ -88,15 +88,15 @@ export const AdoptFlowPage: React.FC = () => {
       {/* Applications List */}
       <div className="space-y-6">
         {userApplications.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center border border-obsidian-300 shadow-soft max-w-md mx-auto space-y-4">
+          <div className="glass-card rounded-3xl p-12 text-center border border-white dark:border-white/10 shadow-elevated max-w-md mx-auto space-y-4">
             <div className="text-4xl">🐾📝</div>
-            <h3 className="text-lg font-bold text-obsidian-900">No active adoption requests found</h3>
-            <p className="text-xs text-obsidian-600">
+            <h3 className="text-lg font-bold text-obsidian-950 dark:text-white">No active adoption requests found</h3>
+            <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-normal">
               Browse dogs on the Discover page to submit a verified adoption application or post your dog to receive inquiries.
             </p>
             <button
               onClick={() => setActiveTab('discover')}
-              className="px-6 py-2.5 rounded-full bg-coral-500 text-white font-bold text-xs"
+              className="btn-primary px-6 py-2.5 rounded-full text-white font-bold text-xs shadow-glow-coral cursor-pointer"
             >
               Go to Discover
             </button>

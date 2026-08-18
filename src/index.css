@@ -149,3 +149,37 @@
 .btn-primary:active {
   transform: translateY(0px) scale(0.98);
 }
+
+/* Universal High-Contrast Dark Mode Overrides */
+.dark .text-obsidian-950,
+.dark .text-obsidian-900,
+.dark .text-obsidian-800 {
+  color: #FFFFFF !important;
+}
+
+.dark .text-obsidian-700 {
+  color: #F1F5F9 !important;
+}
+
+.dark .text-obsidian-600 {
+  color: #CBD5E1 !important;
+}
+
+.dark .text-obsidian-500,
+.dark .text-obsidian-400 {
+  color: #94A3B8 !important;
+}
+
+.dark .bg-obsidian-100 {
+  background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+.dark .bg-obsidian-200 {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark .border-obsidian-100,
+.dark .border-obsidian-200,
+.dark .border-obsidian-300 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
