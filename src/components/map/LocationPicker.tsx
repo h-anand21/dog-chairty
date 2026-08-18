@@ -200,11 +200,17 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
       mapInstanceRef.current = map;
       markerRef.current = marker;
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 150);
     } else {
       mapInstanceRef.current.setView([selectedCoords.lat, selectedCoords.lng], 14);
       if (markerRef.current) {
         markerRef.current.setLatLng([selectedCoords.lat, selectedCoords.lng]);
       }
+      setTimeout(() => {
+        mapInstanceRef.current?.invalidateSize();
+      }, 100);
     }
   }, [showMiniMap, selectedCoords]);
 

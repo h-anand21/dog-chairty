@@ -62,17 +62,20 @@ export const PawMap: React.FC<PawMapProps> = ({ dogs, onSelectDog, height = '580
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       mapInstanceRef.current = map;
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 150);
     }
-
-    return () => {
-      // cleanup handled if unmounted
-    };
   }, []);
 
   // Update Markers when dogs change
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
+
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
 
     // Clear old markers
     markersRef.current.forEach(m => m.remove());
