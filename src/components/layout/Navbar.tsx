@@ -334,6 +334,18 @@ export const Navbar: React.FC = () => {
                   <div className="space-y-1">
                     <button
                       onClick={() => {
+                        setShowProfileMenu(false);
+                        playPawPop();
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-coral-50 text-coral-700 text-xs font-black transition-colors cursor-pointer text-left"
+                    >
+                      <UserCheck className="w-4 h-4 text-coral-500" />
+                      <span>Edit Profile & Change Photo ✏️</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
                         handleTabClick('my_dogs');
                         setShowProfileMenu(false);
                       }}

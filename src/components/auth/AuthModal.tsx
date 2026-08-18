@@ -30,10 +30,12 @@ import {
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialStep?: 'phone' | 'otp' | 'profile';
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
+export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialStep = 'phone' }) => {
   const {
+    currentUser,
     allUsers,
     sendOtp,
     verifyOtp,
@@ -43,7 +45,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   const { playSuccessChime, playPawPop } = useAudio();
 
-  const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
+  const [step, setStep] = useState<'phone' | 'otp' | 'profile'>(initialStep);
   const countryCode = '+91';
   const [phoneDigits, setPhoneDigits] = useState('');
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
@@ -59,6 +61,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [bio, setBio] = useState('Loving dog parent seeking a furry companion to give a caring home!');
   const [avatar, setAvatar] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialStep === 'profile' && currentUser) {
+        setStep('profile');
+        setName(currentUser.name || '');
+        setPhoneDigits(currentUser.phone ? currentUser.phone.replace(/\D/g, '').slice(-10) : '');
+        setLocation(currentUser.location || 'Kolkata, Salt Lake');
+        setBio(currentUser.bio || 'Loving dog parent seeking a furry companion to give a caring home!');
+        setAvatar(currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400');
+        setRole(currentUser.role === 'owner' ? 'owner' : 'adopter');
+      } else {
+        setStep('phone');
+      }
+    }
+  }, [isOpen, initialStep, currentUser]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;

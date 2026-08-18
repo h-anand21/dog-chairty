@@ -4,7 +4,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user_sarah',
     name: 'Sarah Jenkins',
-    phone: '+91 98765 43210',
+    phone: '+91 99999 00001',
     email: 'sarah.jenkins@gmail.com',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80',
     role: 'adopter',
@@ -24,7 +24,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user_alex',
     name: 'Alex Rivera',
-    phone: '+91 98300 12345',
+    phone: '+91 99999 00002',
     email: 'alex.rivera@pawconnect.org',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
     role: 'owner',
