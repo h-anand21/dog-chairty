@@ -967,6 +967,58 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           : c
       )
     );
+
+    // 🤖 Intelligent Automated Response from the Dog's Real Guardian / Owner
+    const activeConv = conversations.find(c => c.id === convId);
+    const targetDog = dogs.find(d => d.id === activeConv?.dogId);
+
+    if (targetDog && senderId !== targetDog.currentOwnerId) {
+      setTimeout(() => {
+        let replyText = `Hello ${senderName.split(' ')[0]}! Thank you for your message regarding ${targetDog.name}. They are doing great and are very excited to find a caring home! Let me know if you would like to arrange a park meet & greet! 🐾`;
+
+        const lowerText = text.toLowerCase();
+        if (isDogBark) {
+          replyText = `Haha, ${targetDog.name} heard that bark and is wagging their tail! 🐕✨ Are you interested in meeting them this week?`;
+        } else if (lowerText.includes('vaccin') || lowerText.includes('health') || lowerText.includes('medical') || lowerText.includes('booklet')) {
+          replyText = `Yes! ${targetDog.name} has up-to-date vaccinations, rabies shots, and full veterinary health clearance. I can bring the health passport to our meetup! 💉🩺`;
+        } else if (lowerText.includes('park') || lowerText.includes('meet') || lowerText.includes('weekend') || lowerText.includes('time') || lowerText.includes('schedule')) {
+          replyText = `That sounds great! We can easily meet at a nearby pet-friendly park around 5:00 PM. Please click the "Park Meetup" button at the top to confirm the time and place! 🌳🐾`;
+        } else if (lowerText.includes('food') || lowerText.includes('treat') || lowerText.includes('diet') || lowerText.includes('eat')) {
+          replyText = `${targetDog.name} loves healthy kibbles, boiled chicken, and crunchy treats (favorite items: ${targetDog.favoriteThings.slice(0, 3).join(', ')}). 🍗🎾`;
+        } else if (lowerText.includes('routine') || lowerText.includes('friendly') || lowerText.includes('kid') || lowerText.includes('child') || lowerText.includes('cat')) {
+          replyText = `${targetDog.name} is extremely friendly, house-trained, and gets along wonderfully with families, kids, and gentle pets! 🐶❤️`;
+        }
+
+        const replyMsg: ChatMessage = {
+          id: `msg_reply_${Date.now()}`,
+          conversationId: convId,
+          senderId: targetDog.currentOwnerId,
+          senderName: targetDog.currentOwnerName || 'Dog Guardian',
+          senderAvatar: targetDog.currentOwnerAvatar || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400',
+          recipientId: senderId,
+          text: replyText,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          read: true
+        };
+
+        setMessages(prev => ({
+          ...prev,
+          [convId]: [...(prev[convId] || []), replyMsg]
+        }));
+
+        setConversations(prev =>
+          prev.map(c =>
+            c.id === convId
+              ? {
+                  ...c,
+                  lastMessage: replyText,
+                  lastMessageTimestamp: 'Just now'
+                }
+              : c
+          )
+        );
+      }, 1200);
+    }
   };
 
   const openChatForDog = (dog: Dog, initialMessage?: string) => {

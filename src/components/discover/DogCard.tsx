@@ -155,15 +155,16 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
             <div className="flex items-center gap-1.5 shrink-0">
               <button
                 onClick={handleChatClick}
-                className="w-8 h-8 rounded-full bg-obsidian-100 dark:bg-white/5 hover:bg-coral-50 dark:hover:bg-coral-950/50 text-obsidian-700 dark:text-obsidian-300 hover:text-coral-600 border border-obsidian-200 dark:border-white/10 hover:border-coral-300 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
-                title={`Chat with ${dog.currentOwnerName} about ${dog.name}`}
+                className="bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-500 text-sky-700 dark:text-sky-300 hover:text-white border border-sky-200 dark:border-sky-800/80 hover:border-sky-500 px-3 py-1.5 rounded-full text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                title={`Chat directly with ${dog.currentOwnerName} about ${dog.name}`}
               >
                 <MessageSquare className="w-3.5 h-3.5" />
+                <span>Chat</span>
               </button>
 
               <button
                 onClick={handleAdoptClick}
-                className="bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-500 text-coral-600 dark:text-coral-300 hover:text-white border border-coral-200 dark:border-coral-800/80 hover:border-coral-500 px-3.5 py-2 rounded-full text-xs font-black transition-all shrink-0 hover:shadow-glow-coral flex items-center gap-1 cursor-pointer"
+                className="bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-500 text-coral-600 dark:text-coral-300 hover:text-white border border-coral-200 dark:border-coral-800/80 hover:border-coral-500 px-3.5 py-1.5 rounded-full text-xs font-black transition-all shrink-0 hover:shadow-glow-coral flex items-center gap-1 cursor-pointer"
               >
                 <span>Adopt</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />

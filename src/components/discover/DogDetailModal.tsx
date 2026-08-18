@@ -364,7 +364,7 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
 
                     <button
                       onClick={handleMessageGuardian}
-                      className="sm:col-span-4 bg-obsidian-100 hover:bg-obsidian-200 text-obsidian-900 border border-obsidian-300 py-4 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs"
+                      className="sm:col-span-4 bg-obsidian-100 dark:bg-white/10 hover:bg-obsidian-200 dark:hover:bg-white/20 text-obsidian-900 dark:text-white border border-obsidian-300 dark:border-white/15 py-4 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs"
                     >
                       <MessageSquare className="w-4 h-4 text-coral-500" />
                       <span>Message Guardian</span>
