@@ -76,7 +76,7 @@ export const AdoptionApplicationModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-obsidian-950/80 backdrop-blur-xl overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white rounded-5xl shadow-2xl border border-obsidian-200 my-6 p-6 sm:p-10 animate-in fade-in zoom-in-95 duration-200 text-left">
+      <div className="relative w-full max-w-2xl bg-white dark:bg-[#0E1524] rounded-5xl shadow-2xl border border-obsidian-200 dark:border-white/10 my-6 p-6 sm:p-10 animate-in fade-in zoom-in-95 duration-200 text-left">
         
         {/* Close Button */}
         <button

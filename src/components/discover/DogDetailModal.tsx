@@ -79,7 +79,7 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-obsidian-950/80 backdrop-blur-xl overflow-y-auto">
-      <div className="relative w-full max-w-5xl bg-white rounded-5xl shadow-2xl border border-obsidian-200 my-6 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-5xl bg-white dark:bg-[#0E1524] rounded-5xl shadow-2xl border border-obsidian-200 dark:border-white/10 my-6 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Close Button */}
         <button

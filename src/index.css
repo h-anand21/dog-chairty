@@ -183,3 +183,11 @@
 .dark .border-obsidian-300 {
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
+
+.dark .bg-white {
+  background-color: #101726 !important;
+}
+
+.dark .bg-obsidian-50 {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}

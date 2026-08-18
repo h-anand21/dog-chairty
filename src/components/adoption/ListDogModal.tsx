@@ -107,7 +107,7 @@ export const ListDogModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian-900/70 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white rounded-4xl p-6 sm:p-8 shadow-2xl border border-obsidian-300 my-8 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl bg-white dark:bg-[#0E1524] rounded-4xl p-6 sm:p-8 shadow-2xl border border-obsidian-200 dark:border-white/10 my-8 animate-in fade-in zoom-in-95 duration-200 text-left">
         
         {/* Close Button */}
         <button
