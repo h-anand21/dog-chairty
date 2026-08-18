@@ -155,20 +155,20 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
           {/* Main Headline & Story */}
           <div className="text-center space-y-5 max-w-3xl mx-auto">
             
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-obsidian-900 font-extrabold text-xs tracking-wider uppercase shadow-xs">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-obsidian-900 dark:text-white font-extrabold text-xs tracking-wider uppercase shadow-xs">
               <span className="text-base">🐾</span>
               <span>100% Direct Pet Guardian Adoption Across India</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black font-display tracking-tight text-obsidian-950 leading-[1.08]">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black font-display tracking-tight text-obsidian-950 dark:text-white leading-[1.08]">
               Find Your Canine Friend. <br />
               <span className="text-gradient-coral">
                 Give a Loving Forever Home.
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-obsidian-600 max-w-2xl mx-auto leading-relaxed font-normal">
+            <p className="text-base sm:text-lg text-obsidian-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed font-normal">
               Direct connection between pet parents and loving adopters. Verified vet clearances, interactive map pins, direct private chat, park meetups, and digital legal handovers.
             </p>
 
@@ -390,7 +390,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 playPawPop();
                 setIsListDogOpen(true);
               }}
-              className="px-5 py-2.5 rounded-2xl bg-coral-50 hover:bg-coral-100 text-coral-700 font-black text-xs border border-coral-200 flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-5 py-2.5 rounded-2xl bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-100 dark:hover:bg-coral-900/60 text-coral-700 dark:text-coral-300 font-black text-xs border border-coral-200 dark:border-coral-800/60 flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Post Dog</span>
@@ -414,10 +414,10 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
         {viewMode === 'grid' && (
           <>
             {filteredDogs.length === 0 ? (
-              <div className="glass-card rounded-4xl p-16 text-center border border-white shadow-card max-w-md mx-auto space-y-4">
+              <div className="glass-card rounded-4xl p-16 text-center border border-white dark:border-white/10 shadow-card max-w-md mx-auto space-y-4">
                 <div className="text-5xl animate-bounce">🐶🔍</div>
-                <h3 className="text-xl font-black font-display text-obsidian-950">No pups match this filter</h3>
-                <p className="text-xs text-obsidian-600 leading-relaxed font-medium">
+                <h3 className="text-xl font-black font-display text-obsidian-950 dark:text-white">No pups match this filter</h3>
+                <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
                   Try resetting your filters or search keywords to see all available furry companions.
                 </p>
                 <button
@@ -451,23 +451,23 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
       {/* 🎉 4. HAPPY TAILS & SUCCESS STORIES */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="glass-card rounded-5xl p-6 sm:p-12 border border-white shadow-elevated space-y-8 text-left">
+        <div className="glass-card rounded-5xl p-6 sm:p-12 border border-white dark:border-white/10 shadow-elevated space-y-8 text-left">
           
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-black text-xs uppercase tracking-wider mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-black text-xs uppercase tracking-wider mb-2 border border-emerald-200 dark:border-emerald-800/60">
                 <Smile className="w-3.5 h-3.5" />
                 <span>Happy Tails</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-black font-display text-obsidian-950">
+              <h2 className="text-3xl sm:text-4xl font-black font-display text-obsidian-950 dark:text-white">
                 Recent Adoption Success Stories 🎉
               </h2>
-              <p className="text-xs sm:text-sm text-obsidian-600 mt-1">
+              <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-300 mt-1">
                 Real dogs and families united through PawConnect&apos;s verified handover system.
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-black text-obsidian-700">
+            <div className="flex items-center gap-2 text-xs font-black text-obsidian-700 dark:text-slate-300">
               <Award className="w-4 h-4 text-amber-500" />
               <span>100% Genuine Handover Verified</span>
             </div>
@@ -477,10 +477,10 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
             {successStories.map(story => (
               <div
                 key={story.id}
-                className="bg-white rounded-3xl p-6 border border-obsidian-200 shadow-sm flex flex-col justify-between space-y-4 relative hover:shadow-card transition-all"
+                className="bg-white dark:bg-[#121A2B] rounded-3xl p-6 border border-obsidian-200 dark:border-white/10 shadow-sm flex flex-col justify-between space-y-4 relative hover:shadow-card transition-all"
               >
                 <div className="space-y-4">
-                  <div className="relative h-48 rounded-2xl overflow-hidden bg-obsidian-100">
+                  <div className="relative h-48 rounded-2xl overflow-hidden bg-obsidian-100 dark:bg-white/5">
                     <img
                       src={story.image}
                       alt={story.dogName}
@@ -492,22 +492,22 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                   </div>
 
                   <div>
-                    <h3 className="text-base font-black text-obsidian-950">
+                    <h3 className="text-base font-black text-obsidian-950 dark:text-white">
                       {story.dogName}
                     </h3>
-                    <p className="text-xs font-semibold text-obsidian-500">
-                      Adopted by <strong className="text-obsidian-900">{story.adoptedBy}</strong> • {story.location}
+                    <p className="text-xs font-semibold text-obsidian-500 dark:text-slate-400">
+                      Adopted by <strong className="text-obsidian-900 dark:text-white">{story.adoptedBy}</strong> • {story.location}
                     </p>
                   </div>
 
-                  <p className="text-xs text-obsidian-700 leading-relaxed italic font-normal">
+                  <p className="text-xs text-obsidian-700 dark:text-slate-300 leading-relaxed italic font-normal">
                     &ldquo;{story.quote}&rdquo;
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-obsidian-200 flex items-center justify-between text-[11px] font-bold text-obsidian-500">
+                <div className="pt-3 border-t border-obsidian-200 dark:border-white/10 flex items-center justify-between text-[11px] font-bold text-obsidian-500 dark:text-slate-400">
                   <span>{story.date}</span>
-                  <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">
+                  <span className="text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-lg border border-amber-200 dark:border-amber-800/60">
                     {story.badge.split(' ')[0]} {story.badge.split(' ')[1]}
                   </span>
                 </div>
