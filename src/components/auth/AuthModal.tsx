@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { useAudio } from '../../context/AudioContext';
 import { smsGatewayService, SmsProviderType } from '../../services/smsGatewayService';
 import { firebaseAuthService } from '../../services/firebaseAuthService';
+import { mapService } from '../../services/mapService';
 import { LocationPicker } from '../map/LocationPicker';
 import {
   X,
@@ -57,10 +58,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
   // New Profile Data for Indian Cities
   const [name, setName] = useState('');
   const [role, setRole] = useState<'owner' | 'adopter'>('adopter');
-  const [location, setLocation] = useState('Kolkata, Salt Lake');
+  const [location, setLocation] = useState('');
   const [bio, setBio] = useState('Loving dog parent seeking a furry companion to give a caring home!');
   const [avatar, setAvatar] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const fetchLiveLocation = async () => {
+    try {
+      const loc = await mapService.getUserLocation();
+      if (loc && loc.displayName) {
+        setLocation(loc.displayName);
+      }
+    } catch (e) {
+      console.warn('Could not auto-fetch live location:', e);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -69,12 +81,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
         setStep('profile');
         setName(currentUser.name || '');
         setPhoneDigits(currentUser.phone ? currentUser.phone.replace(/\D/g, '').slice(-10) : '');
-        setLocation(currentUser.location || 'Kolkata, Salt Lake');
         setBio(currentUser.bio || 'Loving dog parent seeking a furry companion to give a caring home!');
         setAvatar(currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400');
         setRole(currentUser.role === 'owner' ? 'owner' : 'adopter');
+        if (currentUser.location && currentUser.location !== 'Kolkata, Salt Lake' && currentUser.location !== 'India') {
+          setLocation(currentUser.location);
+        } else {
+          fetchLiveLocation();
+        }
       } else {
         setStep('phone');
+        fetchLiveLocation();
       }
     }
   }, [isOpen, currentUser]);

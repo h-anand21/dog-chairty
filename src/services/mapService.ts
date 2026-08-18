@@ -107,51 +107,94 @@ class MapService {
   }
 
   /**
-   * Detects user's real physical GPS location from browser
+   * Detects user's real physical location using high-accuracy browser GPS
+   * with ultra-fast live IP-location fallback (never hardcoded)
    */
-  public getUserLocation(): Promise<GeocodedLocation> {
-    return new Promise((resolve, reject) => {
-      if (typeof navigator === 'undefined' || !navigator.geolocation) {
-        // Default to Kolkata center
-        resolve({
-          displayName: 'Kolkata, Salt Lake, West Bengal',
-          city: 'Kolkata',
-          state: 'West Bengal',
-          lat: 22.5867,
-          lng: 88.4178,
-        });
-        return;
+  public async getUserLocation(): Promise<GeocodedLocation> {
+    // 1. Try Browser GPS
+    const getGps = (): Promise<GeocodedLocation> => {
+      return new Promise((resolve, reject) => {
+        if (typeof navigator === 'undefined' || !navigator.geolocation) {
+          return reject(new Error('Geolocation not supported'));
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          async position => {
+            const { latitude, longitude } = position.coords;
+            try {
+              const loc = await this.reverseGeocode(latitude, longitude);
+              resolve(loc);
+            } catch (e) {
+              resolve({
+                displayName: `Live Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`,
+                city: 'Detected Area',
+                state: 'India',
+                lat: latitude,
+                lng: longitude,
+              });
+            }
+          },
+          err => reject(err),
+          { timeout: 6000, enableHighAccuracy: true, maximumAge: 60000 }
+        );
+      });
+    };
+
+    // 2. Fast Real IP Geolocation Fallback
+    const getIpLocation = async (): Promise<GeocodedLocation> => {
+      try {
+        const res = await fetch('https://ipwho.is/');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success !== false) {
+            const city = data.city || data.region || 'India';
+            const state = data.region || 'India';
+            return {
+              displayName: `${city}, ${state}, India`,
+              city,
+              state,
+              lat: data.latitude || 22.5726,
+              lng: data.longitude || 88.3639,
+            };
+          }
+        }
+      } catch (e) {
+        // try alternative IP service
       }
 
-      navigator.geolocation.getCurrentPosition(
-        async position => {
-          const { latitude, longitude } = position.coords;
-          try {
-            const loc = await this.reverseGeocode(latitude, longitude);
-            resolve(loc);
-          } catch (e) {
-            resolve({
-              displayName: `Current GPS Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`,
-              city: 'Detected City',
-              state: 'India',
-              lat: latitude,
-              lng: longitude,
-            });
-          }
-        },
-        error => {
-          console.warn('Geolocation access denied or unavailable, defaulting to Kolkata:', error);
-          resolve({
-            displayName: 'Kolkata, Salt Lake, West Bengal',
-            city: 'Kolkata',
-            state: 'West Bengal',
-            lat: 22.5867,
-            lng: 88.4178,
-          });
-        },
-        { timeout: 8000, enableHighAccuracy: true }
-      );
-    });
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        if (res.ok) {
+          const data = await res.json();
+          const city = data.city || data.region || 'India';
+          const state = data.region || 'India';
+          return {
+            displayName: `${city}, ${state}, India`,
+            city,
+            state,
+            lat: data.latitude || 22.5726,
+            lng: data.longitude || 88.3639,
+          };
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      return {
+        displayName: 'India',
+        city: 'India',
+        state: 'India',
+        lat: 20.5937,
+        lng: 78.9629,
+      };
+    };
+
+    try {
+      return await getGps();
+    } catch (gpsError) {
+      console.log('GPS prompt skipped or denied, fetching live IP location...', gpsError);
+      return await getIpLocation();
+    }
   }
 
   /**

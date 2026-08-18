@@ -547,7 +547,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       name: `Pet Lover (${cleanInput.slice(-4)})`,
       phone: phone,
       role: 'adopter',
-      location: 'Kolkata, Salt Lake',
+      location: '',
       bio: 'Loving dog guardian and verified pet adopter.',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
       isVerified: true,
