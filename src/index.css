@@ -191,3 +191,23 @@
 .dark .bg-obsidian-50 {
   background-color: rgba(255, 255, 255, 0.04) !important;
 }
+
+/* Universal Form Controls Dark Overrides */
+.dark select {
+  background-color: #121A2B !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark select option {
+  background-color: #121A2B !important;
+  color: #FFFFFF !important;
+}
+
+.dark input[type="text"],
+.dark input[type="number"],
+.dark input[type="email"],
+.dark input[type="tel"],
+.dark textarea {
+  color: #FFFFFF !important;
+}

@@ -114,7 +114,7 @@ export const ChatView: React.FC = () => {
             <img
               src={activeConv.dogAvatar}
               alt={activeConv.dogName}
-              className="w-13 h-13 rounded-2xl object-cover ring-2 ring-coral-400 shadow-sm"
+              className="w-12 h-12 rounded-2xl object-cover ring-2 ring-coral-400 shadow-sm"
             />
             <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-obsidian-900 rounded-full ring-1 ring-emerald-200" />
           </div>

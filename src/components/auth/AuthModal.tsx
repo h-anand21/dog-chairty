@@ -486,103 +486,37 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
           </div>
         )}
 
-        {/* STEP 3: NEW USER PROFILE ONBOARDING */}
+        {/* STEP 3: USER PROFILE SETUP & EDIT */}
         {step === 'profile' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 font-black text-[11px] mb-2 border border-coral-200 dark:border-coral-800/60">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-black text-[11px] mb-2 border border-emerald-200 dark:border-emerald-800/60">
                 <UserCheck className="w-3.5 h-3.5" />
-                <span>Verified Mobile Account</span>
+                <span>Verified Mobile: +91 {phoneDigits || (currentUser?.phone ? currentUser.phone.replace(/\D/g, '').slice(-10) : '')}</span>
               </div>
-              <h2 className="text-2xl font-black font-display text-obsidian-950 dark:text-white">
-                Complete Your Profile 🐶
+              <h2 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950 dark:text-white">
+                {currentUser ? 'Edit Profile & Photo ✏️' : 'Set Up Your Profile 🐶'}
               </h2>
               <p className="text-xs text-obsidian-600 dark:text-slate-300 mt-1 leading-relaxed">
-                Mobile <strong className="text-obsidian-950 dark:text-white">+91 {phoneDigits}</strong> verified! Tell the community a bit about yourself.
+                {currentUser ? 'Update your name, avatar, bio and city location.' : 'Your mobile number is verified! Personalize your community profile.'}
               </p>
             </div>
 
-            <form onSubmit={handleCompleteProfile} className="space-y-3.5 text-left">
-              {/* Full Name */}
-              <div>
-                <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  autoFocus
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  placeholder="e.g. Anand Kumar"
-                  className="w-full px-4 py-3 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/15 focus:bg-white dark:focus:bg-[#121A2B] focus:border-coral-500 text-xs font-extrabold outline-hidden shadow-inner text-obsidian-900 dark:text-white"
-                />
-              </div>
-
-              {/* Account Purpose */}
-              <div>
-                <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1">
-                  I Want To:
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setRole('adopter')}
-                    className={`p-3 rounded-2xl border text-left text-xs font-extrabold transition-all cursor-pointer ${
-                      role === 'adopter'
-                        ? 'border-coral-500 bg-coral-50 dark:bg-coral-950/60 text-coral-700 dark:text-coral-300 shadow-xs'
-                        : 'border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <Heart className="w-3.5 h-3.5 text-coral-500" />
-                      <span>Adopt a Dog</span>
-                    </div>
-                    <div className="font-normal text-[10px] text-obsidian-500 dark:text-slate-400 mt-0.5">Looking for a companion</div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setRole('owner')}
-                    className={`p-3 rounded-2xl border text-left text-xs font-extrabold transition-all cursor-pointer ${
-                      role === 'owner'
-                        ? 'border-coral-500 bg-coral-50 dark:bg-coral-950/60 text-coral-700 dark:text-coral-300 shadow-xs'
-                        : 'border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <DogIcon className="w-3.5 h-3.5 text-coral-500" />
-                      <span>Rehome a Dog</span>
-                    </div>
-                    <div className="font-normal text-[10px] text-obsidian-500 dark:text-slate-400 mt-0.5">List dog for adoption</div>
-                  </button>
-                </div>
-              </div>
-
-              {/* City / Area in India */}
-              <div>
-                <LocationPicker
-                  value={location}
-                  onChange={loc => {
-                    setLocation(loc.displayName);
-                  }}
-                  label="City / Location in India *"
-                  placeholder="Search your city or locality..."
-                />
-              </div>
-
-              {/* Enhanced Profile Photo Selection & Upload */}
-              <div className="p-3.5 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10 space-y-3">
+            <form onSubmit={handleCompleteProfile} className="space-y-4 text-left">
+              
+              {/* 📸 Enhanced Profile Photo Selection & Device Upload */}
+              <div className="p-4 rounded-3xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10 space-y-3.5">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider">
-                    Profile Photo
-                  </label>
+                  <span className="text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                    <Camera className="w-3.5 h-3.5 text-coral-500" />
+                    <span>Choose Profile Photo</span>
+                  </span>
                   
                   {/* Upload Custom Photo Button */}
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="inline-flex items-center gap-1 text-[11px] font-bold text-coral-600 dark:text-coral-400 hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-500/10 dark:bg-coral-500/20 text-[11px] font-extrabold text-coral-600 dark:text-coral-300 hover:bg-coral-500/20 transition-colors border border-coral-200 dark:border-coral-500/30 cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
                     <span>Upload from Device</span>
@@ -596,28 +530,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
                   />
                 </div>
 
-                {/* Main Avatar Preview + Grid */}
-                <div className="flex items-center gap-3.5">
+                {/* Main Avatar Preview + Avatars List */}
+                <div className="flex items-center gap-4">
                   {/* Selected Preview */}
-                  <div className="relative shrink-0">
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="relative shrink-0 cursor-pointer group"
+                    title="Click to upload custom photo"
+                  >
                     <img
                       src={avatar}
                       alt="Selected Profile"
-                      className="w-14 h-14 rounded-2xl object-cover ring-2 ring-coral-500 shadow-md"
+                      className="w-16 h-16 rounded-2xl object-cover ring-3 ring-coral-500 dark:ring-coral-400 shadow-md group-hover:opacity-90 transition-opacity"
                     />
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-coral-500 text-white flex items-center justify-center shadow-xs cursor-pointer hover:scale-110 transition-transform"
-                      title="Upload custom photo"
-                    >
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-coral-500 text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform ring-2 ring-white dark:ring-[#0C1220]">
                       <Camera className="w-3 h-3" />
-                    </button>
+                    </div>
                   </div>
 
-                  {/* Curated Avatars Carousel/Grid */}
-                  <div className="flex-1 overflow-x-auto pb-1">
-                    <div className="flex items-center gap-2">
+                  {/* Curated Avatars Horizontal Carousel */}
+                  <div className="flex-1 overflow-x-auto pb-1 no-scrollbar">
+                    <div className="flex items-center gap-2.5">
                       {sampleAvatars.map((item, i) => {
                         const isSelected = avatar === item.url;
                         return (
@@ -625,17 +558,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
                             key={i}
                             onClick={() => setAvatar(item.url)}
                             className={`relative shrink-0 cursor-pointer transition-all rounded-full p-0.5 ${
-                              isSelected ? 'ring-2 ring-coral-500 scale-105' : 'opacity-60 hover:opacity-100'
+                              isSelected ? 'ring-2 ring-coral-500 scale-110' : 'opacity-60 hover:opacity-100 hover:scale-105'
                             }`}
                             title={item.label}
                           >
                             <img
                               src={item.url}
                               alt={item.label}
-                              className="w-9 h-9 rounded-full object-cover shadow-xs"
+                              className="w-10 h-10 rounded-full object-cover shadow-xs"
                             />
                             {isSelected && (
-                              <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-coral-500 text-white flex items-center justify-center text-[8px] ring-1 ring-white">
+                              <div className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-coral-500 text-white flex items-center justify-center text-[9px] font-black ring-1 ring-white dark:ring-[#0C1220]">
                                 <Check className="w-2.5 h-2.5 stroke-[3]" />
                               </div>
                             )}
@@ -647,17 +580,99 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
                 </div>
               </div>
 
+              {/* Full Name */}
+              <div>
+                <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1.5">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="e.g. Anand Kumar"
+                  className="w-full px-4 py-3 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/15 focus:bg-white dark:focus:bg-[#121A2B] focus:border-coral-500 focus:ring-4 focus:ring-coral-100 dark:focus:ring-coral-500/20 text-xs sm:text-sm font-extrabold outline-hidden shadow-inner text-obsidian-900 dark:text-white transition-all"
+                />
+              </div>
+
+              {/* Account Purpose / Role */}
+              <div>
+                <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1.5">
+                  Your Primary Intent:
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPawPop();
+                      setRole('adopter');
+                    }}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      role === 'adopter'
+                        ? 'border-coral-500 bg-coral-500/15 dark:bg-coral-500/20 text-obsidian-950 dark:text-white ring-2 ring-coral-500/50 shadow-md'
+                        : 'border-obsidian-200 dark:border-white/10 bg-obsidian-100/60 dark:bg-white/5 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 font-black text-xs">
+                      <Heart className={`w-4 h-4 shrink-0 ${role === 'adopter' ? 'text-coral-500 fill-coral-500' : 'text-obsidian-400 dark:text-slate-400'}`} />
+                      <span className={role === 'adopter' ? 'text-coral-600 dark:text-coral-300 font-black' : 'text-obsidian-900 dark:text-white font-extrabold'}>
+                        Adopt a Dog
+                      </span>
+                    </div>
+                    <div className="font-medium text-[10px] text-obsidian-600 dark:text-slate-300 mt-1 leading-normal">
+                      Looking to give a caring home
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPawPop();
+                      setRole('owner');
+                    }}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      role === 'owner'
+                        ? 'border-coral-500 bg-coral-500/15 dark:bg-coral-500/20 text-obsidian-950 dark:text-white ring-2 ring-coral-500/50 shadow-md'
+                        : 'border-obsidian-200 dark:border-white/10 bg-obsidian-100/60 dark:bg-white/5 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 font-black text-xs">
+                      <DogIcon className={`w-4 h-4 shrink-0 ${role === 'owner' ? 'text-coral-500' : 'text-obsidian-400 dark:text-slate-400'}`} />
+                      <span className={role === 'owner' ? 'text-coral-600 dark:text-coral-300 font-black' : 'text-obsidian-900 dark:text-white font-extrabold'}>
+                        Rehome / Guardian
+                      </span>
+                    </div>
+                    <div className="font-medium text-[10px] text-obsidian-600 dark:text-slate-300 mt-1 leading-normal">
+                      List dog for safe adoption
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* City / Area in India */}
+              <div>
+                <LocationPicker
+                  value={location}
+                  onChange={loc => {
+                    setLocation(loc.displayName);
+                  }}
+                  label="City / Location in India *"
+                  placeholder="Type your Indian city or area (e.g. Patna, Delhi, Mumbai)..."
+                />
+              </div>
+
               {/* Short Bio */}
               <div>
-                <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1">
+                <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1.5">
                   Bio / About You
                 </label>
                 <textarea
                   rows={2}
                   value={bio}
                   onChange={e => setBio(e.target.value)}
-                  placeholder="Tell other dog parents about yourself..."
-                  className="w-full px-4 py-2.5 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/15 focus:bg-white dark:focus:bg-[#121A2B] focus:border-coral-500 text-xs font-medium outline-hidden shadow-inner text-obsidian-900 dark:text-white resize-none"
+                  placeholder="Tell other dog parents and adopters a little about yourself..."
+                  className="w-full px-4 py-2.5 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/15 focus:bg-white dark:focus:bg-[#121A2B] focus:border-coral-500 focus:ring-4 focus:ring-coral-100 dark:focus:ring-coral-500/20 text-xs font-medium outline-hidden shadow-inner text-obsidian-900 dark:text-white resize-none transition-all"
                 />
               </div>
 
@@ -671,7 +686,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
                 type="submit"
                 className="w-full btn-primary text-white py-3.5 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] transition-transform"
               >
-                <span>Complete Profile & Enter PawConnect 🎉</span>
+                <span>{currentUser ? 'Save & Update Profile ✨' : 'Complete Profile & Enter PawConnect 🎉'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>

@@ -93,7 +93,7 @@ export const ChatPage: React.FC = () => {
                       <img
                         src={conv.dogAvatar}
                         alt={conv.dogName}
-                        className="w-13 h-13 rounded-2xl object-cover ring-2 ring-coral-300 shadow-2xs"
+                        className="w-12 h-12 rounded-2xl object-cover ring-2 ring-coral-300 shadow-2xs"
                       />
                       <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-obsidian-900 rounded-full" />
                     </div>

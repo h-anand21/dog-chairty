@@ -286,45 +286,63 @@ export const Navbar: React.FC = () => {
                   setShowProfileMenu(!showProfileMenu);
                   setShowNotifMenu(false);
                 }}
-                className="flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-full bg-white/90 border border-obsidian-300 hover:border-coral-400 transition-all shadow-xs cursor-pointer"
+                className="flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-full bg-white/90 dark:bg-[#121A2B] border border-obsidian-200 dark:border-white/15 hover:border-coral-400 dark:hover:border-coral-500 transition-all shadow-xs cursor-pointer"
               >
                 <img
                   src={currentUser.avatar}
                   alt={currentUser.name}
-                  className="w-8 h-8 rounded-full object-cover ring-2 ring-coral-400"
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-coral-400 dark:ring-coral-500 shadow-xs"
                 />
                 <div className="hidden sm:block text-left">
-                  <div className="text-xs font-extrabold text-obsidian-950 leading-none truncate max-w-[110px] flex items-center gap-1">
+                  <div className="text-xs font-extrabold text-obsidian-950 dark:text-white leading-none truncate max-w-[110px] flex items-center gap-1">
                     {currentUser.name.split(' ')[0]}
                     {currentUser.isVerified && <UserCheck className="w-3 h-3 text-emerald-500" />}
                   </div>
-                  <div className="text-[9px] font-bold text-coral-600 capitalize truncate mt-0.5">
+                  <div className="text-[9px] font-bold text-coral-600 dark:text-coral-400 capitalize truncate mt-0.5">
                     {currentUser.phone}
                   </div>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-obsidian-500" />
+                <ChevronDown className={`w-3.5 h-3.5 text-obsidian-500 dark:text-slate-400 transition-transform ${showProfileMenu ? 'rotate-180 text-coral-500' : ''}`} />
               </button>
 
               {/* Profile Dropdown Drawer */}
               {showProfileMenu && (
-                <div className="absolute right-0 mt-3 w-80 glass-dropdown rounded-3xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150 text-left space-y-3">
+                <div className="absolute right-0 mt-3 w-84 glass-dropdown rounded-3xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150 text-left space-y-3 shadow-2xl border border-white/80 dark:border-white/15">
                   
-                  {/* Active User Card */}
-                  <div className="p-3.5 bg-coral-50/80 rounded-2xl border border-coral-200">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={currentUser.avatar}
-                        alt=""
-                        className="w-12 h-12 rounded-2xl object-cover ring-2 ring-coral-400 shadow-xs"
-                      />
-                      <div>
-                        <div className="text-sm font-black text-obsidian-950 flex items-center gap-1">
-                          {currentUser.name}
-                          {currentUser.isVerified && <UserCheck className="w-3.5 h-3.5 text-emerald-600" />}
+                  {/* Active User Card Header */}
+                  <div className="p-4 bg-gradient-to-br from-coral-50/90 via-amber-50/40 to-white dark:from-[#172238] dark:via-[#131B2C] dark:to-[#101726] rounded-2xl border border-coral-200/80 dark:border-coral-500/30 shadow-xs">
+                    <div className="flex items-center gap-3.5">
+                      <div className="relative shrink-0">
+                        <div className="w-14 h-14 rounded-2xl overflow-hidden ring-2 ring-coral-400 dark:ring-coral-500 shadow-md bg-obsidian-200">
+                          <img
+                            src={currentUser.avatar}
+                            alt={currentUser.name}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
-                        <div className="text-xs font-semibold text-coral-700">{currentUser.phone}</div>
-                        <div className="text-[10px] text-obsidian-500 mt-0.5 capitalize">
-                          {currentUser.role === 'owner' ? '🐾 Dog Guardian' : '❤️ Adopter'}
+                        <span className="absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[9px] font-black ring-2 ring-white dark:ring-[#101726]" title="Verified Active Account">
+                          ✓
+                        </span>
+                      </div>
+                      
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-black text-obsidian-950 dark:text-white truncate flex items-center gap-1.5">
+                          <span>{currentUser.name}</span>
+                          {currentUser.isVerified && <UserCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />}
+                        </div>
+                        
+                        <div className="text-xs font-bold text-coral-600 dark:text-coral-400 truncate mt-0.5 flex items-center gap-1">
+                          <Phone className="w-3 h-3 shrink-0" />
+                          <span>{currentUser.phone}</span>
+                        </div>
+                        
+                        <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+                          <span className="px-2 py-0.5 rounded-full bg-coral-500/10 dark:bg-coral-500/20 text-coral-600 dark:text-coral-300 text-[10px] font-black border border-coral-200 dark:border-coral-500/30 capitalize">
+                            {currentUser.role === 'owner' ? '🐾 Dog Guardian' : '❤️ Pet Adopter'}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 text-[10px] font-black border border-emerald-200 dark:border-emerald-500/30">
+                            🇮🇳 Verified
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -338,9 +356,9 @@ export const Navbar: React.FC = () => {
                         playPawPop();
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-coral-50 text-coral-700 text-xs font-black transition-colors cursor-pointer text-left"
+                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl bg-coral-500/15 dark:bg-coral-500/20 hover:bg-coral-500/25 dark:hover:bg-coral-500/30 text-coral-600 dark:text-coral-300 border border-coral-400/30 dark:border-coral-500/40 text-xs font-black transition-all cursor-pointer text-left shadow-xs"
                     >
-                      <UserCheck className="w-4 h-4 text-coral-500" />
+                      <UserCheck className="w-4 h-4 text-coral-500 shrink-0" />
                       <span>Edit Profile & Change Photo ✏️</span>
                     </button>
 
@@ -349,9 +367,9 @@ export const Navbar: React.FC = () => {
                         handleTabClick('my_dogs');
                         setShowProfileMenu(false);
                       }}
-                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-obsidian-100 text-obsidian-800 text-xs font-extrabold transition-colors cursor-pointer text-left"
+                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-900 dark:text-white text-xs font-extrabold transition-colors cursor-pointer text-left"
                     >
-                      <DogIcon className="w-4 h-4 text-coral-500" />
+                      <DogIcon className="w-4 h-4 text-coral-500 shrink-0" />
                       <span>My Dogs & Certificates</span>
                     </button>
 
@@ -360,42 +378,42 @@ export const Navbar: React.FC = () => {
                         handleTabClick('admin');
                         setShowProfileMenu(false);
                       }}
-                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-obsidian-100 text-obsidian-800 text-xs font-extrabold transition-colors cursor-pointer text-left"
+                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-900 dark:text-white text-xs font-extrabold transition-colors cursor-pointer text-left"
                     >
-                      <ShieldCheck className="w-4 h-4 text-sky-500" />
+                      <ShieldCheck className="w-4 h-4 text-sky-500 shrink-0" />
                       <span>Trust & Safety Center</span>
                     </button>
 
                     <button
                       onClick={toggleSound}
-                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-800 dark:text-obsidian-200 text-xs font-extrabold transition-colors cursor-pointer text-left"
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-900 dark:text-white text-xs font-extrabold transition-colors cursor-pointer text-left"
                     >
                       <div className="flex items-center gap-2.5">
                         {soundEnabled ? (
-                          <Volume2 className="w-4 h-4 text-coral-500" />
+                          <Volume2 className="w-4 h-4 text-coral-500 shrink-0" />
                         ) : (
-                          <VolumeX className="w-4 h-4 text-obsidian-400" />
+                          <VolumeX className="w-4 h-4 text-obsidian-400 shrink-0" />
                         )}
                         <span>Sound Effects</span>
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-obsidian-200 dark:bg-white/10">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-obsidian-200 dark:bg-white/10 text-obsidian-800 dark:text-slate-200">
                         {soundEnabled ? 'ON' : 'OFF'}
                       </span>
                     </button>
 
                     <button
                       onClick={toggleTheme}
-                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-800 dark:text-obsidian-200 text-xs font-extrabold transition-colors cursor-pointer text-left"
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-900 dark:text-white text-xs font-extrabold transition-colors cursor-pointer text-left"
                     >
                       <div className="flex items-center gap-2.5">
                         {theme === 'dark' ? (
-                          <Sun className="w-4 h-4 text-amber-400" />
+                          <Sun className="w-4 h-4 text-amber-400 shrink-0" />
                         ) : (
-                          <Moon className="w-4 h-4 text-obsidian-600" />
+                          <Moon className="w-4 h-4 text-obsidian-600 shrink-0" />
                         )}
                         <span>Theme Mode</span>
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-obsidian-200 dark:bg-white/10">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-obsidian-200 dark:bg-white/10 text-obsidian-800 dark:text-slate-200">
                         {theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
                       </span>
                     </button>
@@ -409,7 +427,7 @@ export const Navbar: React.FC = () => {
                         playPawPop();
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-coral-50 hover:bg-coral-100 text-coral-700 text-xs font-black border border-coral-200 cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-obsidian-100 dark:bg-white/5 hover:bg-coral-500/15 dark:hover:bg-coral-500/20 text-obsidian-800 dark:text-slate-200 hover:text-coral-600 dark:hover:text-coral-300 text-xs font-black border border-obsidian-200 dark:border-white/10 transition-all cursor-pointer"
                     >
                       <Phone className="w-3.5 h-3.5" />
                       <span>Log In with Another Phone Number</span>
@@ -422,7 +440,7 @@ export const Navbar: React.FC = () => {
                         setShowProfileMenu(false);
                         playPawPop();
                       }}
-                      className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 dark:hover:bg-rose-500/20 transition-colors cursor-pointer"
                     >
                       <LogOut className="w-3.5 h-3.5" />
                       <span>Log Out of Session</span>

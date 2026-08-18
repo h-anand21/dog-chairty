@@ -16,6 +16,8 @@ import {
   ShieldCheck,
   Phone,
   LogIn,
+  MapPin,
+  Edit3,
 } from 'lucide-react';
 
 export const MyDogsPage: React.FC = () => {
@@ -72,44 +74,85 @@ export const MyDogsPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 text-left">
       
-      {/* Header Profile Section */}
-      <div className="glass-card rounded-4xl p-6 sm:p-8 border border-white dark:border-white/10 shadow-elevated flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-5">
-          <img
-            src={currentUser.avatar}
-            alt={currentUser.name}
-            className="w-20 h-20 rounded-3xl object-cover ring-4 ring-coral-400 dark:ring-coral-500/40 shadow-md"
-          />
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950 dark:text-white">
-                {currentUser.name}
-              </h1>
-              {currentUser.isVerified && (
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800/60">
-                  ✓ Verified Guardian
-                </span>
-              )}
+      {/* 🌟 LUXURY PROFILE IDENTITY CARD */}
+      <div className="relative rounded-4xl overflow-hidden glass-card border border-white dark:border-white/10 shadow-elevated p-6 sm:p-8">
+        
+        {/* Background decorative ambient gradient */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-coral-500/20 via-amber-400/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+            <div className="relative shrink-0">
+              <img
+                src={currentUser.avatar}
+                alt={currentUser.name}
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl object-cover ring-4 ring-coral-400/80 dark:ring-coral-500/60 shadow-xl"
+              />
+              <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-black shadow-md ring-2 ring-white dark:ring-[#101726]" title="Verified Active Member">
+                ✓
+              </span>
             </div>
-            <p className="text-xs text-obsidian-600 dark:text-slate-300 mt-1">
-              📍 {currentUser.location} • 📱 {currentUser.phone} • Member since {currentUser.joinedDate}
-            </p>
-            <p className="text-xs text-obsidian-700 dark:text-slate-300 mt-1 italic max-w-lg">
-              &ldquo;{currentUser.bio}&rdquo;
-            </p>
+            
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="text-2xl sm:text-3xl font-black font-display text-obsidian-950 dark:text-white">
+                  {currentUser.name}
+                </h1>
+                <span className="px-3 py-0.5 rounded-full bg-coral-500/10 dark:bg-coral-500/20 text-coral-600 dark:text-coral-300 text-xs font-black border border-coral-200 dark:border-coral-500/30">
+                  {currentUser.role === 'owner' ? '🐾 Dog Guardian' : '❤️ Pet Adopter'}
+                </span>
+                {currentUser.isVerified && (
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-black border border-emerald-200 dark:border-emerald-500/30 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span>Verified Member</span>
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 text-xs text-obsidian-600 dark:text-slate-300 font-semibold">
+                <span className="flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-coral-500" />
+                  <span>{currentUser.location || 'India'}</span>
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <Phone className="w-3.5 h-3.5 text-coral-500" />
+                  <span>{currentUser.phone}</span>
+                </span>
+                <span>•</span>
+                <span>Member since {currentUser.joinedDate || '2026'}</span>
+              </div>
+
+              <p className="text-xs text-obsidian-700 dark:text-slate-300 italic max-w-xl leading-relaxed pt-1">
+                &ldquo;{currentUser.bio}&rdquo;
+              </p>
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-3 w-full md:w-auto self-stretch md:self-auto justify-end">
+            <button
+              onClick={() => {
+                playPawPop();
+                setIsAuthModalOpen(true);
+              }}
+              className="flex-1 md:flex-initial px-5 py-3 rounded-2xl bg-obsidian-100 dark:bg-white/10 hover:bg-coral-50 dark:hover:bg-coral-950/50 text-obsidian-800 dark:text-slate-200 hover:text-coral-600 dark:hover:text-coral-400 border border-obsidian-200 dark:border-white/10 font-black text-xs transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>Edit Profile</span>
+            </button>
+            <button
+              onClick={() => {
+                playPawPop();
+                setIsListDogOpen(true);
+              }}
+              className="flex-1 md:flex-initial btn-primary text-white px-6 py-3 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 transition-all cursor-pointer shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Post Dog</span>
+            </button>
           </div>
         </div>
-
-        <button
-          onClick={() => {
-            playPawPop();
-            setIsListDogOpen(true);
-          }}
-          className="btn-primary text-white px-6 py-3 rounded-full font-black text-xs shadow-glow-coral flex items-center gap-2 transition-all shrink-0 cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Post New Dog for Adoption</span>
-        </button>
       </div>
 
       {/* Sub Tabs */}
