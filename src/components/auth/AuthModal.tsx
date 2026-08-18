@@ -64,7 +64,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
 
   useEffect(() => {
     if (isOpen) {
-      if (initialStep === 'profile' && currentUser) {
+      if (currentUser) {
+        // Logged in user editing profile
         setStep('profile');
         setName(currentUser.name || '');
         setPhoneDigits(currentUser.phone ? currentUser.phone.replace(/\D/g, '').slice(-10) : '');
@@ -76,7 +77,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
         setStep('phone');
       }
     }
-  }, [isOpen, initialStep, currentUser]);
+  }, [isOpen, currentUser]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -221,19 +222,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
       return;
     }
 
+    const finalPhone = phoneDigits.trim() ? `+91 ${phoneDigits.trim()}` : (currentUser?.phone || '+91 98765 00000');
+
     playSuccessChime();
     completeRegistration({
       name: name.trim(),
-      phone: fullPhone,
+      phone: finalPhone,
       role,
       location,
       bio,
       avatar,
       isVerified: true,
-      homeType: 'House',
-      hasYard: true,
-      otherPets: 'None',
-      experienceLevel: 'Intermediate',
+      homeType: currentUser?.homeType || 'House',
+      hasYard: currentUser?.hasYard ?? true,
+      otherPets: currentUser?.otherPets || 'None',
+      experienceLevel: currentUser?.experienceLevel || 'Intermediate',
     });
 
     onClose();
