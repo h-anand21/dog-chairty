@@ -66,19 +66,6 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Popular Indian Cities for Instant 1-Click Pick
-  const popularCities = [
-    { name: 'Kolkata', lat: 22.5726, lng: 88.3639, state: 'West Bengal' },
-    { name: 'Delhi NCR', lat: 28.6139, lng: 77.2090, state: 'Delhi' },
-    { name: 'Mumbai', lat: 19.0760, lng: 72.8777, state: 'Maharashtra' },
-    { name: 'Bengaluru', lat: 12.9716, lng: 77.5946, state: 'Karnataka' },
-    { name: 'Hyderabad', lat: 17.3850, lng: 78.4867, state: 'Telangana' },
-    { name: 'Pune', lat: 18.5204, lng: 73.8567, state: 'Maharashtra' },
-    { name: 'Jaipur', lat: 26.9124, lng: 75.7873, state: 'Rajasthan' },
-    { name: 'Patna', lat: 25.5941, lng: 85.1376, state: 'Bihar' },
-    { name: 'Lucknow', lat: 26.8467, lng: 80.9462, state: 'Uttar Pradesh' },
-  ];
-
   // Debounced Live Location Search
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
@@ -259,31 +246,6 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
         {isSearching && (
           <Loader2 className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-obsidian-400 animate-spin" />
         )}
-      </div>
-
-      {/* Quick 1-Click Popular Indian Cities Chips */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-        <span className="text-[10px] font-black text-obsidian-400 dark:text-slate-400 uppercase shrink-0">
-          Popular:
-        </span>
-        {popularCities.map((city, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() =>
-              handleSelectLocation({
-                displayName: `${city.name}, ${city.state}`,
-                city: city.name,
-                state: city.state,
-                lat: city.lat,
-                lng: city.lng,
-              })
-            }
-            className="px-2.5 py-1 rounded-full bg-obsidian-100 dark:bg-white/5 hover:bg-coral-50 dark:hover:bg-coral-950/60 text-obsidian-700 dark:text-slate-300 hover:text-coral-600 border border-obsidian-200/80 dark:border-white/10 text-[10px] font-bold shrink-0 transition-colors cursor-pointer"
-          >
-            {city.name}
-          </button>
-        ))}
       </div>
 
       {/* Autocomplete Dropdown */}

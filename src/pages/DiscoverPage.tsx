@@ -49,8 +49,11 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
   const [userGps, setUserGps] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedPillar, setSelectedPillar] = useState<PillarType>(null);
 
-  // Indian Cities Filter List
-  const cityOptions = ['All', 'Kolkata', 'Delhi', 'Mumbai', 'Bengaluru', 'Hyderabad', 'Pune', 'Chennai', 'Jaipur'];
+  // Dynamic Cities Filter List derived from active dogs
+  const cityOptions = useMemo(() => {
+    const dogCities = Array.from(new Set(dogs.map(d => d.city).filter(Boolean))) as string[];
+    return dogCities.length > 0 ? ['All', ...dogCities] : ['All'];
+  }, [dogs]);
 
   // Filtered Dogs Logic
   const filteredDogs = useMemo(() => {
