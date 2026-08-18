@@ -271,13 +271,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-obsidian-950/80 backdrop-blur-xl overflow-y-auto">
-      <div className="relative w-full max-w-md bg-white rounded-4xl p-6 sm:p-8 shadow-2xl border border-obsidian-200 animate-in fade-in zoom-in-95 duration-200 text-left">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-obsidian-950/85 backdrop-blur-xl overflow-y-auto">
+      <div className="relative w-full max-w-xl bg-white dark:bg-[#0C1220] rounded-4xl p-6 sm:p-8 shadow-2xl border border-obsidian-200 dark:border-white/10 max-h-[92vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 text-left">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-obsidian-100 hover:bg-obsidian-200 flex items-center justify-center text-obsidian-700 transition-colors cursor-pointer"
+          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-obsidian-100 dark:bg-white/10 hover:bg-obsidian-200 dark:hover:bg-white/20 flex items-center justify-center text-obsidian-700 dark:text-slate-300 transition-colors cursor-pointer z-10"
         >
           <X className="w-4 h-4" />
         </button>
