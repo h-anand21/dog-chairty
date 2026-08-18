@@ -50,13 +50,48 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
   // Sync incoming value
   useEffect(() => {
-    setQuery(value);
+    setQuery(value || '');
   }, [value]);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Popular Indian Cities for Instant 1-Click Pick
+  const popularCities = [
+    { name: 'Kolkata', lat: 22.5726, lng: 88.3639, state: 'West Bengal' },
+    { name: 'Delhi NCR', lat: 28.6139, lng: 77.2090, state: 'Delhi' },
+    { name: 'Mumbai', lat: 19.0760, lng: 72.8777, state: 'Maharashtra' },
+    { name: 'Bengaluru', lat: 12.9716, lng: 77.5946, state: 'Karnataka' },
+    { name: 'Hyderabad', lat: 17.3850, lng: 78.4867, state: 'Telangana' },
+    { name: 'Pune', lat: 18.5204, lng: 73.8567, state: 'Maharashtra' },
+    { name: 'Jaipur', lat: 26.9124, lng: 75.7873, state: 'Rajasthan' },
+    { name: 'Patna', lat: 25.5941, lng: 85.1376, state: 'Bihar' },
+    { name: 'Lucknow', lat: 26.8467, lng: 80.9462, state: 'Uttar Pradesh' },
+  ];
 
   // Debounced Live Location Search
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
     setQuery(text);
+
+    // Immediately trigger onChange with typed text
+    onChange({
+      displayName: text,
+      city: text.split(',')[0].trim() || 'India',
+      state: 'India',
+      lat: selectedCoords.lat,
+      lng: selectedCoords.lng,
+    });
 
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
 
@@ -68,7 +103,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
         const results = await mapService.searchLocations(text);
         setSuggestions(results);
         setIsSearching(false);
-      }, 350);
+      }, 300);
     } else {
       setSuggestions([]);
       setIsSearching(false);
@@ -174,9 +209,9 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   }, [showMiniMap, selectedCoords]);
 
   return (
-    <div className="space-y-2 text-left relative">
+    <div ref={containerRef} className="space-y-2 text-left relative">
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-black text-obsidian-900 uppercase tracking-wider">
+        <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider">
           {label}
         </label>
         
@@ -184,7 +219,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
           <button
             type="button"
             onClick={() => setShowMiniMap(!showMiniMap)}
-            className="text-[11px] font-bold text-coral-600 hover:text-coral-700 underline cursor-pointer"
+            className="text-[11px] font-bold text-coral-600 dark:text-coral-400 hover:underline cursor-pointer"
           >
             {showMiniMap ? 'Hide Map Pin' : '📍 Adjust Pin on Map'}
           </button>
@@ -193,7 +228,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
             type="button"
             onClick={handleUseGps}
             disabled={isLocating}
-            className="text-[11px] font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1 cursor-pointer"
+            className="text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1 cursor-pointer"
           >
             <Navigation className={`w-3 h-3 ${isLocating ? 'animate-spin' : ''}`} />
             <span>{isLocating ? 'Locating...' : 'Use GPS'}</span>
@@ -212,7 +247,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
             if (suggestions.length > 0) setShowSuggestions(true);
           }}
           placeholder={placeholder}
-          className="w-full pl-10 pr-10 py-3 rounded-2xl bg-obsidian-100 border border-obsidian-200 focus:bg-white focus:border-coral-500 focus:ring-4 focus:ring-coral-100 text-xs sm:text-sm font-bold text-obsidian-950 outline-hidden transition-all shadow-inner"
+          className="w-full pl-10 pr-10 py-3 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/15 focus:bg-white dark:focus:bg-[#121A2B] focus:border-coral-500 focus:ring-4 focus:ring-coral-100 text-xs sm:text-sm font-bold text-obsidian-950 dark:text-white outline-hidden transition-all shadow-inner"
         />
 
         {isSearching && (
@@ -220,10 +255,35 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
         )}
       </div>
 
+      {/* Quick 1-Click Popular Indian Cities Chips */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+        <span className="text-[10px] font-black text-obsidian-400 dark:text-slate-400 uppercase shrink-0">
+          Popular:
+        </span>
+        {popularCities.map((city, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() =>
+              handleSelectLocation({
+                displayName: `${city.name}, ${city.state}`,
+                city: city.name,
+                state: city.state,
+                lat: city.lat,
+                lng: city.lng,
+              })
+            }
+            className="px-2.5 py-1 rounded-full bg-obsidian-100 dark:bg-white/5 hover:bg-coral-50 dark:hover:bg-coral-950/60 text-obsidian-700 dark:text-slate-300 hover:text-coral-600 border border-obsidian-200/80 dark:border-white/10 text-[10px] font-bold shrink-0 transition-colors cursor-pointer"
+          >
+            {city.name}
+          </button>
+        ))}
+      </div>
+
       {/* Autocomplete Dropdown */}
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white rounded-2xl shadow-2xl border border-obsidian-200 overflow-hidden max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
-          <div className="p-2 text-[10px] uppercase font-black tracking-wider text-obsidian-400 border-b border-obsidian-100">
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-[#121A2B] rounded-2xl shadow-2xl border border-obsidian-200 dark:border-white/15 overflow-hidden max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+          <div className="p-2 text-[10px] uppercase font-black tracking-wider text-obsidian-400 dark:text-slate-400 border-b border-obsidian-100 dark:border-white/10">
             Matching Locations in India:
           </div>
           {suggestions.map((loc, idx) => (
@@ -231,14 +291,14 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
               key={idx}
               type="button"
               onClick={() => handleSelectLocation(loc)}
-              className="w-full px-4 py-2.5 text-left hover:bg-coral-50 transition-colors flex items-start gap-2.5 border-b border-obsidian-100 last:border-0 cursor-pointer"
+              className="w-full px-4 py-2.5 text-left hover:bg-coral-50 dark:hover:bg-white/10 transition-colors flex items-start gap-2.5 border-b border-obsidian-100 dark:border-white/10 last:border-0 cursor-pointer"
             >
               <MapPin className="w-4 h-4 text-coral-500 shrink-0 mt-0.5" />
               <div className="min-w-0">
-                <div className="text-xs font-bold text-obsidian-950 truncate">
+                <div className="text-xs font-bold text-obsidian-950 dark:text-white truncate">
                   {loc.displayName}
                 </div>
-                <div className="text-[10px] font-medium text-obsidian-500">
+                <div className="text-[10px] font-medium text-obsidian-500 dark:text-slate-400">
                   {loc.city}, {loc.state} {loc.pincode ? `• PIN: ${loc.pincode}` : ''}
                 </div>
               </div>
@@ -249,7 +309,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
       {/* Mini Interactive Map Pinpoint */}
       {showMiniMap && (
-        <div className="rounded-3xl overflow-hidden border border-obsidian-200 shadow-md mt-2 animate-in fade-in duration-200">
+        <div className="rounded-3xl overflow-hidden border border-obsidian-200 dark:border-white/15 shadow-md mt-2 animate-in fade-in duration-200">
           <div className="p-2 bg-obsidian-950 text-white text-[11px] font-bold flex items-center justify-between px-3">
             <span>📍 Drag the red marker to adjust your exact location</span>
             <span className="text-[10px] text-white/60">
