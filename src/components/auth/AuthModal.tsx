@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAudio } from '../../context/AudioContext';
 import { smsGatewayService, SmsProviderType } from '../../services/smsGatewayService';
@@ -22,6 +22,9 @@ import {
   HelpCircle,
   Clipboard,
   Loader2,
+  Upload,
+  Camera,
+  Check,
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -55,6 +58,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [location, setLocation] = useState('Kolkata, Salt Lake');
   const [bio, setBio] = useState('Loving dog parent seeking a furry companion to give a caring home!');
   const [avatar, setAvatar] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -217,12 +221,32 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setErrorMsg('Image size should be less than 5MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          setAvatar(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const sampleAvatars = [
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400',
-    'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400',
+    { label: 'Girl 1', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80' },
+    { label: 'Boy 1', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80' },
+    { label: 'Girl 2', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80' },
+    { label: 'Boy 2', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80' },
+    { label: 'Girl 3', url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop&q=80' },
+    { label: 'Boy 3', url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=80' },
+    { label: 'Dog Lover', url: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400&auto=format&fit=crop&q=80' },
+    { label: 'Puppy Fan', url: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&auto=format&fit=crop&q=80' },
   ];
 
   return (
@@ -428,116 +452,189 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         {step === 'profile' && (
           <div className="space-y-4">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-black text-[11px] mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 font-black text-[11px] mb-2 border border-coral-200 dark:border-coral-800/60">
                 <UserCheck className="w-3.5 h-3.5" />
-                <span>Verified Indian Account</span>
+                <span>Verified Mobile Account</span>
               </div>
-              <h2 className="text-2xl font-black font-display text-obsidian-950">
-                Welcome to PawConnect! 🐶
+              <h2 className="text-2xl font-black font-display text-obsidian-950 dark:text-white">
+                Complete Your Profile 🐶
               </h2>
-              <p className="text-xs text-obsidian-600 mt-1">
-                Your mobile <strong className="text-obsidian-950">+91 {phoneDigits}</strong> is verified! Complete your profile to start connecting.
+              <p className="text-xs text-obsidian-600 dark:text-slate-300 mt-1 leading-relaxed">
+                Mobile <strong className="text-obsidian-950 dark:text-white">+91 {phoneDigits}</strong> verified! Tell the community a bit about yourself.
               </p>
             </div>
 
             <form onSubmit={handleCompleteProfile} className="space-y-3.5 text-left">
+              {/* Full Name */}
               <div>
-                <label className="block text-xs font-black text-obsidian-900 mb-1">
+                <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1">
                   Full Name *
                 </label>
                 <input
                   type="text"
                   required
+                  autoFocus
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  placeholder="e.g. Rahul Sharma"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 text-xs font-bold outline-hidden"
+                  placeholder="e.g. Anand Kumar"
+                  className="w-full px-4 py-3 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/15 focus:bg-white dark:focus:bg-[#121A2B] focus:border-coral-500 text-xs font-extrabold outline-hidden shadow-inner text-obsidian-900 dark:text-white"
                 />
               </div>
 
+              {/* Account Purpose */}
               <div>
-                <label className="block text-xs font-black text-obsidian-900 mb-1">
-                  Account Purpose
+                <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1">
+                  I Want To:
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setRole('adopter')}
-                    className={`p-2.5 rounded-2xl border text-left text-xs font-extrabold transition-all cursor-pointer ${
-                      role === 'adopter' ? 'border-coral-500 bg-coral-50 text-coral-800' : 'border-obsidian-300 text-obsidian-700'
+                    className={`p-3 rounded-2xl border text-left text-xs font-extrabold transition-all cursor-pointer ${
+                      role === 'adopter'
+                        ? 'border-coral-500 bg-coral-50 dark:bg-coral-950/60 text-coral-700 dark:text-coral-300 shadow-xs'
+                        : 'border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-50'
                     }`}
                   >
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <Heart className="w-3.5 h-3.5 text-coral-500" />
-                      <span>Adopter / Parent</span>
+                      <span>Adopt a Dog</span>
                     </div>
-                    <div className="font-normal text-[10px] text-obsidian-500 mt-0.5">Looking to adopt a dog</div>
+                    <div className="font-normal text-[10px] text-obsidian-500 dark:text-slate-400 mt-0.5">Looking for a companion</div>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setRole('owner')}
-                    className={`p-2.5 rounded-2xl border text-left text-xs font-extrabold transition-all cursor-pointer ${
-                      role === 'owner' ? 'border-coral-500 bg-coral-50 text-coral-800' : 'border-obsidian-300 text-obsidian-700'
+                    className={`p-3 rounded-2xl border text-left text-xs font-extrabold transition-all cursor-pointer ${
+                      role === 'owner'
+                        ? 'border-coral-500 bg-coral-50 dark:bg-coral-950/60 text-coral-700 dark:text-coral-300 shadow-xs'
+                        : 'border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-50'
                     }`}
                   >
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <DogIcon className="w-3.5 h-3.5 text-coral-500" />
-                      <span>Dog Guardian</span>
+                      <span>Rehome a Dog</span>
                     </div>
-                    <div className="font-normal text-[10px] text-obsidian-500 mt-0.5">Looking to rehome a dog</div>
+                    <div className="font-normal text-[10px] text-obsidian-500 dark:text-slate-400 mt-0.5">List dog for adoption</div>
                   </button>
                 </div>
               </div>
 
+              {/* City / Area in India */}
               <div>
                 <LocationPicker
                   value={location}
                   onChange={loc => {
                     setLocation(loc.displayName);
                   }}
-                  label="City / Area in India *"
-                  placeholder="Search your city, locality, or pincode..."
+                  label="City / Location in India *"
+                  placeholder="Search your city or locality..."
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-black text-obsidian-900 mb-1">
-                  Choose Profile Photo
-                </label>
-                <div className="flex items-center gap-2">
-                  {sampleAvatars.map((url, i) => (
+              {/* Enhanced Profile Photo Selection & Upload */}
+              <div className="p-3.5 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider">
+                    Profile Photo
+                  </label>
+                  
+                  {/* Upload Custom Photo Button */}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-coral-600 dark:text-coral-400 hover:underline cursor-pointer"
+                  >
+                    <Upload className="w-3 h-3" />
+                    <span>Upload from Device</span>
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                  />
+                </div>
+
+                {/* Main Avatar Preview + Grid */}
+                <div className="flex items-center gap-3.5">
+                  {/* Selected Preview */}
+                  <div className="relative shrink-0">
                     <img
-                      key={i}
-                      src={url}
-                      alt=""
-                      onClick={() => setAvatar(url)}
-                      className={`w-9 h-9 rounded-full object-cover cursor-pointer border-2 transition-all ${
-                        avatar === url ? 'border-coral-500 scale-110 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'
-                      }`}
+                      src={avatar}
+                      alt="Selected Profile"
+                      className="w-14 h-14 rounded-2xl object-cover ring-2 ring-coral-500 shadow-md"
                     />
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-coral-500 text-white flex items-center justify-center shadow-xs cursor-pointer hover:scale-110 transition-transform"
+                      title="Upload custom photo"
+                    >
+                      <Camera className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Curated Avatars Carousel/Grid */}
+                  <div className="flex-1 overflow-x-auto pb-1">
+                    <div className="flex items-center gap-2">
+                      {sampleAvatars.map((item, i) => {
+                        const isSelected = avatar === item.url;
+                        return (
+                          <div
+                            key={i}
+                            onClick={() => setAvatar(item.url)}
+                            className={`relative shrink-0 cursor-pointer transition-all rounded-full p-0.5 ${
+                              isSelected ? 'ring-2 ring-coral-500 scale-105' : 'opacity-60 hover:opacity-100'
+                            }`}
+                            title={item.label}
+                          >
+                            <img
+                              src={item.url}
+                              alt={item.label}
+                              className="w-9 h-9 rounded-full object-cover shadow-xs"
+                            />
+                            {isSelected && (
+                              <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-coral-500 text-white flex items-center justify-center text-[8px] ring-1 ring-white">
+                                <Check className="w-2.5 h-2.5 stroke-[3]" />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
 
+              {/* Short Bio */}
               <div>
-                <label className="block text-xs font-black text-obsidian-900 mb-1">
-                  Short Bio
+                <label className="block text-xs font-black text-obsidian-900 dark:text-white uppercase tracking-wider mb-1">
+                  Bio / About You
                 </label>
                 <textarea
                   rows={2}
                   value={bio}
                   onChange={e => setBio(e.target.value)}
-                  placeholder="Tell other dog parents about your love for dogs..."
-                  className="w-full px-3.5 py-2 rounded-xl border border-obsidian-300 text-xs outline-hidden"
+                  placeholder="Tell other dog parents about yourself..."
+                  className="w-full px-4 py-2.5 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200 dark:border-white/15 focus:bg-white dark:focus:bg-[#121A2B] focus:border-coral-500 text-xs font-medium outline-hidden shadow-inner text-obsidian-900 dark:text-white resize-none"
                 />
               </div>
 
+              {errorMsg && (
+                <div className="text-xs font-bold text-rose-600 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 p-2.5 rounded-xl border border-rose-200 dark:border-rose-800/60">
+                  {errorMsg}
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full btn-primary text-white py-3 rounded-2xl font-black text-xs shadow-glow-coral cursor-pointer"
+                className="w-full btn-primary text-white py-3.5 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] transition-transform"
               >
-                Complete Registration & Log In 🚀
+                <span>Complete Profile & Enter PawConnect 🎉</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </form>
           </div>
