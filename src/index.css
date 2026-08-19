@@ -4,12 +4,12 @@
 
 @layer base {
   body {
-    @apply bg-[#FAF8F5] text-[#111317] antialiased selection:bg-coral-500 selection:text-white font-sans transition-colors duration-300;
+    @apply bg-[#F2EDE4] text-[#1A1C20] antialiased selection:bg-coral-500 selection:text-white font-sans transition-colors duration-300;
     background-image: 
-      radial-gradient(circle at 85% 10%, rgba(255, 90, 54, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 10% 40%, rgba(14, 165, 233, 0.06) 0%, transparent 45%),
-      radial-gradient(circle at 70% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 45%),
-      radial-gradient(circle at 30% 95%, rgba(16, 185, 129, 0.04) 0%, transparent 40%);
+      radial-gradient(circle at 85% 10%, rgba(255, 90, 54, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 10% 40%, rgba(14, 165, 233, 0.04) 0%, transparent 45%),
+      radial-gradient(circle at 70% 80%, rgba(245, 158, 11, 0.04) 0%, transparent 45%),
+      radial-gradient(circle at 30% 95%, rgba(16, 185, 129, 0.03) 0%, transparent 40%);
     background-attachment: fixed;
   }
 
@@ -62,11 +62,11 @@
 
 /* Glassmorphism Styles (Light & Dark) */
 .glass-nav {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(247, 243, 236, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(222, 215, 203, 0.85);
+  box-shadow: 0 10px 30px -10px rgba(40, 30, 20, 0.05);
 }
 
 .dark .glass-nav {
@@ -76,11 +76,11 @@
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 15px 35px -10px rgba(17, 19, 23, 0.06);
+  border: 1px solid rgba(226, 219, 208, 0.85);
+  box-shadow: 0 14px 32px -10px rgba(40, 30, 20, 0.06);
 }
 
 .dark .glass-card {
@@ -90,10 +90,10 @@
 }
 
 .glass-pill {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(246, 241, 233, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(222, 215, 203, 0.85);
 }
 
 .dark .glass-pill {
@@ -102,11 +102,11 @@
 }
 
 .glass-dropdown {
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(253, 250, 245, 0.96);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(222, 215, 203, 0.9);
+  box-shadow: 0 20px 45px -12px rgba(35, 25, 15, 0.12);
 }
 
 .dark .glass-dropdown {

@@ -27,7 +27,7 @@ export const App: React.FC = () => {
   } = useApp();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF8F5] dark:bg-[#0B0F19] text-[#111317] dark:text-[#F8FAFC] transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-[#F2EDE4] dark:bg-[#0B0F19] text-[#1A1C20] dark:text-[#F8FAFC] transition-colors duration-300">
       
       {/* Top Sticky Responsive Navbar */}
       <Navbar />

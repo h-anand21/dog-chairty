@@ -177,7 +177,7 @@ export const ChatView: React.FC = () => {
       </div>
 
       {/* MESSAGES FEED */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#FAF9F6] dark:bg-[#090E1A] text-left">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#EAE4D9] dark:bg-[#090E1A] text-left">
         
         {/* Active Meet & Greet Status Card */}
         {activeMeet && (
