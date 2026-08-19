@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Dog } from '../types';
 import { DogCard } from '../components/discover/DogCard';
 import { CitySearchInput } from '../components/common/CitySearchInput';
@@ -21,10 +21,55 @@ import {
   Flame,
   Award,
   Plus,
+  X,
+  ChevronRight,
 } from 'lucide-react';
 
 interface DiscoverPageProps {
   onSelectDog: (dog: Dog) => void;
+}
+
+// Common dog breed synonyms, phonetic variations & typo aliases
+const BREED_SYNONYMS: Record<string, string[]> = {
+  labrador: ['lab', 'labber', 'labra', 'labby', 'labs', 'retriever', 'labrado', 'black lab', 'yellow lab', 'chocolate lab'],
+  golden: ['gold', 'goldan', 'retriver', 'retriever', 'goldie', 'goldy'],
+  beagle: ['beagl', 'begal', 'beegal', 'begle', 'hound'],
+  shepherd: ['german', 'germ', 'germon', 'germn', 'shep', 'gsd', 'shephard', 'alsatian', 'gshepherd'],
+  indie: ['desi', 'indian', 'indi', 'indee', 'street', 'pariah', 'stray', 'mixed', 'desi dog', 'rescue'],
+  shih: ['tzu', 'shitzu', 'shihtzu', 'toy', 'small dog', 'fluffy'],
+  husky: ['husk', 'siberian'],
+  rottweiler: ['rott', 'rotweiler'],
+};
+
+function checkFuzzyTokenMatch(token: string, targetText: string): boolean {
+  if (!token || !targetText) return false;
+  const t = token.toLowerCase().trim();
+  const text = targetText.toLowerCase().trim();
+  if (text.includes(t) || t.includes(text)) return true;
+
+  // Prefix matching (>= 3 chars)
+  if (t.length >= 3 && text.length >= 3) {
+    if (text.startsWith(t.slice(0, 3)) || t.startsWith(text.slice(0, 3))) return true;
+  }
+
+  // Check breed synonyms dictionary
+  for (const [canonical, aliases] of Object.entries(BREED_SYNONYMS)) {
+    const isTokenInGroup = canonical.includes(t) || t.includes(canonical) || aliases.some(a => a.includes(t) || t.includes(a));
+    const isTextInGroup = text.includes(canonical) || aliases.some(a => text.includes(a));
+    if (isTokenInGroup && isTextInGroup) return true;
+  }
+
+  // Simple edit distance for typos (e.g. labber -> labrador)
+  if (Math.abs(t.length - text.length) <= 3 && t.length >= 3 && text.length >= 3) {
+    let diffs = 0;
+    const minLen = Math.min(t.length, text.length);
+    for (let i = 0; i < minLen; i++) {
+      if (t[i] !== text[i]) diffs++;
+    }
+    if (diffs <= 2) return true;
+  }
+
+  return false;
 }
 
 export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
@@ -38,6 +83,19 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
   const [selectedSize, setSelectedSize] = useState<string>('All');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPillar, setSelectedPillar] = useState<PillarType>(null);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to dismiss search suggestions
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setIsSearchFocused(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Dynamic Cities Filter List derived from active dogs
   const cityOptions = useMemo(() => {
@@ -45,16 +103,67 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
     return dogCities.length > 0 ? ['All', ...dogCities] : ['All'];
   }, [dogs]);
 
-  // Filtered Dogs Logic
+  // Live Auto-Complete Suggestions (Dogs, Breeds, Traits)
+  const searchSuggestions = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+
+    // 1. Matching dogs (name or breed)
+    const matchingDogs = dogs.filter(d =>
+      !q ||
+      d.name.toLowerCase().includes(q) ||
+      d.breed.toLowerCase().includes(q) ||
+      checkFuzzyTokenMatch(q, d.name) ||
+      checkFuzzyTokenMatch(q, d.breed)
+    ).slice(0, 4);
+
+    // 2. Matching Breeds
+    const allBreeds = Array.from(new Set(dogs.map(d => d.breed)));
+    const matchingBreeds = allBreeds.filter(b =>
+      !q || b.toLowerCase().includes(q) || checkFuzzyTokenMatch(q, b)
+    ).slice(0, 4);
+
+    // 3. Matching Traits & Categories
+    const allTraits = ['Playful', 'Good with Kids', 'House-Trained', 'Water Lover', 'Gentle & Calm', 'Free Adoption'];
+    const matchingTraits = allTraits.filter(t =>
+      !q || t.toLowerCase().includes(q)
+    ).slice(0, 4);
+
+    return {
+      matchingDogs,
+      matchingBreeds,
+      matchingTraits,
+    };
+  }, [dogs, searchQuery]);
+
+  // Filtered Dogs Logic with Fuzzy & Alias Support
   const filteredDogs = useMemo(() => {
     return dogs.filter((dog: Dog) => {
-      // 1. Text search on name, breed, location, bio
-      const matchesSearch =
-        searchQuery === '' ||
-        dog.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        dog.breed.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        dog.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        dog.bio.toLowerCase().includes(searchQuery.toLowerCase());
+      // 1. Comprehensive Smart Fuzzy & Alias text search
+      const matchesSearch = (() => {
+        if (!searchQuery.trim()) return true;
+        const queryTokens = searchQuery.toLowerCase().trim().split(/\s+/);
+        
+        const haystack = [
+          dog.name,
+          dog.breed,
+          dog.location,
+          dog.city,
+          dog.state,
+          dog.bio,
+          dog.gender,
+          dog.size,
+          dog.energy,
+          dog.adoptionType,
+          ...dog.favoriteThings,
+          ...dog.personalityTraits,
+        ].join(' ').toLowerCase();
+
+        return queryTokens.every(token => {
+          if (haystack.includes(token)) return true;
+          const words = haystack.split(/\s+/);
+          return words.some(w => checkFuzzyTokenMatch(token, w));
+        });
+      })();
 
       // 2. City filter
       const matchesCity =
@@ -160,15 +269,129 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 relative z-30">
               
               {/* Search text */}
-              <div className="sm:col-span-7 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-obsidian-400 dark:text-slate-400" />
+              <div ref={searchContainerRef} className="sm:col-span-7 relative z-40">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-coral-500 pointer-events-none" />
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Search breed, name, traits (e.g. Labrador, friendly, Indie)..."
-                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white dark:bg-[#121A2B] border border-obsidian-200 dark:border-white/15 text-xs sm:text-sm font-semibold text-obsidian-900 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-4 focus:ring-coral-100 dark:focus:ring-coral-500/20 outline-hidden transition-all shadow-xs"
+                  onChange={e => {
+                    setSearchQuery(e.target.value);
+                    setIsSearchFocused(true);
+                  }}
+                  onFocus={() => setIsSearchFocused(true)}
+                  placeholder="Search breed, name, traits (e.g. Labrador, Golden, Indie, Playful)..."
+                  className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-white dark:bg-[#121A2B] border border-obsidian-200 dark:border-white/15 text-xs sm:text-sm font-semibold text-obsidian-900 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-4 focus:ring-coral-100 dark:focus:ring-coral-500/20 outline-hidden transition-all shadow-xs"
                 />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPawPop();
+                      setSearchQuery('');
+                    }}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-obsidian-100 dark:bg-white/10 hover:bg-obsidian-200 dark:hover:bg-white/20 text-obsidian-600 dark:text-slate-300 flex items-center justify-center text-xs transition-colors cursor-pointer"
+                    title="Clear search"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+
+                {/* 🌟 Live Auto-Complete Suggestions Dropdown */}
+                {isSearchFocused && (
+                  <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-2xl rounded-3xl shadow-2xl border border-obsidian-200/90 dark:border-white/15 overflow-hidden max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 text-left divide-y divide-obsidian-100 dark:divide-white/10 ring-1 ring-black/5 dark:ring-white/10">
+                    
+                    {/* Matching Dog Names */}
+                    {searchSuggestions.matchingDogs.length > 0 && (
+                      <div className="p-2">
+                        <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400 flex items-center gap-1">
+                          <span>🐾 Dogs Available</span>
+                        </div>
+                        {searchSuggestions.matchingDogs.map(d => (
+                          <button
+                            key={d.id}
+                            type="button"
+                            onClick={() => {
+                              playPawPop();
+                              setSearchQuery(d.name);
+                              setIsSearchFocused(false);
+                            }}
+                            className="w-full px-3 py-2 rounded-2xl hover:bg-coral-50/80 dark:hover:bg-coral-950/40 flex items-center justify-between gap-3 text-left transition-colors cursor-pointer group"
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <img
+                                src={d.coverPhoto}
+                                alt={d.name}
+                                className="w-8 h-8 rounded-xl object-cover ring-1 ring-coral-400 shrink-0"
+                              />
+                              <div className="truncate">
+                                <div className="text-xs font-black text-obsidian-950 dark:text-white group-hover:text-coral-600 dark:group-hover:text-coral-400 truncate">
+                                  {d.name}
+                                </div>
+                                <div className="text-[10px] text-obsidian-500 dark:text-slate-400 font-medium truncate">
+                                  {d.breed} • 📍 {d.location}
+                                </div>
+                              </div>
+                            </div>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-coral-100/80 dark:bg-coral-950/80 text-coral-700 dark:text-coral-300 shrink-0">
+                              {d.age}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Matching Breeds */}
+                    {searchSuggestions.matchingBreeds.length > 0 && (
+                      <div className="p-2">
+                        <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400 flex items-center gap-1">
+                          <span>🐕 Breeds</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 px-2 pt-1 pb-2">
+                          {searchSuggestions.matchingBreeds.map((breed, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                playPawPop();
+                                setSearchQuery(breed);
+                                setIsSearchFocused(false);
+                              }}
+                              className="px-3 py-1.5 rounded-xl bg-obsidian-100 dark:bg-white/10 hover:bg-coral-50 dark:hover:bg-coral-950/60 hover:text-coral-600 text-obsidian-800 dark:text-slate-200 text-xs font-black transition-all cursor-pointer border border-obsidian-200 dark:border-white/10"
+                            >
+                              🔍 {breed}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Popular Traits & Keywords */}
+                    {searchSuggestions.matchingTraits.length > 0 && (
+                      <div className="p-2 bg-obsidian-50/50 dark:bg-white/5">
+                        <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400">
+                          <span>⚡ Traits & Categories</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 px-2 pt-1 pb-1">
+                          {searchSuggestions.matchingTraits.map((trait, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                playPawPop();
+                                setSearchQuery(trait);
+                                setIsSearchFocused(false);
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-white dark:bg-[#121A2B] hover:border-coral-400 text-obsidian-700 dark:text-slate-300 text-[11px] font-bold border border-obsidian-200 dark:border-white/10 cursor-pointer transition-colors"
+                            >
+                              ✨ {trait}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                  </div>
+                )}
               </div>
 
               {/* Dynamic Indian City Search Input */}
