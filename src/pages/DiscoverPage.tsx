@@ -432,66 +432,6 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
       {/* 🐶 3. DOGS MARKETPLACE (GRID / INTERACTIVE MAP SWITCHER) */}
       <section id="marketplace-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28 space-y-6">
-        
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-left">
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-black font-display text-obsidian-950 dark:text-white">
-              Dogs Waiting for a Home 🐕
-            </h2>
-            <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-400 mt-1">
-              Click on any pup to hear their bark, view health records, or submit an adoption request.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 self-start sm:self-auto">
-            
-            {/* View Mode Toggle: Grid vs Interactive Map */}
-            <div className="p-1 bg-obsidian-100 dark:bg-white/10 rounded-2xl flex items-center gap-1 shadow-inner border border-obsidian-200 dark:border-white/10">
-              <button
-                onClick={() => {
-                  playPawPop();
-                  setViewMode('grid');
-                }}
-                className={`px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
-                  viewMode === 'grid'
-                    ? 'bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white shadow-md'
-                    : 'text-obsidian-600 dark:text-slate-400 hover:text-obsidian-950 dark:hover:text-white'
-                }`}
-              >
-                <Grid className="w-3.5 h-3.5" />
-                <span>Grid</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  playPawPop();
-                  setViewMode('map');
-                }}
-                className={`px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
-                  viewMode === 'map'
-                    ? 'bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white shadow-md'
-                    : 'text-obsidian-600 dark:text-slate-400 hover:text-obsidian-950 dark:hover:text-white'
-                }`}
-              >
-                <MapPin className="w-3.5 h-3.5" />
-                <span>Live Map 🗺️</span>
-              </button>
-            </div>
-
-            <button
-              onClick={() => {
-                playPawPop();
-                setIsListDogOpen(true);
-              }}
-              className="px-5 py-2.5 rounded-2xl bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-100 dark:hover:bg-coral-900/60 text-coral-700 dark:text-coral-300 font-black text-xs border border-coral-200 dark:border-coral-800/60 flex items-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Post Dog</span>
-            </button>
-
-          </div>
-        </div>
-
         {/* VIEW 1: INTERACTIVE REAL MAP */}
         {viewMode === 'map' && (
           <div className="animate-in fade-in zoom-in-95 duration-200">
