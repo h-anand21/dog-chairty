@@ -98,14 +98,49 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
     });
   }, [dogs, searchQuery, selectedCity, selectedStatus, selectedSize, selectedCategory]);
 
+  const [isGpsLoading, setIsGpsLoading] = useState(false);
+  const [gpsStatusText, setGpsStatusText] = useState<string | null>(null);
+
   const handleGpsDetect = async () => {
     playPawPop();
-    const loc = await mapService.getUserLocation();
-    setUserGps({ lat: loc.lat, lng: loc.lng });
-    if (loc.city) {
-      const match = cityOptions.find(c => loc.city.toLowerCase().includes(c.toLowerCase()));
-      if (match) setSelectedCity(match);
+    setIsGpsLoading(true);
+    setGpsStatusText('Detecting your GPS location... 🛰️');
+
+    try {
+      const loc = await mapService.getUserLocation();
+      setUserGps({ lat: loc.lat, lng: loc.lng });
+
+      if (loc.city && loc.city !== 'India' && loc.city !== 'Local Area') {
+        const match = cityOptions.find(c => loc.city.toLowerCase().includes(c.toLowerCase()));
+        setSelectedCity(match || loc.city);
+        setGpsStatusText(`📍 Location Locked: ${loc.city}, ${loc.state}`);
+      } else {
+        setGpsStatusText(`📍 GPS coordinates locked (${loc.lat.toFixed(2)}, ${loc.lng.toFixed(2)})`);
+      }
+
+      // Automatically switch to live interactive map
+      setViewMode('map');
+
+      // Scroll smoothly down to the marketplace section
+      setTimeout(() => {
+        document.getElementById('marketplace-grid')?.scrollIntoView({ behavior: 'smooth' });
+      }, 250);
+    } catch (err) {
+      setGpsStatusText('⚠️ GPS permission not granted. Showing all India dogs.');
+    } finally {
+      setIsGpsLoading(false);
+      setTimeout(() => {
+        setGpsStatusText(null);
+      }, 7000);
     }
+  };
+
+  const handleOpenMapDirectly = () => {
+    playPawPop();
+    setViewMode('map');
+    setTimeout(() => {
+      document.getElementById('marketplace-grid')?.scrollIntoView({ behavior: 'smooth' });
+    }, 150);
   };
 
   const successStories = [
@@ -205,16 +240,34 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 <button
                   type="button"
                   onClick={handleGpsDetect}
-                  className="w-full h-full py-3.5 px-4 rounded-2xl bg-obsidian-100 dark:bg-white/10 hover:bg-obsidian-200 dark:hover:bg-white/20 text-obsidian-900 dark:text-white border border-obsidian-300 dark:border-white/10 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                  disabled={isGpsLoading}
+                  className="w-full h-full py-3.5 px-4 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-glow-coral disabled:opacity-75"
                 >
-                  <Navigation className="w-3.5 h-3.5 text-coral-500" />
-                  <span>Use My GPS</span>
+                  <Navigation className={`w-3.5 h-3.5 ${isGpsLoading ? 'animate-spin' : ''}`} />
+                  <span>{isGpsLoading ? 'Locating...' : 'Use My GPS'}</span>
                 </button>
               </div>
 
             </div>
 
-            {/* Quick Category Pills & Count */}
+            {/* GPS Live Status Feedback Banner */}
+            {gpsStatusText && (
+              <div className="px-4 py-2 rounded-2xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/60 text-sky-800 dark:text-sky-300 text-xs font-bold flex items-center justify-between animate-in fade-in duration-200">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-sky-500 animate-ping" />
+                  <span>{gpsStatusText}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setGpsStatusText(null)}
+                  className="text-sky-600 dark:text-sky-400 hover:text-sky-900 text-xs font-black cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+            {/* Quick Category Pills, Live Map Toggle & Count */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-obsidian-200/80 dark:border-white/10">
               
               <div className="flex flex-wrap items-center gap-1.5">
@@ -247,9 +300,49 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 ))}
               </div>
 
-              <div className="text-xs font-bold text-obsidian-600 dark:text-slate-300">
-                <span className="text-coral-600 dark:text-coral-400 font-black">{filteredDogs.length}</span> pup{filteredDogs.length === 1 ? '' : 's'} available
+              <div className="flex items-center gap-2">
+                {/* View Switcher in Hero */}
+                <div className="p-0.5 bg-obsidian-100 dark:bg-white/10 rounded-xl flex items-center gap-0.5 border border-obsidian-200 dark:border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPawPop();
+                      setViewMode('grid');
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-black flex items-center gap-1 transition-all cursor-pointer ${
+                      viewMode === 'grid'
+                        ? 'bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white shadow-xs'
+                        : 'text-obsidian-600 dark:text-slate-400'
+                    }`}
+                  >
+                    <Grid className="w-3 h-3" />
+                    <span>Grid</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPawPop();
+                      setViewMode('map');
+                      setTimeout(() => {
+                        document.getElementById('marketplace-grid')?.scrollIntoView({ behavior: 'smooth' });
+                      }, 100);
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-black flex items-center gap-1 transition-all cursor-pointer ${
+                      viewMode === 'map'
+                        ? 'bg-coral-500 text-white shadow-glow-coral'
+                        : 'text-obsidian-600 dark:text-slate-400'
+                    }`}
+                  >
+                    <MapPin className="w-3 h-3" />
+                    <span>Map 🗺️</span>
+                  </button>
+                </div>
+
+                <div className="text-xs font-bold text-obsidian-600 dark:text-slate-300">
+                  <span className="text-coral-600 dark:text-coral-400 font-black">{filteredDogs.length}</span> pup{filteredDogs.length === 1 ? '' : 's'}
+                </div>
               </div>
+
             </div>
 
           </div>
@@ -406,6 +499,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
               dogs={filteredDogs}
               onSelectDog={onSelectDog}
               height="620px"
+              initialUserGps={userGps}
             />
           </div>
         )}
