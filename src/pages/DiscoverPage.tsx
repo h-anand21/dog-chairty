@@ -1,16 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { Dog } from '../types';
 import { DogCard } from '../components/discover/DogCard';
-import { PawMap } from '../components/map/PawMap';
 import { CitySearchInput } from '../components/common/CitySearchInput';
 import { HowItWorksAnimated } from '../components/discover/HowItWorksAnimated';
 import { PillarDetailModal, PillarType } from '../components/common/PillarDetailModal';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
-import { mapService } from '../services/mapService';
 import {
   Search,
-  Filter,
   Sparkles,
   MapPin,
   Heart,
@@ -20,14 +17,9 @@ import {
   MessageSquare,
   FileCheck,
   Volume2,
-  Compass,
   Smile,
-  SlidersHorizontal,
   Flame,
   Award,
-  Navigation,
-  Grid,
-  Map as MapIcon,
   Plus,
 } from 'lucide-react';
 
@@ -45,8 +37,6 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedSize, setSelectedSize] = useState<string>('All');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
-  const [userGps, setUserGps] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedPillar, setSelectedPillar] = useState<PillarType>(null);
 
   // Dynamic Cities Filter List derived from active dogs
@@ -97,51 +87,6 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
       return matchesSearch && matchesCity && matchesStatus && matchesSize && matchesCategory;
     });
   }, [dogs, searchQuery, selectedCity, selectedStatus, selectedSize, selectedCategory]);
-
-  const [isGpsLoading, setIsGpsLoading] = useState(false);
-  const [gpsStatusText, setGpsStatusText] = useState<string | null>(null);
-
-  const handleGpsDetect = async () => {
-    playPawPop();
-    setIsGpsLoading(true);
-    setGpsStatusText('Detecting your GPS location... 🛰️');
-
-    try {
-      const loc = await mapService.getUserLocation();
-      setUserGps({ lat: loc.lat, lng: loc.lng });
-
-      if (loc.city && loc.city !== 'India' && loc.city !== 'Local Area') {
-        const match = cityOptions.find(c => loc.city.toLowerCase().includes(c.toLowerCase()));
-        setSelectedCity(match || loc.city);
-        setGpsStatusText(`📍 Location Locked: ${loc.city}, ${loc.state}`);
-      } else {
-        setGpsStatusText(`📍 GPS coordinates locked (${loc.lat.toFixed(2)}, ${loc.lng.toFixed(2)})`);
-      }
-
-      // Automatically switch to live interactive map
-      setViewMode('map');
-
-      // Scroll smoothly down to the marketplace section
-      setTimeout(() => {
-        document.getElementById('marketplace-grid')?.scrollIntoView({ behavior: 'smooth' });
-      }, 250);
-    } catch (err) {
-      setGpsStatusText('⚠️ GPS permission not granted. Showing all India dogs.');
-    } finally {
-      setIsGpsLoading(false);
-      setTimeout(() => {
-        setGpsStatusText(null);
-      }, 7000);
-    }
-  };
-
-  const handleOpenMapDirectly = () => {
-    playPawPop();
-    setViewMode('map');
-    setTimeout(() => {
-      document.getElementById('marketplace-grid')?.scrollIntoView({ behavior: 'smooth' });
-    }, 150);
-  };
 
   const successStories = [
     {
@@ -215,59 +160,29 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 relative z-30">
               
               {/* Search text */}
-              <div className="sm:col-span-5 relative">
+              <div className="sm:col-span-7 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-obsidian-400 dark:text-slate-400" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Search breed, name, area, traits..."
+                  placeholder="Search breed, name, traits (e.g. Labrador, friendly, Indie)..."
                   className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white dark:bg-[#121A2B] border border-obsidian-200 dark:border-white/15 text-xs sm:text-sm font-semibold text-obsidian-900 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-4 focus:ring-coral-100 dark:focus:ring-coral-500/20 outline-hidden transition-all shadow-xs"
                 />
               </div>
 
               {/* Dynamic Indian City Search Input */}
-              <div className="sm:col-span-4 relative z-40">
+              <div className="sm:col-span-5 relative z-40">
                 <CitySearchInput
                   value={selectedCity}
                   onSelectCity={city => setSelectedCity(city)}
-                  placeholder="Search Your City (e.g. Mumbai, Delhi, Kolkata)..."
+                  placeholder="Filter By City (e.g. Mumbai, Delhi, Kolkata)..."
                 />
-              </div>
-
-              {/* GPS Near Me Button */}
-              <div className="sm:col-span-3">
-                <button
-                  type="button"
-                  onClick={handleGpsDetect}
-                  disabled={isGpsLoading}
-                  className="w-full h-full py-3.5 px-4 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-glow-coral disabled:opacity-75"
-                >
-                  <Navigation className={`w-3.5 h-3.5 ${isGpsLoading ? 'animate-spin' : ''}`} />
-                  <span>{isGpsLoading ? 'Locating...' : 'Use My GPS'}</span>
-                </button>
               </div>
 
             </div>
 
-            {/* GPS Live Status Feedback Banner */}
-            {gpsStatusText && (
-              <div className="px-4 py-2 rounded-2xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/60 text-sky-800 dark:text-sky-300 text-xs font-bold flex items-center justify-between animate-in fade-in duration-200">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-sky-500 animate-ping" />
-                  <span>{gpsStatusText}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setGpsStatusText(null)}
-                  className="text-sky-600 dark:text-sky-400 hover:text-sky-900 text-xs font-black cursor-pointer"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-
-            {/* Quick Category Pills, Live Map Toggle & Count */}
+            {/* Quick Category Pills & Count */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-obsidian-200/80 dark:border-white/10">
               
               <div className="flex flex-wrap items-center gap-1.5">
@@ -300,47 +215,8 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 ))}
               </div>
 
-              <div className="flex items-center gap-2">
-                {/* View Switcher in Hero */}
-                <div className="p-0.5 bg-obsidian-100 dark:bg-white/10 rounded-xl flex items-center gap-0.5 border border-obsidian-200 dark:border-white/10">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      playPawPop();
-                      setViewMode('grid');
-                    }}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-black flex items-center gap-1 transition-all cursor-pointer ${
-                      viewMode === 'grid'
-                        ? 'bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white shadow-xs'
-                        : 'text-obsidian-600 dark:text-slate-400'
-                    }`}
-                  >
-                    <Grid className="w-3 h-3" />
-                    <span>Grid</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      playPawPop();
-                      setViewMode('map');
-                      setTimeout(() => {
-                        document.getElementById('marketplace-grid')?.scrollIntoView({ behavior: 'smooth' });
-                      }, 100);
-                    }}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-black flex items-center gap-1 transition-all cursor-pointer ${
-                      viewMode === 'map'
-                        ? 'bg-coral-500 text-white shadow-glow-coral'
-                        : 'text-obsidian-600 dark:text-slate-400'
-                    }`}
-                  >
-                    <MapPin className="w-3 h-3" />
-                    <span>Map 🗺️</span>
-                  </button>
-                </div>
-
-                <div className="text-xs font-bold text-obsidian-600 dark:text-slate-300">
-                  <span className="text-coral-600 dark:text-coral-400 font-black">{filteredDogs.length}</span> pup{filteredDogs.length === 1 ? '' : 's'}
-                </div>
+              <div className="text-xs font-bold text-obsidian-600 dark:text-slate-300">
+                <span className="text-coral-600 dark:text-coral-400 font-black">{filteredDogs.length}</span> pup{filteredDogs.length === 1 ? '' : 's'} available
               </div>
 
             </div>
@@ -430,57 +306,39 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
       {/* 🐾 2. HOW PAWCONNECT WORKS (Interactive Animated Journey & Live Simulator) */}
       <HowItWorksAnimated />
 
-      {/* 🐶 3. DOGS MARKETPLACE (GRID / INTERACTIVE MAP SWITCHER) */}
+      {/* 🐶 3. DOGS MARKETPLACE GRID */}
       <section id="marketplace-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28 space-y-6">
-        {/* VIEW 1: INTERACTIVE REAL MAP */}
-        {viewMode === 'map' && (
-          <div className="animate-in fade-in zoom-in-95 duration-200">
-            <PawMap
-              dogs={filteredDogs}
-              onSelectDog={onSelectDog}
-              height="620px"
-              initialUserGps={userGps}
-            />
+        {filteredDogs.length === 0 ? (
+          <div className="glass-card rounded-4xl p-16 text-center border border-white dark:border-white/10 shadow-card max-w-md mx-auto space-y-4">
+            <div className="text-5xl animate-bounce">🐶🔍</div>
+            <h3 className="text-xl font-black font-display text-obsidian-950 dark:text-white">No pups match this filter</h3>
+            <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
+              Try resetting your filters or search keywords to see all available furry companions.
+            </p>
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCity('All');
+                setSelectedStatus('all');
+                setSelectedSize('All');
+                setSelectedCategory('all');
+              }}
+              className="btn-primary text-white px-6 py-2.5 rounded-full font-extrabold text-xs cursor-pointer shadow-glow-coral"
+            >
+              Reset All Filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredDogs.map((dog: Dog) => (
+              <DogCard
+                key={dog.id}
+                dog={dog}
+                onSelect={onSelectDog}
+              />
+            ))}
           </div>
         )}
-
-        {/* VIEW 2: STANDARD GRID */}
-        {viewMode === 'grid' && (
-          <>
-            {filteredDogs.length === 0 ? (
-              <div className="glass-card rounded-4xl p-16 text-center border border-white dark:border-white/10 shadow-card max-w-md mx-auto space-y-4">
-                <div className="text-5xl animate-bounce">🐶🔍</div>
-                <h3 className="text-xl font-black font-display text-obsidian-950 dark:text-white">No pups match this filter</h3>
-                <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
-                  Try resetting your filters or search keywords to see all available furry companions.
-                </p>
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedCity('All');
-                    setSelectedStatus('all');
-                    setSelectedSize('All');
-                    setSelectedCategory('all');
-                  }}
-                  className="btn-primary text-white px-6 py-2.5 rounded-full font-extrabold text-xs cursor-pointer shadow-glow-coral"
-                >
-                  Reset All Filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredDogs.map((dog: Dog) => (
-                  <DogCard
-                    key={dog.id}
-                    dog={dog}
-                    onSelect={onSelectDog}
-                  />
-                ))}
-              </div>
-            )}
-          </>
-        )}
-
       </section>
 
       {/* 🎉 4. HAPPY TAILS & SUCCESS STORIES */}
