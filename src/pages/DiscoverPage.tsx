@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Dog } from '../types';
 import { DogCard } from '../components/discover/DogCard';
+import { PawMap } from '../components/map/PawMap';
 import { CitySearchInput } from '../components/common/CitySearchInput';
 import { HowItWorksAnimated } from '../components/discover/HowItWorksAnimated';
 import { PillarDetailModal, PillarType } from '../components/common/PillarDetailModal';
@@ -23,6 +24,8 @@ import {
   Plus,
   X,
   ChevronRight,
+  Grid,
+  Map as MapIcon,
 } from 'lucide-react';
 
 interface DiscoverPageProps {
@@ -83,6 +86,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
   const [selectedSize, setSelectedSize] = useState<string>('All');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPillar, setSelectedPillar] = useState<PillarType>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
@@ -296,57 +300,60 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                   </button>
                 )}
 
-                {/* 🌟 Live Auto-Complete Suggestions Dropdown */}
+                {/* 🌟 Live Auto-Complete Suggestions Dropdown (100% Solid & High-Contrast) */}
                 {isSearchFocused && (
-                  <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-2xl rounded-3xl shadow-2xl border border-obsidian-200/90 dark:border-white/15 overflow-hidden max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 text-left divide-y divide-obsidian-100 dark:divide-white/10 ring-1 ring-black/5 dark:ring-white/10">
+                  <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-[#FFFFFF] dark:bg-[#0E1526] rounded-3xl shadow-2xl border-2 border-coral-500/40 dark:border-coral-500/50 overflow-hidden max-h-84 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 text-left divide-y divide-obsidian-200 dark:divide-white/10 ring-4 ring-black/10 dark:ring-black/50">
                     
                     {/* Matching Dog Names */}
                     {searchSuggestions.matchingDogs.length > 0 && (
-                      <div className="p-2">
-                        <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400 flex items-center gap-1">
-                          <span>🐾 Dogs Available</span>
+                      <div className="p-2.5 bg-white dark:bg-[#0E1526]">
+                        <div className="px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-coral-600 dark:text-coral-400 bg-coral-50/80 dark:bg-[#152035] rounded-xl mb-1.5 flex items-center justify-between">
+                          <span>🐾 Available Puppies</span>
+                          <span className="text-[10px] text-obsidian-500 dark:text-slate-400 font-bold">Direct Guardian Verified</span>
                         </div>
-                        {searchSuggestions.matchingDogs.map(d => (
-                          <button
-                            key={d.id}
-                            type="button"
-                            onClick={() => {
-                              playPawPop();
-                              setSearchQuery(d.name);
-                              setIsSearchFocused(false);
-                            }}
-                            className="w-full px-3 py-2 rounded-2xl hover:bg-coral-50/80 dark:hover:bg-coral-950/40 flex items-center justify-between gap-3 text-left transition-colors cursor-pointer group"
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <img
-                                src={d.coverPhoto}
-                                alt={d.name}
-                                className="w-8 h-8 rounded-xl object-cover ring-1 ring-coral-400 shrink-0"
-                              />
-                              <div className="truncate">
-                                <div className="text-xs font-black text-obsidian-950 dark:text-white group-hover:text-coral-600 dark:group-hover:text-coral-400 truncate">
-                                  {d.name}
-                                </div>
-                                <div className="text-[10px] text-obsidian-500 dark:text-slate-400 font-medium truncate">
-                                  {d.breed} • 📍 {d.location}
+                        <div className="space-y-1">
+                          {searchSuggestions.matchingDogs.map(d => (
+                            <button
+                              key={d.id}
+                              type="button"
+                              onClick={() => {
+                                playPawPop();
+                                setSearchQuery(d.name);
+                                setIsSearchFocused(false);
+                              }}
+                              className="w-full px-3 py-2 rounded-2xl bg-white dark:bg-[#0E1526] hover:bg-coral-500/10 dark:hover:bg-coral-500/15 flex items-center justify-between gap-3 text-left transition-colors cursor-pointer group border border-transparent hover:border-coral-500/30"
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <img
+                                  src={d.coverPhoto}
+                                  alt={d.name}
+                                  className="w-9 h-9 rounded-xl object-cover ring-2 ring-coral-400 shrink-0"
+                                />
+                                <div className="truncate">
+                                  <div className="text-xs font-black text-obsidian-950 dark:text-white group-hover:text-coral-600 dark:group-hover:text-coral-400 truncate">
+                                    {d.name}
+                                  </div>
+                                  <div className="text-[10px] text-obsidian-600 dark:text-slate-300 font-semibold truncate">
+                                    {d.breed} • 📍 {d.location}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-coral-100/80 dark:bg-coral-950/80 text-coral-700 dark:text-coral-300 shrink-0">
-                              {d.age}
-                            </span>
-                          </button>
-                        ))}
+                              <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-coral-100 dark:bg-coral-950 text-coral-700 dark:text-coral-300 shrink-0 border border-coral-200 dark:border-coral-800">
+                                {d.age}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     )}
 
                     {/* Matching Breeds */}
                     {searchSuggestions.matchingBreeds.length > 0 && (
-                      <div className="p-2">
-                        <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400 flex items-center gap-1">
+                      <div className="p-2.5 bg-[#F8FAFC] dark:bg-[#111A2E]">
+                        <div className="px-2 py-1 text-[11px] font-black uppercase tracking-wider text-obsidian-600 dark:text-slate-300 flex items-center gap-1 mb-1">
                           <span>🐕 Breeds</span>
                         </div>
-                        <div className="flex flex-wrap gap-1.5 px-2 pt-1 pb-2">
+                        <div className="flex flex-wrap gap-1.5 px-1">
                           {searchSuggestions.matchingBreeds.map((breed, idx) => (
                             <button
                               key={idx}
@@ -356,7 +363,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                                 setSearchQuery(breed);
                                 setIsSearchFocused(false);
                               }}
-                              className="px-3 py-1.5 rounded-xl bg-obsidian-100 dark:bg-white/10 hover:bg-coral-50 dark:hover:bg-coral-950/60 hover:text-coral-600 text-obsidian-800 dark:text-slate-200 text-xs font-black transition-all cursor-pointer border border-obsidian-200 dark:border-white/10"
+                              className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#18243A] hover:bg-coral-500 hover:text-white text-obsidian-900 dark:text-white text-xs font-black transition-all cursor-pointer border border-obsidian-200 dark:border-white/15 shadow-xs"
                             >
                               🔍 {breed}
                             </button>
@@ -367,11 +374,11 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
                     {/* Popular Traits & Keywords */}
                     {searchSuggestions.matchingTraits.length > 0 && (
-                      <div className="p-2 bg-obsidian-50/50 dark:bg-white/5">
-                        <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400">
+                      <div className="p-2.5 bg-white dark:bg-[#0E1526]">
+                        <div className="px-2 py-1 text-[11px] font-black uppercase tracking-wider text-obsidian-600 dark:text-slate-300 mb-1">
                           <span>⚡ Traits & Categories</span>
                         </div>
-                        <div className="flex flex-wrap gap-1.5 px-2 pt-1 pb-1">
+                        <div className="flex flex-wrap gap-1.5 px-1">
                           {searchSuggestions.matchingTraits.map((trait, idx) => (
                             <button
                               key={idx}
@@ -381,7 +388,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                                 setSearchQuery(trait);
                                 setIsSearchFocused(false);
                               }}
-                              className="px-2.5 py-1 rounded-lg bg-white dark:bg-[#121A2B] hover:border-coral-400 text-obsidian-700 dark:text-slate-300 text-[11px] font-bold border border-obsidian-200 dark:border-white/10 cursor-pointer transition-colors"
+                              className="px-3 py-1.5 rounded-xl bg-[#F1F5F9] dark:bg-[#18243A] hover:bg-coral-500 hover:text-white text-obsidian-800 dark:text-slate-200 text-xs font-bold border border-obsidian-200 dark:border-white/10 cursor-pointer transition-colors shadow-xs"
                             >
                               ✨ {trait}
                             </button>
@@ -405,7 +412,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
             </div>
 
-            {/* Quick Category Pills & Count */}
+            {/* Quick Category Pills, View Mode Switcher & Count */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-obsidian-200/80 dark:border-white/10">
               
               <div className="flex flex-wrap items-center gap-1.5">
@@ -438,8 +445,47 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 ))}
               </div>
 
-              <div className="text-xs font-bold text-obsidian-600 dark:text-slate-300">
-                <span className="text-coral-600 dark:text-coral-400 font-black">{filteredDogs.length}</span> pup{filteredDogs.length === 1 ? '' : 's'} available
+              <div className="flex items-center gap-3">
+                {/* 🗺️ Grid vs Map View Switcher */}
+                <div className="p-0.5 bg-obsidian-100 dark:bg-white/10 rounded-xl flex items-center gap-0.5 border border-obsidian-200 dark:border-white/10 shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPawPop();
+                      setViewMode('grid');
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-black flex items-center gap-1 transition-all cursor-pointer ${
+                      viewMode === 'grid'
+                        ? 'bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white shadow-xs'
+                        : 'text-obsidian-600 dark:text-slate-400 hover:text-obsidian-950 dark:hover:text-white'
+                    }`}
+                  >
+                    <Grid className="w-3 h-3" />
+                    <span>Grid</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPawPop();
+                      setViewMode('map');
+                      setTimeout(() => {
+                        document.getElementById('marketplace-grid')?.scrollIntoView({ behavior: 'smooth' });
+                      }, 100);
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-black flex items-center gap-1 transition-all cursor-pointer ${
+                      viewMode === 'map'
+                        ? 'bg-coral-500 text-white shadow-glow-coral'
+                        : 'text-obsidian-600 dark:text-slate-400 hover:text-coral-500'
+                    }`}
+                  >
+                    <MapIcon className="w-3 h-3" />
+                    <span>Map 🗺️</span>
+                  </button>
+                </div>
+
+                <div className="text-xs font-bold text-obsidian-600 dark:text-slate-300">
+                  <span className="text-coral-600 dark:text-coral-400 font-black">{filteredDogs.length}</span> pup{filteredDogs.length === 1 ? '' : 's'} available
+                </div>
               </div>
 
             </div>
@@ -529,39 +575,71 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
       {/* 🐾 2. HOW PAWCONNECT WORKS (Interactive Animated Journey & Live Simulator) */}
       <HowItWorksAnimated />
 
-      {/* 🐶 3. DOGS MARKETPLACE GRID */}
+      {/* 🐶 3. DOGS MARKETPLACE (GRID / MAP VIEW) */}
       <section id="marketplace-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28 space-y-6">
-        {filteredDogs.length === 0 ? (
-          <div className="glass-card rounded-4xl p-16 text-center border border-white dark:border-white/10 shadow-card max-w-md mx-auto space-y-4">
-            <div className="text-5xl animate-bounce">🐶🔍</div>
-            <h3 className="text-xl font-black font-display text-obsidian-950 dark:text-white">No pups match this filter</h3>
-            <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
-              Try resetting your filters or search keywords to see all available furry companions.
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedCity('All');
-                setSelectedStatus('all');
-                setSelectedSize('All');
-                setSelectedCategory('all');
-              }}
-              className="btn-primary text-white px-6 py-2.5 rounded-full font-extrabold text-xs cursor-pointer shadow-glow-coral"
-            >
-              Reset All Filters
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredDogs.map((dog: Dog) => (
-              <DogCard
-                key={dog.id}
-                dog={dog}
-                onSelect={onSelectDog}
-              />
-            ))}
+        
+        {/* VIEW 1: INTERACTIVE REAL MAP */}
+        {viewMode === 'map' && (
+          <div className="animate-in fade-in zoom-in-95 duration-200 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-black text-obsidian-800 dark:text-slate-200">
+                <MapPin className="w-4 h-4 text-coral-500" />
+                <span>Interactive Paw Map: Click any pup pin to view details or apply</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className="text-xs font-bold text-coral-600 dark:text-coral-400 hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <Grid className="w-3.5 h-3.5" />
+                <span>Switch to Grid View</span>
+              </button>
+            </div>
+            <PawMap
+              dogs={filteredDogs}
+              onSelectDog={onSelectDog}
+              height="620px"
+            />
           </div>
         )}
+
+        {/* VIEW 2: STANDARD GRID */}
+        {viewMode === 'grid' && (
+          <>
+            {filteredDogs.length === 0 ? (
+              <div className="glass-card rounded-4xl p-16 text-center border border-white dark:border-white/10 shadow-card max-w-md mx-auto space-y-4">
+                <div className="text-5xl animate-bounce">🐶🔍</div>
+                <h3 className="text-xl font-black font-display text-obsidian-950 dark:text-white">No pups match this filter</h3>
+                <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
+                  Try resetting your filters or search keywords to see all available furry companions.
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedCity('All');
+                    setSelectedStatus('all');
+                    setSelectedSize('All');
+                    setSelectedCategory('all');
+                  }}
+                  className="btn-primary text-white px-6 py-2.5 rounded-full font-extrabold text-xs cursor-pointer shadow-glow-coral"
+                >
+                  Reset All Filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredDogs.map((dog: Dog) => (
+                  <DogCard
+                    key={dog.id}
+                    dog={dog}
+                    onSelect={onSelectDog}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
       </section>
 
       {/* 🎉 4. HAPPY TAILS & SUCCESS STORIES */}
