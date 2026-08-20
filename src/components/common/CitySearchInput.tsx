@@ -111,12 +111,12 @@ export const CitySearchInput: React.FC<CitySearchInputProps> = ({
         )}
       </div>
 
-      {/* Clean Floating Suggestions Dropdown (Sits directly beneath the input) */}
+      {/* Clean Floating Suggestions Dropdown (100% Solid & High Contrast) */}
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-white/98 dark:bg-[#0F172A]/98 backdrop-blur-2xl rounded-3xl shadow-2xl border border-obsidian-200/90 dark:border-white/15 overflow-hidden max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 ring-1 ring-black/5 dark:ring-white/10">
+        <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-[100] bg-[#FFFFFF] dark:bg-[#0E1526] rounded-3xl shadow-2xl border-2 border-coral-500/40 dark:border-coral-500/50 overflow-hidden max-h-72 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 ring-4 ring-black/10 dark:ring-black/50 text-left divide-y divide-obsidian-100 dark:divide-white/10">
           
           {/* Dropdown Header */}
-          <div className="px-4 py-2.5 bg-obsidian-50/80 dark:bg-white/5 border-b border-obsidian-100 dark:border-white/10 flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-obsidian-500 dark:text-slate-400">
+          <div className="px-4 py-2.5 bg-[#F1F5F9] dark:bg-[#141E33] border-b border-obsidian-200 dark:border-white/10 flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-coral-600 dark:text-coral-400">
             <span>Matching Indian Cities / Areas</span>
             <button
               type="button"
@@ -128,13 +128,13 @@ export const CitySearchInput: React.FC<CitySearchInputProps> = ({
           </div>
 
           {/* List of Suggestions */}
-          <div className="py-1">
+          <div className="py-1 bg-[#FFFFFF] dark:bg-[#0E1526]">
             {suggestions.map((loc, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => handleSelect(loc.city || loc.displayName.split(',')[0])}
-                className="w-full px-4 py-3 text-left hover:bg-coral-50/80 dark:hover:bg-coral-950/40 transition-colors flex items-start gap-3 border-b border-obsidian-100/70 dark:border-white/5 last:border-0 cursor-pointer group"
+                className="w-full px-4 py-3 text-left bg-[#FFFFFF] dark:bg-[#0E1526] hover:bg-coral-50 dark:hover:bg-[#162238] transition-colors flex items-start gap-3 border-b border-obsidian-100 dark:border-white/10 last:border-0 cursor-pointer group"
               >
                 <div className="w-7 h-7 rounded-xl bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 group-hover:bg-coral-500 group-hover:text-white flex items-center justify-center shrink-0 transition-colors mt-0.5 shadow-2xs">
                   <MapPin className="w-3.5 h-3.5" />
@@ -144,7 +144,7 @@ export const CitySearchInput: React.FC<CitySearchInputProps> = ({
                   <div className="text-xs font-black text-obsidian-950 dark:text-white group-hover:text-coral-600 dark:group-hover:text-coral-400 transition-colors truncate">
                     {loc.city || loc.displayName.split(',')[0]}
                   </div>
-                  <div className="text-[11px] font-medium text-obsidian-500 dark:text-slate-400 truncate mt-0.5">
+                  <div className="text-[11px] font-medium text-obsidian-600 dark:text-slate-300 truncate mt-0.5">
                     {loc.displayName}
                   </div>
                 </div>
