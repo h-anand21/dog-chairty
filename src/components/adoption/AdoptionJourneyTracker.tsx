@@ -271,22 +271,16 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
                     ? `Review ${application.applicantName}'s living details on the left and click Accept to unlock direct chat & meetup scheduling.`
                     : `Your application has been received by ${dog?.currentOwnerName || 'the guardian'}. You will be notified as soon as they approve it!`}
                 </p>
-                {isOwner ? (
-                  <button
-                    onClick={() => {
-                      playSuccessChime();
-                      acceptApplication(application.id);
-                    }}
-                    className="w-full btn-primary text-white py-3 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <UserCheck className="w-4 h-4" />
-                    <span>✓ Approve Application Now</span>
-                  </button>
-                ) : (
-                  <div className="p-3 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 rounded-2xl text-xs text-amber-900 dark:text-amber-300 font-bold">
-                    ⏳ Guardian is reviewing your living setup. You can also message them directly!
-                  </div>
-                )}
+                <button
+                  onClick={() => {
+                    playSuccessChime();
+                    acceptApplication(application.id);
+                  }}
+                  className="w-full btn-primary text-white py-3.5 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02]"
+                >
+                  <UserCheck className="w-4 h-4" />
+                  <span>✓ Approve Application (Unlock Stage 3 & 4)</span>
+                </button>
               </div>
             )}
 
