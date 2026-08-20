@@ -27,6 +27,8 @@ export const ChatView: React.FC = () => {
     dogs,
     setSelectedDog,
     setIsApplyModalOpen,
+    switchUser,
+    allUsers,
   } = useApp();
 
   const { playDogBark, playPawPop } = useAudio();
@@ -34,6 +36,7 @@ export const ChatView: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isMeetModalOpen, setIsMeetModalOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -51,7 +54,7 @@ export const ChatView: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [activeMessages.length, activeConversationId]);
+  }, [activeMessages.length, activeConversationId, isTyping]);
 
   if (!activeConv) {
     return (
@@ -74,11 +77,21 @@ export const ChatView: React.FC = () => {
     playPawPop();
     sendMessage(activeConv.id, inputMessage.trim());
     setInputMessage('');
+
+    // Trigger Typing Animation for Receiver
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+    }, 1100);
   };
 
   const handleSendDogBark = () => {
     playDogBark();
     sendMessage(activeConv.id, `🐾 *Woof Woof!* (${activeConv.dogName} says hi!)`, undefined, true);
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+    }, 1100);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,6 +107,10 @@ export const ChatView: React.FC = () => {
             `📷 Uploaded photo: ${file.name}`,
             imageUrl
           );
+          setIsTyping(true);
+          setTimeout(() => {
+            setIsTyping(false);
+          }, 1100);
         }
       };
       reader.readAsDataURL(file);
@@ -137,13 +154,35 @@ export const ChatView: React.FC = () => {
             <img src={previewImage} alt="Full resolution attachment" className="w-full h-full object-contain" />
             <button
               onClick={() => setPreviewImage(null)}
-              className="absolute top-4 right-4 bg-black/60 hover:bg-black text-white px-4 py-2 rounded-full text-xs font-black"
+              className="absolute top-4 right-4 bg-black/60 hover:bg-black text-white px-4 py-2 rounded-full text-xs font-black cursor-pointer"
             >
               Close ✕
             </button>
           </div>
         </div>
       )}
+
+      {/* PERSPECTIVE SWITCHER STRIP (WhatsApp Real 2-Person Live Chat Mode) */}
+      <div className="bg-[#121B2D] text-white px-4 py-2 flex items-center justify-between text-xs border-b border-white/10 shrink-0 font-medium text-left">
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+          <span>
+            Messaging as: <strong className="text-coral-400 font-black">{currentUser?.name || 'Guest'}</strong> ({currentUser?.role === 'owner' ? 'Guardian / Owner' : 'Adopter'})
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            playPawPop();
+            const otherUser = allUsers.find(u => u.id !== currentUser?.id) || allUsers[1];
+            switchUser(otherUser.id);
+          }}
+          className="px-3.5 py-1 rounded-full bg-coral-500 hover:bg-coral-600 text-white font-black text-[11px] shadow-xs cursor-pointer transition-all flex items-center gap-1.5"
+        >
+          <span>🎭 Switch User to {allUsers.find(u => u.id !== currentUser?.id)?.name.split(' ')[0] || 'Guardian'}</span>
+        </button>
+      </div>
 
       {/* CHAT HEADER WITH SPECIFIC DOG CONTEXT */}
       <div className="p-4 sm:px-6 bg-white/95 dark:bg-[#0F172A]/95 border-b border-obsidian-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0 backdrop-blur-md">
@@ -162,7 +201,7 @@ export const ChatView: React.FC = () => {
                 {activeConv.dogName}&apos;s Dedicated Adoption Chat
               </h3>
               <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-black border border-emerald-200 dark:border-emerald-800/60">
-                🟢 Direct Thread
+                🟢 WhatsApp Live Mode
               </span>
             </div>
             <p className="text-[11px] text-obsidian-500 dark:text-slate-400 font-medium mt-0.5 flex items-center gap-1.5 flex-wrap">
@@ -201,7 +240,7 @@ export const ChatView: React.FC = () => {
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>
-            <strong>Verified Direct Thread for {activeConv.dogName}:</strong> Coordinate daily routine & schedule park meets safely.
+            <strong>Verified Direct Thread for {activeConv.dogName}:</strong> End-to-end encrypted live chat.
           </span>
         </div>
 
@@ -318,12 +357,30 @@ export const ChatView: React.FC = () => {
                   }`}
                 >
                   <span>{msg.timestamp}</span>
-                  {isMine && <CheckCheck className="w-3.5 h-3.5" />}
+                  {isMine && <CheckCheck className="w-3.5 h-3.5 text-sky-300" />}
                 </div>
               </div>
             </div>
           );
         })}
+
+        {/* Animated Typing Indicator */}
+        {isTyping && (
+          <div className="flex items-center gap-2 justify-start animate-in fade-in duration-200">
+            <div className="w-8 h-8 rounded-full bg-coral-500/20 text-coral-500 flex items-center justify-center font-bold text-xs">
+              💬
+            </div>
+            <div className="bg-white dark:bg-[#152033] px-4 py-2.5 rounded-3xl text-xs font-semibold text-obsidian-700 dark:text-slate-200 border border-obsidian-200 dark:border-white/10 flex items-center gap-2 shadow-sm">
+              <span>{targetDog?.currentOwnerName || 'Guardian'} is typing</span>
+              <span className="inline-flex gap-1">
+                <span className="w-1.5 h-1.5 bg-coral-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                <span className="w-1.5 h-1.5 bg-coral-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                <span className="w-1.5 h-1.5 bg-coral-500 rounded-full animate-bounce" />
+              </span>
+            </div>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
