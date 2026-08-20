@@ -9,14 +9,17 @@ export const AdoptFlowPage: React.FC = () => {
   const { applications, currentUser, setActiveTab } = useApp();
   const { playPawPop } = useAudio();
 
-  const [activeFilter, setActiveFilter] = useState<'all' | 'my_requests' | 'incoming_requests'>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [selectedDogId, setSelectedDogId] = useState<string>('all');
 
-  const userApplications = applications.filter((app: AdoptionApplication) => {
-    if (activeFilter === 'my_requests') {
-      return currentUser ? app.applicantId === currentUser.id : false;
+  const filteredApplications = applications.filter((app: AdoptionApplication) => {
+    if (selectedDogId !== 'all' && app.dogId !== selectedDogId) return false;
+
+    if (activeFilter === 'active') {
+      return app.status !== 'completed';
     }
-    if (activeFilter === 'incoming_requests') {
-      return currentUser ? (currentUser.role === 'owner' || app.applicantId !== currentUser.id) : true;
+    if (activeFilter === 'completed') {
+      return app.status === 'completed';
     }
     return true;
   });
@@ -35,7 +38,7 @@ export const AdoptFlowPage: React.FC = () => {
             Adoption Journey Tracker
           </h1>
           <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-300 mt-1">
-            Track applications from questionnaire review to physical dual-confirmation transfer.
+            Select any pup below to track their live journey from application review to final certificate handover.
           </p>
         </div>
 
@@ -51,48 +54,99 @@ export const AdoptFlowPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-obsidian-200 dark:border-white/10 pb-2">
-        <button
-          onClick={() => setActiveFilter('all')}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-            activeFilter === 'all'
-              ? 'bg-coral-500 text-white shadow-xs'
-              : 'text-obsidian-600 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
-          }`}
-        >
-          All Applications ({applications.length})
-        </button>
-        <button
-          onClick={() => setActiveFilter('my_requests')}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-            activeFilter === 'my_requests'
-              ? 'bg-coral-500 text-white shadow-xs'
-              : 'text-obsidian-600 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
-          }`}
-        >
-          My Submitted Requests
-        </button>
-        <button
-          onClick={() => setActiveFilter('incoming_requests')}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-            activeFilter === 'incoming_requests'
-              ? 'bg-coral-500 text-white shadow-xs'
-              : 'text-obsidian-600 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
-          }`}
-        >
-          Incoming Guardian Requests
-        </button>
+      {/* Filter Tabs & Dog Select Chips */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-obsidian-200 dark:border-white/10 pb-3">
+        
+        {/* Status Filter Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+          <button
+            onClick={() => {
+              playPawPop();
+              setActiveFilter('all');
+            }}
+            className={`px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
+              activeFilter === 'all'
+                ? 'bg-coral-500 text-white shadow-xs'
+                : 'text-obsidian-600 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
+            }`}
+          >
+            All Journeys ({applications.length})
+          </button>
+
+          <button
+            onClick={() => {
+              playPawPop();
+              setActiveFilter('active');
+            }}
+            className={`px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
+              activeFilter === 'active'
+                ? 'bg-coral-500 text-white shadow-xs'
+                : 'text-obsidian-600 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
+            }`}
+          >
+            Active Pipelines ({applications.filter(a => a.status !== 'completed').length})
+          </button>
+
+          <button
+            onClick={() => {
+              playPawPop();
+              setActiveFilter('completed');
+            }}
+            className={`px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
+              activeFilter === 'completed'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-obsidian-600 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/10'
+            }`}
+          >
+            Completed Adoptions 🎉 ({applications.filter(a => a.status === 'completed').length})
+          </button>
+        </div>
+
+        {/* Dog Chips Selector */}
+        <div className="flex items-center gap-1.5 overflow-x-auto">
+          <span className="text-[11px] font-black uppercase text-obsidian-400 dark:text-slate-400 mr-1 shrink-0">
+            Pup Filter:
+          </span>
+          <button
+            onClick={() => setSelectedDogId('all')}
+            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              selectedDogId === 'all'
+                ? 'bg-obsidian-900 dark:bg-white text-white dark:text-obsidian-950'
+                : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-700 dark:text-slate-300'
+            }`}
+          >
+            All Pups
+          </button>
+
+          {applications.map((app) => (
+            <button
+              key={app.id}
+              onClick={() => {
+                playPawPop();
+                setSelectedDogId(app.dogId);
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                selectedDogId === app.dogId
+                  ? 'bg-coral-500 text-white ring-2 ring-coral-300'
+                  : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-800 dark:text-slate-200 hover:bg-obsidian-200 dark:hover:bg-white/20'
+              }`}
+            >
+              <img src={app.dogPhoto} alt={app.dogName} className="w-4 h-4 rounded-full object-cover" />
+              <span>{app.dogName}</span>
+            </button>
+          ))}
+        </div>
+
       </div>
 
       {/* Applications List */}
       <div className="space-y-6">
-        {userApplications.length === 0 ? (
+        {filteredApplications.length === 0 ? (
           <div className="glass-card rounded-3xl p-12 text-center border border-white dark:border-white/10 shadow-elevated max-w-md mx-auto space-y-4">
             <div className="text-4xl">🐾📝</div>
-            <h3 className="text-lg font-bold text-obsidian-950 dark:text-white">No active adoption requests found</h3>
+            <h3 className="text-lg font-bold text-obsidian-950 dark:text-white">No adoption requests matching this filter</h3>
             <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-normal">
-              Browse dogs on the Discover page to submit a verified adoption application or post your dog to receive inquiries.
+              Browse dogs on the Discover page to submit a verified adoption application for any dog.
             </p>
             <button
               onClick={() => setActiveTab('discover')}
@@ -102,7 +156,7 @@ export const AdoptFlowPage: React.FC = () => {
             </button>
           </div>
         ) : (
-          userApplications.map((app: AdoptionApplication) => (
+          filteredApplications.map((app: AdoptionApplication) => (
             <AdoptionJourneyTracker key={app.id} application={app} />
           ))
         )}
