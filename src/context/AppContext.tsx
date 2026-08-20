@@ -1122,7 +1122,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         let replyText = `Hello ${senderName.split(' ')[0]}! Thank you for your message regarding ${targetDog.name}. They are doing great and are very excited to find a caring home! Let me know if you would like to arrange a park meet & greet! 🐾`;
 
         const lowerText = text.toLowerCase();
-        if (isDogBark) {
+        if (image) {
+          replyText = `Awesome picture! 📷 Thank you so much for uploading this photo! It gives me great confidence regarding ${targetDog.name}'s environment and care.`;
+        } else if (isDogBark) {
           replyText = `Haha, ${targetDog.name} heard that bark and is wagging their tail! 🐕✨ Are you interested in meeting them this week?`;
         } else if (lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('hey') || lowerText.includes('kaise') || lowerText.includes('namaste')) {
           replyText = `Hello ${senderName.split(' ')[0]}! 👋 Thanks for reaching out about ${targetDog.name}. How can I help you today regarding their adoption routine or health records?`;

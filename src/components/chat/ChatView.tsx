@@ -33,7 +33,10 @@ export const ChatView: React.FC = () => {
 
   const [inputMessage, setInputMessage] = useState('');
   const [isMeetModalOpen, setIsMeetModalOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const activeConv = conversations.find(c => c.id === activeConversationId) || conversations[0];
   const activeMessages = activeConv ? messages[activeConv.id] || [] : [];
@@ -78,15 +81,23 @@ export const ChatView: React.FC = () => {
     sendMessage(activeConv.id, `🐾 *Woof Woof!* (${activeConv.dogName} says hi!)`, undefined, true);
   };
 
-  const handleSendSamplePhoto = () => {
-    playPawPop();
-    const photos = [
-      'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&auto=format&fit=crop&q=80'
-    ];
-    const randomPhoto = targetDog?.coverPhoto || photos[Math.floor(Math.random() * photos.length)];
-    sendMessage(activeConv.id, `Here is a recent photo of ${activeConv.dogName}!`, randomPhoto);
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      playPawPop();
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imageUrl = event.target?.result as string;
+        if (imageUrl) {
+          sendMessage(
+            activeConv.id,
+            `📷 Uploaded photo: ${file.name}`,
+            imageUrl
+          );
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleDirectAdopt = () => {
@@ -107,6 +118,33 @@ export const ChatView: React.FC = () => {
   return (
     <div className="glass-card rounded-4xl border border-white dark:border-white/10 shadow-elevated flex flex-col h-[700px] overflow-hidden">
       
+      {/* Hidden Device File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileUpload}
+      />
+
+      {/* Image Preview Lightbox */}
+      {previewImage && (
+        <div
+          onClick={() => setPreviewImage(null)}
+          className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer animate-in fade-in duration-200"
+        >
+          <div className="relative max-w-3xl max-h-[85vh] rounded-3xl overflow-hidden shadow-2xl border border-white/20">
+            <img src={previewImage} alt="Full resolution attachment" className="w-full h-full object-contain" />
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute top-4 right-4 bg-black/60 hover:bg-black text-white px-4 py-2 rounded-full text-xs font-black"
+            >
+              Close ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* CHAT HEADER WITH SPECIFIC DOG CONTEXT */}
       <div className="p-4 sm:px-6 bg-white/95 dark:bg-[#0F172A]/95 border-b border-obsidian-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0 backdrop-blur-md">
         <div className="flex items-center gap-3 text-left">
@@ -263,8 +301,14 @@ export const ChatView: React.FC = () => {
                 )}
 
                 {msg.image && (
-                  <div className="mt-2.5 rounded-2xl overflow-hidden max-h-56 shadow-sm">
-                    <img src={msg.image} alt="Attachment" className="w-full h-full object-cover" />
+                  <div
+                    onClick={() => setPreviewImage(msg.image || null)}
+                    className="mt-2.5 rounded-2xl overflow-hidden max-h-56 shadow-sm cursor-pointer group relative"
+                  >
+                    <img src={msg.image} alt="Attachment" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
+                      Click to Expand 🔍
+                    </div>
                   </div>
                 )}
 
@@ -309,9 +353,9 @@ export const ChatView: React.FC = () => {
       >
         <button
           type="button"
-          onClick={handleSendSamplePhoto}
-          title="Share photo"
-          className="w-11 h-11 rounded-2xl flex items-center justify-center bg-obsidian-100 dark:bg-white/5 hover:bg-coral-50 dark:hover:bg-coral-950/50 text-obsidian-700 dark:text-slate-300 hover:text-coral-500 transition-colors cursor-pointer border border-obsidian-200 dark:border-white/10"
+          onClick={() => fileInputRef.current?.click()}
+          title="Upload real photo from device"
+          className="w-11 h-11 rounded-2xl flex items-center justify-center bg-obsidian-100 dark:bg-white/5 hover:bg-coral-50 dark:hover:bg-coral-950/50 text-obsidian-700 dark:text-slate-300 hover:text-coral-500 transition-colors cursor-pointer border border-obsidian-200 dark:border-white/10 shrink-0"
         >
           <ImageIcon className="w-5 h-5" />
         </button>
@@ -320,7 +364,7 @@ export const ChatView: React.FC = () => {
           type="button"
           onClick={handleSendDogBark}
           title="Send dog bark audio note"
-          className="w-11 h-11 rounded-2xl flex items-center justify-center bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-100 text-coral-600 dark:text-coral-400 transition-colors cursor-pointer border border-coral-200 dark:border-coral-800/60"
+          className="w-11 h-11 rounded-2xl flex items-center justify-center bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-100 text-coral-600 dark:text-coral-400 transition-colors cursor-pointer border border-coral-200 dark:border-coral-800/60 shrink-0"
         >
           <Volume2 className="w-5 h-5" />
         </button>
@@ -336,7 +380,7 @@ export const ChatView: React.FC = () => {
         <button
           type="submit"
           disabled={!inputMessage.trim()}
-          className="w-12 h-11 rounded-2xl btn-primary disabled:opacity-50 text-white flex items-center justify-center cursor-pointer shadow-glow-coral"
+          className="w-12 h-11 rounded-2xl btn-primary disabled:opacity-50 text-white flex items-center justify-center cursor-pointer shadow-glow-coral shrink-0"
         >
           <Send className="w-4 h-4" />
         </button>
