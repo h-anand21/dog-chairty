@@ -189,12 +189,19 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
         <div className="p-5 rounded-3xl bg-obsidian-100/90 dark:bg-[#101726] border border-obsidian-200 dark:border-white/10 space-y-3.5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-black uppercase tracking-wider text-obsidian-400 dark:text-slate-400">
-              Verified Application
+              Submitted Questionnaire
             </span>
-            <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-emerald-200 dark:border-emerald-800/60">
-              <UserCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Screened Profile</span>
-            </span>
+            {application.status === 'accepted' || currentStep >= 3 ? (
+              <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-emerald-200 dark:border-emerald-800/60">
+                <UserCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>Screening Approved ✓</span>
+              </span>
+            ) : (
+              <span className="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-amber-200 dark:border-amber-800/60">
+                <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                <span>Under Review ⏳</span>
+              </span>
+            )}
           </div>
 
           <div className="space-y-2.5 text-xs text-obsidian-800 dark:text-slate-200">
@@ -252,6 +259,36 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
                 <span>Next Immediate Action</span>
               </span>
             </div>
+
+            {/* Stage 2: Under Review */}
+            {currentStep === 2 && (
+              <div className="space-y-2.5">
+                <h4 className="font-black text-base text-obsidian-950 dark:text-white">
+                  Application Under Review ⏳
+                </h4>
+                <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
+                  {isOwner
+                    ? `Review ${application.applicantName}'s living details on the left and click Accept to unlock direct chat & meetup scheduling.`
+                    : `Your application has been received by ${dog?.currentOwnerName || 'the guardian'}. You will be notified as soon as they approve it!`}
+                </p>
+                {isOwner ? (
+                  <button
+                    onClick={() => {
+                      playSuccessChime();
+                      acceptApplication(application.id);
+                    }}
+                    className="w-full btn-primary text-white py-3 rounded-2xl font-black text-xs shadow-glow-coral flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <UserCheck className="w-4 h-4" />
+                    <span>✓ Approve Application Now</span>
+                  </button>
+                ) : (
+                  <div className="p-3 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 rounded-2xl text-xs text-amber-900 dark:text-amber-300 font-bold">
+                    ⏳ Guardian is reviewing your living setup. You can also message them directly!
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Stage 3: Chat */}
             {currentStep === 3 && (
