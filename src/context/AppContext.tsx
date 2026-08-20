@@ -671,9 +671,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Submit Application
   const submitApplication = (data: Omit<AdoptionApplication, 'id' | 'status' | 'submittedAt'>) => {
+    const appId = `app_${Date.now()}`;
     const newApp: AdoptionApplication = {
       ...data,
-      id: `app_${Date.now()}`,
+      id: appId,
       status: 'submitted',
       submittedAt: 'Just now'
     };
@@ -695,10 +696,71 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         read: false
       };
       setNotifications(prev => [notif, ...prev]);
+
+      // 🌟 Real-Time Guardian Auto-Acceptance & Conversation Unlock (1.5s delay)
+      setTimeout(() => {
+        setApplications(prev =>
+          prev.map(a => (a.id === appId ? { ...a, status: 'accepted', reviewedAt: 'Just now' } : a))
+        );
+        updateDogStatus(data.dogId, 'pending');
+
+        const convId = `conv_${data.dogId}_${data.applicantId}`;
+        const guardianName = targetDog.currentOwnerName || 'Guardian';
+        const guardianAvatar = targetDog.currentOwnerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
+
+        setConversations(prev => {
+          const exists = prev.some(c => c.id === convId);
+          if (exists) return prev;
+          return [
+            {
+              id: convId,
+              dogId: data.dogId,
+              dogName: data.dogName,
+              dogAvatar: data.dogPhoto,
+              participants: [targetDog.currentOwnerId, data.applicantId],
+              lastMessage: `Application approved! Chat & Meetup unlocked.`,
+              lastMessageTimestamp: 'Just now',
+              unreadCount: 1
+            },
+            ...prev
+          ];
+        });
+
+        setMessages(prev => ({
+          ...prev,
+          [convId]: [
+            ...(prev[convId] || []),
+            {
+              id: `msg_auto_${Date.now()}`,
+              conversationId: convId,
+              senderId: targetDog.currentOwnerId,
+              senderName: guardianName,
+              senderAvatar: guardianAvatar,
+              recipientId: data.applicantId,
+              text: `Hi ${data.applicantName}! 👋 I reviewed your adoption request for ${data.dogName}. Your home setup and experience look fantastic! Let's arrange a Park Meet & Greet so you can spend time with ${data.dogName}.`,
+              timestamp: 'Just now',
+              read: false
+            }
+          ]
+        }));
+
+        const acceptNotif: NotificationItem = {
+          id: `notif_accept_${Date.now()}`,
+          userId: data.applicantId,
+          title: `🎉 Application Approved for ${data.dogName}!`,
+          message: `Guardian ${guardianName} approved your request! Private chat and Meet & Greet scheduling are active.`,
+          type: 'application_accepted',
+          relatedDogId: targetDog.id,
+          relatedApplicationId: appId,
+          timestamp: 'Just now',
+          read: false
+        };
+        setNotifications(prev => [acceptNotif, ...prev]);
+      }, 1500);
     }
   };
 
-  // Accept Application
+  // Accept Application (Manual Owner Trigger)
   const acceptApplication = (applicationId: string) => {
     const app = applications.find(a => a.id === applicationId);
     if (!app) return;
@@ -800,9 +862,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const scheduleMeetup = (data: Omit<MeetAndGreet, 'id' | 'status'>) => {
+    const meetId = `meet_${Date.now()}`;
     const newMeet: MeetAndGreet = {
       ...data,
-      id: `meet_${Date.now()}`,
+      id: meetId,
       status: 'scheduled'
     };
     setMeetups(prev => [newMeet, ...prev]);
@@ -813,6 +876,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       convId,
       `📅 Meet & Greet Scheduled for ${data.date} at ${data.time} (📍 ${data.locationName}). Looking forward to meeting!`
     );
+
+    // 🌟 Real-time Guardian Meetup Confirmation (1.5s delay)
+    setTimeout(() => {
+      setMeetups(prev => prev.map(m => (m.id === meetId ? { ...m, status: 'completed' } : m)));
+      updateDogStatus(data.dogId, 'agreement_pending');
+
+      sendMessage(
+        convId,
+        `🤝 Park Meet & Greet for ${data.dogName} is confirmed! Stage 5 (Digital Legal Agreement) is now unlocked.`
+      );
+
+      const notif: NotificationItem = {
+        id: `notif_meet_${Date.now()}`,
+        userId: data.adopterId,
+        title: `🌳 Meet & Greet Confirmed for ${data.dogName}!`,
+        message: `Guardian confirmed the meetup. You can now review and sign the Digital Adoption Agreement.`,
+        type: 'meeting_scheduled',
+        relatedDogId: data.dogId,
+        timestamp: 'Just now',
+        read: false
+      };
+      setNotifications(prev => [notif, ...prev]);
+    }, 1500);
   };
 
   const acceptMeetup = (meetupId: string) => {
@@ -824,10 +910,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const signAgreement = (applicationId: string, role: 'owner' | 'adopter', signature: string) => {
+    const targetApp = applications.find(a => a.id === applicationId);
+    const targetDog = dogs.find(d => d.id === targetApp?.dogId);
+    const nowStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
     setAgreements(prev =>
       prev.map(agree => {
         if (agree.applicationId === applicationId) {
-          const nowStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
           const updated = {
             ...agree,
             ownerSignature: role === 'owner' ? signature : agree.ownerSignature,
@@ -841,49 +930,95 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return agree;
       })
     );
+
+    // 🌟 If adopter signed, simulate Guardian counter-signing automatically (1.2s delay)
+    if (role === 'adopter' && targetDog && targetApp) {
+      setTimeout(() => {
+        const guardianSig = targetDog.currentOwnerName || 'Alex Rivera';
+        setAgreements(prev =>
+          prev.map(agree => {
+            if (agree.applicationId === applicationId) {
+              return {
+                ...agree,
+                ownerSignature: guardianSig,
+                ownerSignedAt: nowStr,
+                isFullySigned: true,
+              };
+            }
+            return agree;
+          })
+        );
+
+        const convId = `conv_${targetApp.dogId}_${targetApp.applicantId}`;
+        sendMessage(
+          convId,
+          `✍️ Both parties have digitally signed the Legal Transfer Agreement for ${targetApp.dogName}! Proceeding to Stage 6 (Dual Handover).`
+        );
+
+        const signNotif: NotificationItem = {
+          id: `notif_sign_${Date.now()}`,
+          userId: targetApp.applicantId,
+          title: `📜 Agreement Fully Signed for ${targetApp.dogName}!`,
+          message: `Guardian counter-signed the agreement. Dual Handover confirmation is now ready.`,
+          type: 'agreement_signed',
+          relatedDogId: targetApp.dogId,
+          timestamp: 'Just now',
+          read: false
+        };
+        setNotifications(prev => [signNotif, ...prev]);
+      }, 1200);
+    }
   };
 
   const confirmHandover = (applicationId: string, role: 'owner' | 'adopter') => {
-    let completedTransfer = false;
-    let targetDogId = '';
-    let adopterId = '';
+    const targetApp = applications.find(a => a.id === applicationId);
+    const targetDog = dogs.find(d => d.id === targetApp?.dogId);
+    const nowStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 
+    // Mark current role confirmation
     setHandovers(prev =>
       prev.map(h => {
         if (h.applicationId === applicationId) {
-          const nowStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-          const updated = {
+          return {
             ...h,
             ownerConfirmed: role === 'owner' ? true : h.ownerConfirmed,
             ownerConfirmedAt: role === 'owner' ? nowStr : h.ownerConfirmedAt,
             adopterConfirmed: role === 'adopter' ? true : h.adopterConfirmed,
             adopterConfirmedAt: role === 'adopter' ? nowStr : h.adopterConfirmedAt,
           };
-          if (updated.ownerConfirmed && updated.adopterConfirmed) {
-            updated.isCompleted = true;
-            updated.completedAt = nowStr;
-            completedTransfer = true;
-            targetDogId = h.dogId;
-          }
-          return updated;
         }
         return h;
       })
     );
 
-    if (completedTransfer || (role === 'owner' && handovers.find(h => h.applicationId === applicationId)?.adopterConfirmed) || (role === 'adopter' && handovers.find(h => h.applicationId === applicationId)?.ownerConfirmed)) {
-      const app = applications.find(a => a.id === applicationId);
-      if (app) {
-        targetDogId = app.dogId;
-        adopterId = app.applicantId;
+    // 🌟 Real-time Guardian Handover Confirmation (1.2s delay) to complete adoption!
+    setTimeout(() => {
+      const certId = `CERT-PAW-${Date.now().toString().slice(-6)}`;
+      const adoptedDateStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 
-        const adopterUser = allUsers.find(u => u.id === app.applicantId) || currentUser || INITIAL_USERS[0];
-        const certId = `CERT-PAW-${Date.now().toString().slice(-6)}`;
-        const adoptedDateStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+      setHandovers(prev =>
+        prev.map(h => {
+          if (h.applicationId === applicationId) {
+            return {
+              ...h,
+              ownerConfirmed: true,
+              ownerConfirmedAt: nowStr,
+              adopterConfirmed: true,
+              adopterConfirmedAt: nowStr,
+              isCompleted: true,
+              completedAt: nowStr
+            };
+          }
+          return h;
+        })
+      );
+
+      if (targetApp && targetDog) {
+        const adopterUser = allUsers.find(u => u.id === targetApp.applicantId) || currentUser || INITIAL_USERS[0];
 
         setDogs(prev =>
           prev.map(dog => {
-            if (dog.id === targetDogId) {
+            if (dog.id === targetDog.id) {
               return {
                 ...dog,
                 status: 'adopted',
@@ -906,30 +1041,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           prev.map(a => (a.id === applicationId ? { ...a, status: 'completed' } : a))
         );
 
-        const transferredDog = dogs.find(d => d.id === targetDogId);
-        if (transferredDog) {
-          setCelebrationData({
-            isOpen: true,
-            dog: { ...transferredDog, status: 'adopted', newOwnerName: adopterUser.name, certificateId: certId },
-            adopter: adopterUser,
-            owner: currentUser,
-            type: 'transfer'
-          });
-        }
+        setCelebrationData({
+          isOpen: true,
+          dog: { ...targetDog, status: 'adopted', newOwnerName: adopterUser.name, certificateId: certId },
+          adopter: adopterUser,
+          owner: currentUser,
+          type: 'transfer'
+        });
+
+        const convId = `conv_${targetDog.id}_${targetApp.applicantId}`;
+        sendMessage(
+          convId,
+          `🏆 Official Handover Completed! ${targetDog.name} is legally registered under ${adopterUser.name}. Certificate #${certId} generated!`
+        );
 
         const transferNotif: NotificationItem = {
-          id: `notif_${Date.now()}`,
-          userId: adopterId,
-          title: `🏆 Adoption Completed! ${app.dogName} is officially yours!`,
-          message: `Both parties confirmed handover. Certificate #${certId} has been issued to your dashboard!`,
+          id: `notif_trans_${Date.now()}`,
+          userId: targetApp.applicantId,
+          title: `🏆 Adoption Completed! ${targetDog.name} is officially yours!`,
+          message: `Physical handover confirmed. Certificate #${certId} has been generated on your dashboard!`,
           type: 'dog_transferred',
-          relatedDogId: targetDogId,
+          relatedDogId: targetDog.id,
           timestamp: 'Just now',
           read: false
         };
         setNotifications(prev => [transferNotif, ...prev]);
       }
-    }
+    }, 1200);
   };
 
   const sendMessage = (convId: string, text: string, image?: string, isDogBark?: boolean) => {
