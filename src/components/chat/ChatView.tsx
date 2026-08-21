@@ -12,6 +12,8 @@ import {
   Sparkles,
   MapPin,
   Clock,
+  Phone,
+  MessageSquare,
 } from 'lucide-react';
 
 export const ChatView: React.FC = () => {
@@ -182,6 +184,39 @@ export const ChatView: React.FC = () => {
         >
           <span>🎭 Switch User to {allUsers.find(u => u.id !== currentUser?.id)?.name.split(' ')[0] || 'Guardian'}</span>
         </button>
+      </div>
+
+      {/* DIRECT OWNER VERIFIED CONTACT & SOCKET BAR */}
+      <div className="bg-slate-900 text-white px-4 py-2 border-b border-white/10 text-left flex flex-wrap items-center justify-between gap-2 text-xs shrink-0 font-medium">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>
+            Dog Guardian: <strong className="text-white font-bold">{targetDog?.currentOwnerName || 'Alex Rivera'}</strong>
+          </span>
+          <span className="text-[10px] text-slate-400 font-mono">
+            (⚡ Live Socket: #chat-{activeConv.dogId})
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <a
+            href={`tel:${targetDog?.currentOwnerPhone || '+919830012345'}`}
+            className="px-3 py-1 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] flex items-center gap-1 shadow-xs transition-all cursor-pointer"
+          >
+            <Phone className="w-3 h-3" />
+            <span>Call: {targetDog?.currentOwnerPhone || '+91 98300 12345'}</span>
+          </a>
+
+          <a
+            href={`https://wa.me/${(targetDog?.currentOwnerPhone || '+919830012345').replace(/[^0-9]/g, '')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1 rounded-full bg-emerald-700 hover:bg-emerald-600 text-white font-black text-[11px] flex items-center gap-1 shadow-xs transition-all cursor-pointer"
+          >
+            <MessageSquare className="w-3 h-3" />
+            <span>WhatsApp</span>
+          </a>
+        </div>
       </div>
 
       {/* CHAT HEADER WITH SPECIFIC DOG CONTEXT */}
