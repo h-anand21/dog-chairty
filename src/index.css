@@ -119,18 +119,21 @@
 .text-gradient-coral {
   background: linear-gradient(135deg, #FF5A36 0%, #FF8A00 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-dark {
   background: linear-gradient(180deg, #111317 0%, #2D323E 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .dark .text-gradient-dark {
   background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
