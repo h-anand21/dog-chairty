@@ -117,7 +117,7 @@ export const ChatPage: React.FC = () => {
 
                       <div className="flex items-center justify-between mt-1 pt-1 border-t border-obsidian-100 dark:border-white/5">
                         <span className="text-[10px] text-coral-600 dark:text-coral-400 font-bold truncate">
-                          Guardian: {matchingDog?.currentOwnerName || 'Alex Rivera'}
+                          Guardian: {matchingDog?.currentOwnerName || 'Pet Parent'}
                         </span>
                         {conv.unreadCount > 0 && (
                           <span className="px-1.5 py-0.2 text-[9px] font-black bg-coral-500 text-white rounded-full">

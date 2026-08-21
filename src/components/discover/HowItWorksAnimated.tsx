@@ -274,19 +274,17 @@ export const HowItWorksAnimated: React.FC = () => {
                     className="space-y-4 text-left"
                   >
                     <div className="flex items-center gap-3">
-                      <img
-                        src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=200"
-                        alt="Bruno"
-                        className="w-14 h-14 rounded-2xl object-cover ring-2 ring-coral-400 shadow-md shrink-0"
-                      />
+                      <div className="w-14 h-14 rounded-2xl bg-coral-100 dark:bg-coral-950/80 text-coral-500 flex items-center justify-center text-2xl ring-2 ring-coral-400 shadow-md shrink-0">
+                        🐕✨
+                      </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-base font-black text-obsidian-950 dark:text-white">Bruno (2 Yrs)</h4>
+                          <h4 className="text-base font-black text-obsidian-950 dark:text-white">Sample Companion Pup</h4>
                           <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-black border border-emerald-200 dark:border-emerald-800/60">
-                            ✓ 100% Vaccinated
+                            ✓ 100% Vet Cleared
                           </span>
                         </div>
-                        <p className="text-xs text-obsidian-500 dark:text-slate-400 font-semibold">Golden Retriever • Kolkata, Salt Lake</p>
+                        <p className="text-xs text-obsidian-500 dark:text-slate-400 font-semibold">Verified Pet Parent Listing</p>
                       </div>
                     </div>
 
@@ -300,7 +298,7 @@ export const HowItWorksAnimated: React.FC = () => {
                           <div className={`w-1 bg-coral-500 rounded-full transition-all ${isPlayingBark ? 'h-7 animate-bounce delay-100' : 'h-3'}`} />
                         </div>
                         <span className="text-xs font-black text-coral-900 dark:text-coral-200">
-                          {isPlayingBark ? 'Barking! 🐾' : 'Audio Note: Bruno Greeting'}
+                          {isPlayingBark ? 'Barking! 🐾' : 'Audio Note: Greeting Bark'}
                         </span>
                       </div>
 
@@ -373,7 +371,7 @@ export const HowItWorksAnimated: React.FC = () => {
                         className="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-black text-xs shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <Send className="w-3.5 h-3.5" />
-                        <span>{demoSubmitted ? '✓ Application Dispatched to Alex!' : 'Test Submit Application 🚀'}</span>
+                        <span>{demoSubmitted ? '✓ Application Dispatched to Guardian!' : 'Test Submit Application 🚀'}</span>
                       </button>
                     </form>
                   </motion.div>
@@ -393,20 +391,18 @@ export const HowItWorksAnimated: React.FC = () => {
                       
                       {/* Message 1 */}
                       <div className="flex items-start gap-2">
-                        <img
-                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"
-                          alt="Alex"
-                          className="w-6 h-6 rounded-full object-cover shrink-0 mt-0.5"
-                        />
+                        <div className="w-6 h-6 rounded-full bg-coral-500 text-white flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">
+                          G
+                        </div>
                         <div className="bg-white dark:bg-[#152033] p-2 rounded-2xl shadow-xs border border-obsidian-200 dark:border-white/10 text-obsidian-900 dark:text-white">
-                          Hi Sarah! Bruno loves swimming and tennis balls. He’s excited to meet you! 🎾
+                          Hi there! The pup loves outdoor walks and tennis balls. He’s excited to meet you! 🎾
                         </div>
                       </div>
 
                       {/* Message 2 */}
                       <div className="flex items-start gap-2 justify-end">
                         <div className="bg-emerald-500 text-white p-2 rounded-2xl shadow-xs">
-                          Can we meet this Sunday at Eco Park Canine Playground at 5 PM? 🌳
+                          Can we schedule a Park Meet & Greet this weekend at 5 PM? 🌳
                         </div>
                       </div>
 
@@ -416,7 +412,7 @@ export const HowItWorksAnimated: React.FC = () => {
                     <div className="p-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-emerald-600" />
-                        <span className="font-black text-emerald-950 dark:text-emerald-200">Eco Park Meetup Confirmed</span>
+                        <span className="font-black text-emerald-950 dark:text-emerald-200">Park Meetup Confirmed</span>
                       </div>
                       <span className="text-[10px] font-bold bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-100 px-2 py-0.5 rounded-full">
                         Sun 5:00 PM
@@ -442,12 +438,12 @@ export const HowItWorksAnimated: React.FC = () => {
                           <span>Official Adoption Gold Certificate</span>
                         </div>
                         <span className="text-[10px] font-black text-amber-800 dark:text-amber-200 bg-amber-200/80 dark:bg-amber-900/60 px-2 py-0.5 rounded-md">
-                          #CERT-PAW-849201
+                          #CERT-PAW-VERIFIED
                         </span>
                       </div>
 
                       <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-amber-200 dark:border-amber-800/60 font-semibold text-amber-900 dark:text-amber-200">
-                        <div>Guardian: <strong>Alex Rivera ✓</strong></div>
+                        <div>Guardian: <strong>Verified Guardian ✓</strong></div>
                         <div>Adopter: <strong>{demoSigned ? 'Sarah Jenkins ✓' : 'Pending Sign'}</strong></div>
                       </div>
                     </div>

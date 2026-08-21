@@ -90,10 +90,10 @@ export const FeedPage: React.FC = () => {
               <span>Happy Tails Spotlight</span>
             </div>
             <h4 className="text-lg font-black font-display leading-tight">
-              Bruno & Sarah&apos;s New Journey
+              Adopted Rescue Companion&apos;s New Journey
             </h4>
             <p className="text-xs text-white/90 leading-relaxed">
-              After a successful 6-stage handover, Bruno is enjoying his new 2000 sq ft garden with sister Luna!
+              After a successful 6-stage verified handover, our rescued pup is thriving in their loving forever home!
             </p>
           </div>
 
