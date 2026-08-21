@@ -187,7 +187,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try {
         const parsed: Dog[] = JSON.parse(saved);
-        return parsed.filter(d => !['dog_bruno', 'dog_luna', 'dog_milo', 'dog_rocky'].includes(d.id));
+        return parsed.filter(d =>
+          !['dog_bruno', 'dog_luna', 'dog_milo', 'dog_rocky'].includes(d.id) &&
+          !d.id.includes('bruno') && !d.id.includes('luna') && !d.id.includes('milo') && !d.id.includes('rocky')
+        );
       } catch (e) {
         return [];
       }
@@ -196,13 +199,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const [selectedDog, setSelectedDog] = useState<Dog | null>(null);
 
-  // 4. Applications State
+  // 4. Applications State (Only keep applications for currently existing listed dogs)
   const [applications, setApplications] = useState<AdoptionApplication[]>(() => {
     const saved = localStorage.getItem('pawconnect_applications');
     if (saved) {
       try {
         const parsed: AdoptionApplication[] = JSON.parse(saved);
-        return parsed.filter(a => !['app_sarah_bruno', 'app_sarah_luna', 'app_alex_rocky'].includes(a.id));
+        const validDogIds = dogs.map(d => d.id);
+        return parsed.filter(a =>
+          validDogIds.includes(a.dogId) &&
+          !['dog_bruno', 'dog_luna', 'dog_milo', 'dog_rocky'].includes(a.dogId) &&
+          !a.dogId.includes('bruno') && !a.dogId.includes('luna') && !a.dogId.includes('milo') && !a.dogId.includes('rocky')
+        );
       } catch (e) {
         return [];
       }
@@ -216,22 +224,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try {
         const parsed: MeetAndGreet[] = JSON.parse(saved);
-        return parsed.filter(m => m.id !== 'meet_1');
+        const validDogIds = dogs.map(d => d.id);
+        return parsed.filter(m => validDogIds.includes(m.dogId));
       } catch (e) {
         return [];
       }
     }
     return [];
   });
+
+  // 6. Agreements
   const [agreements, setAgreements] = useState<AdoptionAgreement[]>(() => {
     const saved = localStorage.getItem('pawconnect_agreements');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed: AdoptionAgreement[] = JSON.parse(saved);
+        const validDogIds = dogs.map(d => d.id);
+        return parsed.filter(a => validDogIds.includes(a.dogId));
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
   });
 
   // 7. Handover Confirmations
   const [handovers, setHandovers] = useState<HandoverConfirmation[]>(() => {
     const saved = localStorage.getItem('pawconnect_handovers');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed: HandoverConfirmation[] = JSON.parse(saved);
+        const validDogIds = dogs.map(d => d.id);
+        return parsed.filter(h => validDogIds.includes(h.dogId));
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
   });
 
   // 8. Chat Conversations
@@ -239,14 +268,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const saved = localStorage.getItem('pawconnect_conversations');
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed.filter((c: Conversation) => !['conv_alex_sarah_bruno', 'conv_david_sarah_luna', 'conv_david_sarah_milo', 'conv_david_sarah_rocky'].includes(c.id));
+        const parsed: Conversation[] = JSON.parse(saved);
+        const validDogIds = dogs.map(d => d.id);
+        if (Array.isArray(parsed)) return parsed.filter(c => validDogIds.includes(c.dogId));
       } catch (e) {
         // fallback
       }
     }
     return [];
   });
+
+  // 🌟 Clean up legacy orphaned data if no dogs exist
+  useEffect(() => {
+    if (dogs.length === 0) {
+      setApplications([]);
+      setConversations([]);
+      setMeetups([]);
+      setAgreements([]);
+      setHandovers([]);
+      setMessages({});
+      localStorage.removeItem('pawconnect_applications');
+      localStorage.removeItem('pawconnect_conversations');
+      localStorage.removeItem('pawconnect_messages');
+      localStorage.removeItem('pawconnect_meetups');
+      localStorage.removeItem('pawconnect_agreements');
+      localStorage.removeItem('pawconnect_handovers');
+    }
+  }, [dogs]);
 
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>(() => {
     const saved = localStorage.getItem('pawconnect_messages');
