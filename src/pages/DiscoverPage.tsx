@@ -201,38 +201,8 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
     });
   }, [dogs, searchQuery, selectedCity, selectedStatus, selectedSize, selectedCategory]);
 
-  const successStories = [
-    {
-      id: 'story_1',
-      dogName: 'Cooper (Golden Retriever)',
-      adoptedBy: 'Ananya & Rohan',
-      location: 'Kolkata, Salt Lake',
-      image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80',
-      quote: 'PawConnect made meeting Cooper’s previous guardian so smooth and transparent. He has brought infinite joy to our family!',
-      date: 'Adopted July 2026',
-      badge: 'Gold Certificate #CERT-PAW-849201'
-    },
-    {
-      id: 'story_2',
-      dogName: 'Daisy (Beagle)',
-      adoptedBy: 'Kabir Verma',
-      location: 'Delhi NCR, GK-2',
-      image: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=600&auto=format&fit=crop&q=80',
-      quote: 'The dual-confirmation handover and verified vet records gave us 100% peace of mind. Daisy is our sweetest companion!',
-      date: 'Adopted June 2026',
-      badge: 'Gold Certificate #CERT-PAW-739182'
-    },
-    {
-      id: 'story_3',
-      dogName: 'Max (Indie Rescue)',
-      adoptedBy: 'Pooja Nair',
-      location: 'Bengaluru, Indiranagar',
-      image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&auto=format&fit=crop&q=80',
-      quote: 'We scheduled a park meet & greet through PawConnect chat first. Max bonded with us instantly on the grass!',
-      date: 'Adopted May 2026',
-      badge: 'Gold Certificate #CERT-PAW-992140'
-    }
-  ];
+  // Real adoption stories derived from actual adopted dogs in app state
+  const realAdoptedDogs = dogs.filter(d => d.status === 'adopted');
 
   return (
     <div className="space-y-16 sm:space-y-24 pb-20">
@@ -683,47 +653,59 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {successStories.map(story => (
-              <div
-                key={story.id}
-                className="bg-white dark:bg-[#121A2B] rounded-3xl p-6 border border-obsidian-200 dark:border-white/10 shadow-sm flex flex-col justify-between space-y-4 relative hover:shadow-card transition-all"
-              >
-                <div className="space-y-4">
-                  <div className="relative h-48 rounded-2xl overflow-hidden bg-obsidian-100 dark:bg-white/5">
-                    <img
-                      src={story.image}
-                      alt={story.dogName}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-3 right-3 bg-emerald-500 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-md">
-                      ✓ Adopted
+          {realAdoptedDogs.length === 0 ? (
+            <div className="glass-card rounded-4xl p-10 text-center border border-white dark:border-white/10 max-w-lg mx-auto space-y-3">
+              <div className="text-4xl">🏆✨</div>
+              <h3 className="text-lg font-black font-display text-obsidian-950 dark:text-white">
+                No Real Adoption Handovers Yet
+              </h3>
+              <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
+                When real pet parents complete a verified 6-Stage Handover Protocol, their official Gold Certificate and Happy Tails story will automatically appear here!
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {realAdoptedDogs.map(dog => (
+                <div
+                  key={dog.id}
+                  className="bg-white dark:bg-[#121A2B] rounded-3xl p-6 border border-obsidian-200 dark:border-white/10 shadow-sm flex flex-col justify-between space-y-4 relative hover:shadow-card transition-all"
+                >
+                  <div className="space-y-4">
+                    <div className="relative h-48 rounded-2xl overflow-hidden bg-obsidian-100 dark:bg-white/5">
+                      <img
+                        src={dog.coverPhoto}
+                        alt={dog.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-3 right-3 bg-emerald-500 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-md">
+                        ✓ Adopted
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <h3 className="text-base font-black text-obsidian-950 dark:text-white">
-                      {story.dogName}
-                    </h3>
-                    <p className="text-xs font-semibold text-obsidian-500 dark:text-slate-400">
-                      Adopted by <strong className="text-obsidian-900 dark:text-white">{story.adoptedBy}</strong> • {story.location}
+                    <div>
+                      <h3 className="text-base font-black text-obsidian-950 dark:text-white">
+                        {dog.name} ({dog.breed})
+                      </h3>
+                      <p className="text-xs font-semibold text-obsidian-500 dark:text-slate-400">
+                        Adopted by <strong className="text-obsidian-900 dark:text-white">{dog.newOwnerName || 'Verified Parent'}</strong> • {dog.location}
+                      </p>
+                    </div>
+
+                    <p className="text-xs text-obsidian-700 dark:text-slate-300 leading-relaxed italic font-normal">
+                      &ldquo;Completed verified handover on PawConnect with full vet records.&rdquo;
                     </p>
                   </div>
 
-                  <p className="text-xs text-obsidian-700 dark:text-slate-300 leading-relaxed italic font-normal">
-                    &ldquo;{story.quote}&rdquo;
-                  </p>
+                  <div className="pt-3 border-t border-obsidian-200 dark:border-white/10 flex items-center justify-between text-[11px] font-bold text-obsidian-500 dark:text-slate-400">
+                    <span>{dog.adoptedDate || 'Recently Adopted'}</span>
+                    <span className="text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-lg border border-amber-200 dark:border-amber-800/60">
+                      Gold Cert #{dog.certificateId || 'CERT-PAW'}
+                    </span>
+                  </div>
                 </div>
-
-                <div className="pt-3 border-t border-obsidian-200 dark:border-white/10 flex items-center justify-between text-[11px] font-bold text-obsidian-500 dark:text-slate-400">
-                  <span>{story.date}</span>
-                  <span className="text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-lg border border-amber-200 dark:border-amber-800/60">
-                    {story.badge.split(' ')[0]} {story.badge.split(' ')[1]}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
         </div>
       </section>

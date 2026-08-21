@@ -187,9 +187,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try {
         const parsed: Dog[] = JSON.parse(saved);
+        const mockKeywords = ['bruno', 'luna', 'milo', 'rocky', 'coco', 'bella', 'cooper', 'daisy', 'max'];
         return parsed.filter(d =>
-          !['dog_bruno', 'dog_luna', 'dog_milo', 'dog_rocky'].includes(d.id) &&
-          !d.id.includes('bruno') && !d.id.includes('luna') && !d.id.includes('milo') && !d.id.includes('rocky')
+          !mockKeywords.some(kw => d.id.toLowerCase().includes(kw) || d.name.toLowerCase().includes(kw))
         );
       } catch (e) {
         return [];
