@@ -607,24 +607,41 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
         {viewMode === 'grid' && (
           <>
             {filteredDogs.length === 0 ? (
-              <div className="glass-card rounded-4xl p-16 text-center border border-white dark:border-white/10 shadow-card max-w-md mx-auto space-y-4">
-                <div className="text-5xl animate-bounce">🐶🔍</div>
-                <h3 className="text-xl font-black font-display text-obsidian-950 dark:text-white">No pups match this filter</h3>
-                <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
-                  Try resetting your filters or search keywords to see all available furry companions.
+              <div className="glass-card rounded-4xl p-12 sm:p-16 text-center border border-white dark:border-white/10 shadow-card max-w-lg mx-auto space-y-4">
+                <div className="w-20 h-20 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-500 mx-auto flex items-center justify-center text-4xl shadow-glow-coral">
+                  🐕✨
+                </div>
+                <h3 className="text-2xl font-black font-display text-obsidian-950 dark:text-white">
+                  No Mock Pups Listed!
+                </h3>
+                <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
+                  All initial fake/demo dog listings have been cleared. Be the first real pet parent to list a dog for adoption on PawConnect!
                 </p>
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedCity('All');
-                    setSelectedStatus('all');
-                    setSelectedSize('All');
-                    setSelectedCategory('all');
-                  }}
-                  className="btn-primary text-white px-6 py-2.5 rounded-full font-extrabold text-xs cursor-pointer shadow-glow-coral"
-                >
-                  Reset All Filters
-                </button>
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <button
+                    onClick={() => {
+                      playPawPop();
+                      setIsListDogOpen(true);
+                    }}
+                    className="btn-primary text-white px-6 py-3 rounded-full font-black text-xs cursor-pointer shadow-glow-coral flex items-center gap-2"
+                  >
+                    <span>🐾 List a Real Dog Now</span>
+                  </button>
+                  {(searchQuery || selectedCity !== 'All' || selectedCategory !== 'all') && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedCity('All');
+                        setSelectedStatus('all');
+                        setSelectedSize('All');
+                        setSelectedCategory('all');
+                      }}
+                      className="px-5 py-3 rounded-full bg-obsidian-100 dark:bg-white/10 text-obsidian-800 dark:text-slate-200 font-bold text-xs cursor-pointer hover:bg-obsidian-200 transition-colors"
+                    >
+                      Reset Filters
+                    </button>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

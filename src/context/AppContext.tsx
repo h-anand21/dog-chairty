@@ -187,135 +187,65 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try {
         const parsed: Dog[] = JSON.parse(saved);
-        // Ensure all active dogs are open and available for adoption (unless fully adopted)
-        return parsed.map(d => (d.status === 'adopted' ? d : { ...d, status: 'available' as const }));
+        return parsed.filter(d => !['dog_bruno', 'dog_luna', 'dog_milo', 'dog_rocky'].includes(d.id));
       } catch (e) {
-        return INITIAL_DOGS;
+        return [];
       }
     }
-    return INITIAL_DOGS;
+    return [];
   });
   const [selectedDog, setSelectedDog] = useState<Dog | null>(null);
 
   // 4. Applications State
   const [applications, setApplications] = useState<AdoptionApplication[]>(() => {
     const saved = localStorage.getItem('pawconnect_applications');
-    return saved ? JSON.parse(saved) : INITIAL_APPLICATIONS;
+    if (saved) {
+      try {
+        const parsed: AdoptionApplication[] = JSON.parse(saved);
+        return parsed.filter(a => !['app_sarah_bruno', 'app_sarah_luna', 'app_alex_rocky'].includes(a.id));
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
   });
 
   // 5. Meetups
   const [meetups, setMeetups] = useState<MeetAndGreet[]>(() => {
     const saved = localStorage.getItem('pawconnect_meetups');
-    return saved ? JSON.parse(saved) : [
-      {
-        id: 'meet_1',
-        applicationId: 'app_sarah_bruno',
-        dogId: 'dog_bruno',
-        dogName: 'Bruno',
-        ownerId: 'user_alex',
-        adopterId: 'user_sarah',
-        date: 'Tomorrow (Sunday)',
-        time: '5:00 PM',
-        locationName: 'Eco Park Canine Playground',
-        locationAddress: 'Major Arterial Road, Action Area II, New Town',
-        notes: 'Bring tennis balls! Bruno is excited to meet Luna.',
-        status: 'scheduled'
+    if (saved) {
+      try {
+        const parsed: MeetAndGreet[] = JSON.parse(saved);
+        return parsed.filter(m => m.id !== 'meet_1');
+      } catch (e) {
+        return [];
       }
-    ];
+    }
+    return [];
   });
-
-  // 6. Agreements
   const [agreements, setAgreements] = useState<AdoptionAgreement[]>(() => {
     const saved = localStorage.getItem('pawconnect_agreements');
-    return saved ? JSON.parse(saved) : [
-      {
-        id: 'agree_sarah_bruno',
-        applicationId: 'app_sarah_bruno',
-        dogId: 'dog_bruno',
-        dogName: 'Bruno',
-        dogBreed: 'Golden Retriever',
-        currentOwnerId: 'user_alex',
-        currentOwnerName: 'Alex Rivera',
-        adopterId: 'user_sarah',
-        adopterName: 'Sarah Jenkins',
-        adoptionDate: 'August 18, 2026',
-        termsAccepted: true,
-        ownerSignature: 'Alex Rivera',
-        ownerSignedAt: '14 Aug 2026, 11:30 AM',
-        isFullySigned: false
-      }
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
 
   // 7. Handover Confirmations
   const [handovers, setHandovers] = useState<HandoverConfirmation[]>(() => {
     const saved = localStorage.getItem('pawconnect_handovers');
-    return saved ? JSON.parse(saved) : [
-      {
-        id: 'handover_sarah_bruno',
-        applicationId: 'app_sarah_bruno',
-        dogId: 'dog_bruno',
-        ownerConfirmed: false,
-        adopterConfirmed: false,
-        isCompleted: false
-      }
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
 
-  // 8. Chat Conversations
   // 8. Chat Conversations
   const [conversations, setConversations] = useState<Conversation[]>(() => {
     const saved = localStorage.getItem('pawconnect_conversations');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) return parsed.filter((c: Conversation) => !['conv_alex_sarah_bruno', 'conv_david_sarah_luna', 'conv_david_sarah_milo', 'conv_david_sarah_rocky'].includes(c.id));
       } catch (e) {
         // fallback
       }
     }
-    return [
-      {
-        id: 'conv_alex_sarah_bruno',
-        dogId: 'dog_bruno',
-        dogName: 'Bruno',
-        dogAvatar: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&auto=format&fit=crop&q=80',
-        participants: ['user_alex', 'user_sarah'],
-        lastMessage: 'Sure! Bruno loves playing with tennis balls at Eco Park.',
-        lastMessageTimestamp: '10:45 AM',
-        unreadCount: 0
-      },
-      {
-        id: 'conv_david_sarah_luna',
-        dogId: 'dog_luna',
-        dogName: 'Luna',
-        dogAvatar: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=400&auto=format&fit=crop&q=80',
-        participants: ['user_david', 'user_sarah'],
-        lastMessage: 'Luna is completely vaccinated and loves agility courses & swimming!',
-        lastMessageTimestamp: '9:30 AM',
-        unreadCount: 0
-      },
-      {
-        id: 'conv_david_sarah_milo',
-        dogId: 'dog_milo',
-        dogName: 'Milo',
-        dogAvatar: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=400&auto=format&fit=crop&q=80',
-        participants: ['user_david', 'user_sarah'],
-        lastMessage: 'Milo is fully house-trained and super gentle with children.',
-        lastMessageTimestamp: 'Yesterday',
-        unreadCount: 0
-      },
-      {
-        id: 'conv_david_sarah_rocky',
-        dogId: 'dog_rocky',
-        dogName: 'Rocky',
-        dogAvatar: 'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=400&auto=format&fit=crop&q=80',
-        participants: ['user_david', 'user_sarah'],
-        lastMessage: 'Rocky knows 8 commands and would love an active outdoor parent!',
-        lastMessageTimestamp: 'Yesterday',
-        unreadCount: 0
-      }
-    ];
+    return [];
   });
 
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>(() => {
@@ -540,8 +470,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => unsubscribe();
   }, []);
 
-  // Clean / normalize phone numbers
-  const cleanPhone = (p: string) => p.replace(/\D/g, '');
 
   // Auth Guard Helper
   const requireAuth = (reason: string, action?: () => void): boolean => {
@@ -1160,7 +1088,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           : c
       )
     );
-
   };
 
   const openChatForDog = (dog: Dog, initialMessage?: string) => {
