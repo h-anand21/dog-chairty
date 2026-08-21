@@ -23,6 +23,7 @@ import {
   INITIAL_NOTIFICATIONS,
 } from '../data/mockData';
 import { otpService } from '../services/otpService';
+import { socketEngine, SocketMessagePayload } from '../services/socketService';
 
 interface AppContextType {
   // Authentication & Dynamic Users
@@ -498,6 +499,46 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem('pawconnect_reports', JSON.stringify(reports));
   }, [reports]);
+
+  // ⚡ Live Bidirectional Web Socket Subscription
+  useEffect(() => {
+    const unsubscribe = socketEngine.subscribe((payload: SocketMessagePayload) => {
+      setMessages(prev => {
+        const existing = prev[payload.conversationId] || [];
+        if (existing.some(m => m.id === payload.id)) return prev;
+        const incomingMsg: ChatMessage = {
+          id: payload.id,
+          conversationId: payload.conversationId,
+          senderId: payload.senderId,
+          senderName: payload.senderName,
+          senderAvatar: payload.senderAvatar,
+          recipientId: payload.recipientId,
+          text: payload.text,
+          image: payload.image,
+          isDogBark: payload.isDogBark,
+          timestamp: payload.timestamp,
+          read: true
+        };
+        return {
+          ...prev,
+          [payload.conversationId]: [...existing, incomingMsg]
+        };
+      });
+
+      setConversations(prev =>
+        prev.map(c =>
+          c.id === payload.conversationId
+            ? {
+                ...c,
+                lastMessage: payload.isDogBark ? '🐾 Woof! (Audio Bark)' : payload.text,
+                lastMessageTimestamp: 'Just now'
+              }
+            : c
+        )
+      );
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Clean / normalize phone numbers
   const cleanPhone = (p: string) => p.replace(/\D/g, '');
@@ -1089,6 +1130,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       read: false
     };
 
+    // Emit live socket payload
+    socketEngine.emitMessage({
+      id: newMsg.id,
+      conversationId: convId,
+      senderId,
+      senderName,
+      senderAvatar,
+      recipientId: '',
+      text,
+      image,
+      timestamp: newMsg.timestamp,
+      isDogBark
+    });
+
     setMessages(prev => ({
       ...prev,
       [convId]: [...(prev[convId] || []), newMsg]
@@ -1163,6 +1218,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           read: true
         };
+
+        // Emit socket reply
+        socketEngine.emitMessage({
+          id: replyMsg.id,
+          conversationId: convId,
+          senderId: replySenderId,
+          senderName: replySenderName,
+          senderAvatar: replySenderAvatar,
+          recipientId: senderId,
+          text: replyText,
+          timestamp: replyMsg.timestamp,
+          dogId: targetDog.id,
+          dogName: targetDog.name
+        });
 
         setMessages(prev => ({
           ...prev,
