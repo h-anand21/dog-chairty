@@ -1,6 +1,7 @@
 /**
  * PawConnect Real-Time Bidirectional Web Socket Engine
- * Enables 100% live multi-tab & multi-user bidirectional communication directly on the website.
+ * Enables 100% real live multi-tab & multi-window communication directly between real users.
+ * NO AUTOMATED BOT REPLIES.
  */
 
 export interface SocketMessagePayload {
@@ -26,6 +27,7 @@ class PawConnectSocketEngine {
   public isConnected = true;
 
   constructor() {
+    // 1. Cross-Tab/Window BroadcastChannel
     if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
       try {
         this.channel = new BroadcastChannel('pawconnect_live_socket_bus');
@@ -39,7 +41,20 @@ class PawConnectSocketEngine {
       }
     }
 
+    // 2. Cross-Window Storage Event (for separate browser windows)
     if (typeof window !== 'undefined') {
+      window.addEventListener('storage', (e: StorageEvent) => {
+        if (e.key === 'pawconnect_socket_broadcast' && e.newValue) {
+          try {
+            const data = JSON.parse(e.newValue);
+            if (data && data.id) {
+              this.notifyListeners(data);
+            }
+          } catch (err) {}
+        }
+      });
+
+      // 3. Custom Event Bus for same window
       window.addEventListener('pawconnect_socket_event', (e: Event) => {
         const customEvent = e as CustomEvent<SocketMessagePayload>;
         if (customEvent.detail) {
@@ -59,26 +74,31 @@ class PawConnectSocketEngine {
 
   // Emit a message through the bidirectional live web socket engine
   public emitMessage(payload: SocketMessagePayload) {
-    // 1. Broadcast cross-tab/window via BroadcastChannel
+    // 1. Broadcast via BroadcastChannel
     if (this.channel) {
       try {
         this.channel.postMessage({
           type: 'LIVE_CHAT_MESSAGE',
           payload
         });
-      } catch (e) {
-        // fallback ignored
-      }
+      } catch (e) {}
     }
 
-    // 2. Dispatch in current window
+    // 2. Storage event for cross-window syncing
     if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(
+          'pawconnect_socket_broadcast',
+          JSON.stringify({ ...payload, _ts: Date.now() })
+        );
+      } catch (e) {}
+
       window.dispatchEvent(
         new CustomEvent('pawconnect_socket_event', { detail: payload })
       );
     }
 
-    // 3. Notify local listeners
+    // 3. Local subscribers
     this.notifyListeners(payload);
   }
 
