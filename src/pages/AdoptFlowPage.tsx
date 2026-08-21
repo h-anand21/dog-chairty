@@ -142,18 +142,27 @@ export const AdoptFlowPage: React.FC = () => {
       {/* Applications List */}
       <div className="space-y-6">
         {filteredApplications.length === 0 ? (
-          <div className="glass-card rounded-3xl p-12 text-center border border-white dark:border-white/10 shadow-elevated max-w-md mx-auto space-y-4">
-            <div className="text-4xl">🐾📝</div>
-            <h3 className="text-lg font-bold text-obsidian-950 dark:text-white">No adoption requests matching this filter</h3>
-            <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-normal">
-              Browse dogs on the Discover page to submit a verified adoption application for any dog.
+          <div className="glass-card rounded-4xl p-12 sm:p-16 text-center border border-white dark:border-white/10 shadow-elevated max-w-lg mx-auto space-y-4">
+            <div className="w-16 h-16 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-500 mx-auto flex items-center justify-center text-3xl shadow-glow-coral">
+              🐾📋
+            </div>
+            <h3 className="text-xl font-black font-display text-obsidian-950 dark:text-white">
+              No Active Adoption Journeys
+            </h3>
+            <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
+              No demo journey pipelines are active. When a real user submits an adoption request for a listed dog, their 6-Stage Handover Tracker will appear here in real time!
             </p>
-            <button
-              onClick={() => setActiveTab('discover')}
-              className="btn-primary px-6 py-2.5 rounded-full text-white font-bold text-xs shadow-glow-coral cursor-pointer"
-            >
-              Go to Discover
-            </button>
+            <div className="pt-2">
+              <button
+                onClick={() => {
+                  playPawPop();
+                  setActiveTab('discover');
+                }}
+                className="btn-primary px-6 py-3 rounded-full text-white font-black text-xs shadow-glow-coral cursor-pointer"
+              >
+                Browse & List Real Dogs ➔
+              </button>
+            </div>
           </div>
         ) : (
           filteredApplications.map((app: AdoptionApplication) => (
