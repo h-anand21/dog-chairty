@@ -35,6 +35,7 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
     setActiveConversationId,
     setActiveTab,
     setViewingCertificateDog,
+    openChatForDog,
   } = useApp();
 
   const { playPawPop, playSuccessChime } = useAudio();
@@ -82,9 +83,11 @@ export const AdoptionJourneyTracker: React.FC<JourneyTrackerProps> = ({ applicat
 
   const handleOpenChat = () => {
     playPawPop();
-    const convId = `conv_${application.dogId}_${application.applicantId}`;
-    setActiveConversationId(convId);
-    setActiveTab('chat');
+    if (dog) {
+      openChatForDog(dog);
+    } else {
+      setActiveTab('chat');
+    }
   };
 
   const handleConfirmHandoverAction = () => {
