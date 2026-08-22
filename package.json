@@ -12,6 +12,7 @@
     "@types/leaflet": "^1.9.22",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
+    "convex": "^1.45.0",
     "firebase": "^12.17.1",
     "framer-motion": "^11.18.2",
     "leaflet": "^1.9.4",
