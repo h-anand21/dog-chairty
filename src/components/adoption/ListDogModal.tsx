@@ -51,7 +51,7 @@ export const ListDogModal: React.FC = () => {
   const [name, setName] = useState('');
   const [breed, setBreed] = useState('');
   const [showBreedDropdown, setShowBreedDropdown] = useState(false);
-  const [age, setAge] = useState('2 Years');
+  const [age, setAge] = useState('');
   const [gender, setGender] = useState<'Male' | 'Female'>('Male');
   const [size, setSize] = useState<'Small' | 'Medium' | 'Large' | 'Extra Large'>('Large');
   const [energy, setEnergy] = useState<'Low (Couch Potato)' | 'Moderate' | 'High Energy' | 'Zoomies Master'>('Moderate');
@@ -104,7 +104,7 @@ export const ListDogModal: React.FC = () => {
     const created = addDog({
       name: name || 'Buddy',
       breed: breed || 'Mixed Breed',
-      age,
+      age: age.trim() || '2 Years',
       gender,
       size,
       energy,
