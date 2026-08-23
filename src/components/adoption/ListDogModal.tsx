@@ -74,8 +74,22 @@ export const ListDogModal: React.FC = () => {
   const [adoptionType, setAdoptionType] = useState<'Free Adoption' | 'Adoption Fee'>('Free Adoption');
 
   // Photos
-  const [coverPhoto, setCoverPhoto] = useState('https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=800&auto=format&fit=crop&q=80');
-  const [additionalPhoto, setAdditionalPhoto] = useState('https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&auto=format&fit=crop&q=80');
+  const [coverPhoto, setCoverPhoto] = useState('');
+  const [additionalPhoto, setAdditionalPhoto] = useState('');
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setCoverPhoto(reader.result);
+          playPawPop();
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   if (!isListDogOpen) return null;
 
@@ -476,57 +490,93 @@ export const ListDogModal: React.FC = () => {
           {step === 4 && (
             <div className="space-y-4 text-left">
               <div>
-                <label className="block text-xs font-bold text-obsidian-800 mb-1">
-                  Select Cover Photo Preset (or paste image URL)
+                <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
+                  Upload Dog Photo (from Phone / PC) or Select Preset *
                 </label>
                 
-                {/* Presets */}
-                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-3">
-                  {samplePhotoOptions.map((opt, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setCoverPhoto(opt.url)}
-                      className={`relative rounded-xl overflow-hidden aspect-square border-2 transition-all ${
-                        coverPhoto === opt.url
-                          ? 'border-coral-500 scale-95 shadow-md'
-                          : 'border-transparent hover:opacity-80'
-                      }`}
-                    >
-                      <img src={opt.url} alt={opt.label} className="w-full h-full object-cover" />
-                      {coverPhoto === opt.url && (
-                        <div className="absolute inset-0 bg-coral-500/30 flex items-center justify-center">
-                          <CheckCircle2 className="w-5 h-5 text-white drop-shadow-md" />
-                        </div>
-                      )}
-                    </button>
-                  ))}
+                {/* File Upload Dropzone */}
+                <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-coral-300 dark:border-coral-500/40 rounded-2xl bg-coral-50/50 dark:bg-coral-950/20 hover:bg-coral-100/50 dark:hover:bg-coral-950/40 transition-colors cursor-pointer text-center mb-3">
+                  <div className="w-10 h-10 rounded-full bg-coral-500 text-white flex items-center justify-center mb-2 shadow-sm">
+                    📸
+                  </div>
+                  <span className="text-xs font-black text-coral-700 dark:text-coral-300">
+                    Click to Upload Dog Photo from Gallery / Device
+                  </span>
+                  <span className="text-[10px] text-obsidian-500 dark:text-slate-400 mt-0.5 font-medium">
+                    Supports JPG, PNG, WEBP files
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
+
+                {/* URL Input */}
+                <div className="mb-3">
+                  <span className="text-[11px] text-obsidian-500 dark:text-slate-400 font-bold block mb-1">
+                    Or Paste Direct Photo Web Link (Optional)
+                  </span>
+                  <input
+                    type="url"
+                    value={coverPhoto}
+                    onChange={e => setCoverPhoto(e.target.value)}
+                    placeholder="https://images.unsplash.com/..."
+                    className="w-full px-3.5 py-2 rounded-xl border border-obsidian-400/80 dark:border-white/15 text-xs outline-hidden dark:bg-[#121A2B] dark:text-white"
+                  />
                 </div>
 
-                <input
-                  type="url"
-                  value={coverPhoto}
-                  onChange={e => setCoverPhoto(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-3.5 py-2 rounded-xl border border-obsidian-400/80 text-xs outline-hidden"
-                />
+                {/* Presets if no custom photo available */}
+                <div>
+                  <span className="text-[11px] text-obsidian-500 dark:text-slate-400 font-bold block mb-1.5">
+                    Or Pick a Quick Preset Photo
+                  </span>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                    {samplePhotoOptions.map((opt, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setCoverPhoto(opt.url)}
+                        className={`relative rounded-xl overflow-hidden aspect-square border-2 transition-all ${
+                          coverPhoto === opt.url
+                            ? 'border-coral-500 scale-95 shadow-md'
+                            : 'border-transparent hover:opacity-80'
+                        }`}
+                      >
+                        <img src={opt.url} alt={opt.label} className="w-full h-full object-cover" />
+                        {coverPhoto === opt.url && (
+                          <div className="absolute inset-0 bg-coral-500/30 flex items-center justify-center">
+                            <CheckCircle2 className="w-5 h-5 text-white drop-shadow-md" />
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              {/* Photo Preview Card */}
-              <div className="p-3 bg-obsidian-300/60 rounded-2xl flex items-center gap-4">
-                <img
-                  src={coverPhoto}
-                  alt="Preview"
-                  className="w-16 h-16 rounded-2xl object-cover ring-2 ring-coral-400"
-                />
+              {/* Live Photo Preview Card */}
+              <div className="p-3.5 bg-obsidian-100 dark:bg-white/5 rounded-2xl flex items-center gap-4 border border-obsidian-200 dark:border-white/10">
+                {coverPhoto ? (
+                  <img
+                    src={coverPhoto}
+                    alt="Preview"
+                    className="w-16 h-16 rounded-2xl object-cover ring-2 ring-coral-400 shrink-0"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-coral-100 dark:bg-coral-950/60 text-coral-500 flex items-center justify-center text-2xl font-bold border border-coral-200 dark:border-coral-800/60 shrink-0">
+                    🐕
+                  </div>
+                )}
                 <div>
-                  <div className="text-sm font-black text-obsidian-900">
+                  <div className="text-sm font-black text-obsidian-950 dark:text-white">
                     {name || 'Your Pup'} • {breed || 'Breed'}
                   </div>
-                  <div className="text-xs text-obsidian-600">
-                    {age} • {gender} • 📍 {location}
+                  <div className="text-xs text-obsidian-600 dark:text-slate-300">
+                    {age || '2 Years'} • {gender} • 📍 {location || 'Kolkata'}
                   </div>
-                  <span className="inline-block mt-1 text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                  <span className="inline-block mt-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60">
                     Will be LIVE on Marketplace instantly
                   </span>
                 </div>
