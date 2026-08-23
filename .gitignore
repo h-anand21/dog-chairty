@@ -37,3 +37,9 @@ dist-ssr
 .turbo
 .parcel-cache
 .gemini
+.agents
+.convex
+.claude
+AGENTS.md
+CLAUDE.md
+SKILL.md
