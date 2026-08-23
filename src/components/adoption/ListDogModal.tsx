@@ -65,12 +65,12 @@ export const ListDogModal: React.FC = () => {
   const [vaccinated, setVaccinated] = useState(true);
   const [neutered, setNeutered] = useState(true);
   const [microchipped, setMicrochipped] = useState(true);
-  const [medicalNotes, setMedicalNotes] = useState('Fully up to date on all vaccinations, clean health checkup.');
-  const [favoriteInput, setFavoriteInput] = useState('🎾 Tennis Balls, 🍗 Chicken, 🛋️ Cuddles');
-  const [personalityInput, setPersonalityInput] = useState('Playful, Gentle, House-Trained');
+  const [medicalNotes, setMedicalNotes] = useState('');
+  const [favoriteInput, setFavoriteInput] = useState('');
+  const [personalityInput, setPersonalityInput] = useState('');
 
   // Adoption Details
-  const [reasonForAdoption, setReasonForAdoption] = useState('Moving to an apartment where large pets are not permitted.');
+  const [reasonForAdoption, setReasonForAdoption] = useState('');
   const [adoptionType, setAdoptionType] = useState<'Free Adoption' | 'Adoption Fee'>('Free Adoption');
 
   // Photos
@@ -115,7 +115,7 @@ export const ListDogModal: React.FC = () => {
       coverPhoto: coverPhoto || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=800',
       photos: [coverPhoto, additionalPhoto].filter(Boolean),
       bio: bio || 'Loves belly rubs, outdoor walks, and is very friendly with everyone!',
-      reasonForAdoption,
+      reasonForAdoption: reasonForAdoption.trim() || 'Seeking a loving, active forever home with attentive pet parents.',
       adoptionType,
       currentOwnerId: '',
       currentOwnerName: '',
@@ -124,9 +124,9 @@ export const ListDogModal: React.FC = () => {
       vaccinated,
       neutered,
       microchipped,
-      medicalNotes,
-      favoriteThings: favList.length ? favList : ['🎾 Balls', '🍗 Treats', '🌳 Walks'],
-      personalityTraits: traitList.length ? traitList : ['Loving', 'Loyal', 'Friendly'],
+      medicalNotes: medicalNotes.trim() || 'Fully up to date on all vaccinations, clean health checkup.',
+      favoriteThings: favList.length ? favList : ['🎾 Tennis Balls', '🍗 Chicken', '🛋️ Cuddles'],
+      personalityTraits: traitList.length ? traitList : ['Playful', 'Gentle', 'House-Trained'],
     });
 
     handleClose();
