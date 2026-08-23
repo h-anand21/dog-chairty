@@ -166,15 +166,46 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
   };
 
   const handleOtpChange = (index: number, val: string) => {
-    if (!/^\d*$/.test(val)) return;
+    const cleanVal = val.replace(/\D/g, '');
+    if (!cleanVal && val !== '') return;
+
+    const digit = cleanVal.slice(-1);
     const newDigits = [...otpDigits];
-    newDigits[index] = val.slice(-1);
+    newDigits[index] = digit;
     setOtpDigits(newDigits);
 
-    // Auto-focus next input
-    if (val && index < 5) {
+    // Auto-focus next input when digit is entered
+    if (digit && index < 5) {
       const nextInput = document.getElementById(`otp-input-${index + 1}`);
       nextInput?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      if (otpDigits[index]) {
+        // Clear current digit
+        const newDigits = [...otpDigits];
+        newDigits[index] = '';
+        setOtpDigits(newDigits);
+      } else if (index > 0) {
+        // Clear previous digit and move focus to previous input box
+        const newDigits = [...otpDigits];
+        newDigits[index - 1] = '';
+        setOtpDigits(newDigits);
+        const prevInput = document.getElementById(`otp-input-${index - 1}`);
+        prevInput?.focus();
+      }
+    } else if (e.key === 'ArrowLeft' && index > 0) {
+      e.preventDefault();
+      const prevInput = document.getElementById(`otp-input-${index - 1}`);
+      prevInput?.focus();
+    } else if (e.key === 'ArrowRight' && index < 5) {
+      e.preventDefault();
+      const nextInput = document.getElementById(`otp-input-${index + 1}`);
+      nextInput?.focus();
+    } else if (e.key === 'Enter') {
+      handleVerifyOtp(e);
     }
   };
 
@@ -187,6 +218,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
         newDigits[i] = pasted[i];
       }
       setOtpDigits(newDigits);
+      const targetIdx = Math.min(pasted.length, 5);
+      const targetInput = document.getElementById(`otp-input-${targetIdx}`);
+      targetInput?.focus();
     }
   };
 
@@ -429,8 +463,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
                     inputMode="numeric"
                     maxLength={1}
                     value={digit}
+                    autoFocus={idx === 0}
                     onPaste={handleOtpPaste}
                     onChange={e => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={e => handleKeyDown(idx, e)}
                     className="w-11 sm:w-13 h-12 sm:h-14 text-center text-xl sm:text-2xl font-black rounded-2xl bg-obsidian-100 dark:bg-white/5 border-2 border-obsidian-300 dark:border-white/15 focus:border-coral-500 focus:bg-white dark:focus:bg-[#121A2B] focus:ring-4 focus:ring-coral-100 dark:focus:ring-coral-500/20 text-obsidian-950 dark:text-white outline-hidden transition-all shadow-inner"
                   />
                 ))}
