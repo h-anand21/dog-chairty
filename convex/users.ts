@@ -31,7 +31,7 @@ export const upsertUser = mutation({
     homeType: v.optional(v.string()),
     hasYard: v.optional(v.boolean()),
     otherPets: v.optional(v.string()),
-    experienceLevel: v.optional(v.union(v.literal("First-Time Parent"), v.literal("Intermediate"), v.literal("Experienced Parent"), v.literal("Professional Trainer"))),
+    experienceLevel: v.optional(v.string()),
     bio: v.optional(v.string()),
   },
   handler: async (ctx, args) => {

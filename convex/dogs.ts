@@ -36,6 +36,7 @@ export const create = mutation({
     currentOwnerId: v.string(),
     currentOwnerName: v.string(),
     currentOwnerAvatar: v.string(),
+    currentOwnerPhone: v.optional(v.string()),
     isOwnerVerified: v.boolean(),
     vaccinated: v.boolean(),
     neutered: v.boolean(),

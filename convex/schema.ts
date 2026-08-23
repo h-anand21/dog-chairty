@@ -16,7 +16,7 @@ export default defineSchema({
     homeType: v.optional(v.string()),
     hasYard: v.optional(v.boolean()),
     otherPets: v.optional(v.string()),
-    experienceLevel: v.optional(v.union(v.literal("First-Time Parent"), v.literal("Intermediate"), v.literal("Experienced Parent"), v.literal("Professional Trainer"))),
+    experienceLevel: v.optional(v.string()),
     bio: v.optional(v.string()),
   }).index("by_user_id", ["id"]).index("by_phone", ["phone"]),
 

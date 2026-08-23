@@ -4,6 +4,43 @@ import { useAudio } from '../../context/AudioContext';
 import { LocationPicker } from '../map/LocationPicker';
 import { X, ArrowRight, ArrowLeft, CheckCircle2, Sparkles } from 'lucide-react';
 
+const POPULAR_DOG_BREEDS = [
+  'Golden Retriever',
+  'Labrador Retriever',
+  'German Shepherd',
+  'Beagle',
+  'Pug',
+  'Shih Tzu',
+  'French Bulldog',
+  'Siberian Husky',
+  'Samoyed',
+  'Rottweiler',
+  'Doberman Pinscher',
+  'Boxer',
+  'Dachshund',
+  'Poodle (Standard / Toy)',
+  'Great Dane',
+  'Cocker Spaniel',
+  'Pomeranian',
+  'Lhasa Apso',
+  'Border Collie',
+  'Chihuahua',
+  'Bulldog (English)',
+  'Australian Shepherd',
+  'Saint Bernard',
+  'Indie / Indian Pariah Dog',
+  'Mudhol Hound',
+  'Rajapalayam',
+  'Gaddi Kutta',
+  'Bakharwal Dog',
+  'Kombai',
+  'Kanni',
+  'Chippiparai',
+  'Indian Spitz',
+  'Mixed Breed / Crossbreed',
+  'Other Rescue Companion',
+];
+
 export const ListDogModal: React.FC = () => {
   const { isListDogOpen, setIsListDogOpen, addDog, setSelectedDog, setActiveTab } = useApp();
   const { playSuccessChime, playPawPop } = useAudio();
@@ -13,6 +50,7 @@ export const ListDogModal: React.FC = () => {
   // Form State
   const [name, setName] = useState('');
   const [breed, setBreed] = useState('');
+  const [showBreedDropdown, setShowBreedDropdown] = useState(false);
   const [age, setAge] = useState('2 Years');
   const [gender, setGender] = useState<'Male' | 'Female'>('Male');
   const [size, setSize] = useState<'Small' | 'Medium' | 'Large' | 'Extra Large'>('Large');
@@ -163,18 +201,45 @@ export const ListDogModal: React.FC = () => {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-obsidian-800 mb-1">
-                    Breed *
+                <div className="relative">
+                  <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
+                    Breed * <span className="text-[10px] text-coral-500 font-medium">(Type for suggestions)</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={breed}
-                    onChange={e => setBreed(e.target.value)}
-                    placeholder="e.g. Golden Retriever, Beagle"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 focus:ring-2 focus:ring-coral-200 text-sm outline-hidden"
+                    onFocus={() => setShowBreedDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowBreedDropdown(false), 200)}
+                    onChange={e => {
+                      setBreed(e.target.value);
+                      setShowBreedDropdown(true);
+                    }}
+                    placeholder="e.g. Golden, Beagle, Indie..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 dark:border-white/15 focus:border-coral-500 focus:ring-2 focus:ring-coral-200 text-sm outline-hidden dark:bg-[#121A2B] dark:text-white"
                   />
+
+                  {/* 🐶 Interactive Breed Autocomplete Dropdown */}
+                  {showBreedDropdown && breed.trim().length > 0 && (
+                    <div className="absolute left-0 right-0 top-full mt-1 z-50 max-h-48 overflow-y-auto bg-white dark:bg-[#121A2B] border border-coral-300 dark:border-coral-500/40 rounded-2xl shadow-elevated divide-y divide-obsidian-100 dark:divide-white/10 animate-in fade-in zoom-in-95 duration-150">
+                      {POPULAR_DOG_BREEDS.filter(b => b.toLowerCase().includes(breed.toLowerCase().trim())).map((b, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setBreed(b);
+                            setShowBreedDropdown(false);
+                            playPawPop();
+                          }}
+                          className="w-full px-4 py-2.5 text-left text-xs font-bold text-obsidian-900 dark:text-white hover:bg-coral-50 dark:hover:bg-coral-950/60 hover:text-coral-600 dark:hover:text-coral-400 transition-colors flex items-center justify-between cursor-pointer"
+                        >
+                          <span>🐕 {b}</span>
+                          <span className="text-[10px] text-coral-500 font-semibold uppercase">Select ➔</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
