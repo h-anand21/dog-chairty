@@ -24,6 +24,8 @@ import {
 } from '../data/mockData';
 import { otpService } from '../services/otpService';
 import { socketEngine, SocketMessagePayload } from '../services/socketService';
+import { convexClient } from '../services/convexService';
+import { api } from '../../convex/_generated/api';
 
 interface AppContextType {
   // Authentication & Dynamic Users
@@ -173,6 +175,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  // Persist allUsers to localStorage whenever users list changes
+  useEffect(() => {
+    localStorage.setItem('pawconnect_users', JSON.stringify(allUsers));
+  }, [allUsers]);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
@@ -579,6 +586,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCurrentUser(defaultNewUser);
     localStorage.setItem('pawconnect_current_user', JSON.stringify(defaultNewUser));
 
+    // ☁️ Sync to Convex Cloud Users Table
+    try {
+      convexClient.mutation(api.users.upsertUser, {
+        id: defaultNewUser.id,
+        name: defaultNewUser.name,
+        phone: defaultNewUser.phone,
+        avatar: defaultNewUser.avatar,
+        role: defaultNewUser.role,
+        location: defaultNewUser.location || 'Kolkata',
+        isVerified: defaultNewUser.isVerified,
+        joinedDate: defaultNewUser.joinedDate,
+        homeType: defaultNewUser.homeType,
+        hasYard: defaultNewUser.hasYard,
+        otherPets: defaultNewUser.otherPets,
+        experienceLevel: defaultNewUser.experienceLevel,
+        bio: defaultNewUser.bio,
+      }).catch(() => {});
+    } catch (e) {}
+
     if (pendingAuthAction) {
       pendingAuthAction();
       setPendingAuthAction(null);
@@ -598,6 +624,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setAllUsers(prev => [newUser, ...prev.filter(u => u.id !== newUser.id)]);
     setCurrentUser(newUser);
     localStorage.setItem('pawconnect_current_user', JSON.stringify(newUser));
+
+    // ☁️ Sync to Convex Cloud Users Table
+    try {
+      convexClient.mutation(api.users.upsertUser, {
+        id: newUser.id,
+        name: newUser.name,
+        phone: newUser.phone,
+        avatar: newUser.avatar,
+        role: newUser.role,
+        location: newUser.location || 'Kolkata',
+        isVerified: newUser.isVerified,
+        joinedDate: newUser.joinedDate,
+        homeType: newUser.homeType,
+        hasYard: newUser.hasYard,
+        otherPets: newUser.otherPets,
+        experienceLevel: newUser.experienceLevel,
+        bio: newUser.bio,
+      }).catch(() => {});
+    } catch (e) {}
 
     if (pendingAuthAction) {
       pendingAuthAction();
@@ -642,6 +687,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isOwnerVerified: currentUser?.isVerified ?? true,
     };
     setDogs(prev => [newDog, ...prev]);
+
+    // ☁️ Sync to Convex Cloud Dogs Table
+    try {
+      convexClient.mutation(api.dogs.create, {
+        id: newDog.id,
+        name: newDog.name,
+        breed: newDog.breed,
+        age: newDog.age,
+        gender: newDog.gender,
+        size: newDog.size,
+        energy: newDog.energy,
+        location: newDog.location,
+        lat: newDog.lat,
+        lng: newDog.lng,
+        city: newDog.city,
+        coverPhoto: newDog.coverPhoto,
+        photos: newDog.photos,
+        bio: newDog.bio,
+        reasonForAdoption: newDog.reasonForAdoption,
+        adoptionType: newDog.adoptionType,
+        status: newDog.status,
+        currentOwnerId: newDog.currentOwnerId,
+        currentOwnerName: newDog.currentOwnerName,
+        currentOwnerAvatar: newDog.currentOwnerAvatar,
+        currentOwnerPhone: newDog.currentOwnerPhone,
+        isOwnerVerified: newDog.isOwnerVerified,
+        vaccinated: newDog.vaccinated,
+        neutered: newDog.neutered,
+        microchipped: newDog.microchipped,
+        medicalNotes: newDog.medicalNotes,
+        favoriteThings: newDog.favoriteThings,
+        personalityTraits: newDog.personalityTraits,
+        interestedCount: newDog.interestedCount,
+        likesCount: newDog.likesCount,
+      }).catch(() => {});
+    } catch (e) {}
 
     // Announcement post on PawFeed
     const announcementPost: Post = {
