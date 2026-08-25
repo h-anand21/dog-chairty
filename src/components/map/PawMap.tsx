@@ -28,7 +28,7 @@ export const PawMap: React.FC<PawMapProps> = ({
   height = '580px',
   initialUserGps = null,
 }) => {
-  const { setSelectedDog, setIsApplyModalOpen, theme } = useApp();
+  const { currentUser, requireAuth, setSelectedDog, setIsApplyModalOpen, theme } = useApp();
   const { playPawPop } = useAudio();
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -275,6 +275,12 @@ export const PawMap: React.FC<PawMapProps> = ({
               <button
                 onClick={() => {
                   playPawPop();
+                  if (!currentUser) {
+                    requireAuth(`Please log in with your mobile number to view full details for ${activeDog.name}!`, () => {
+                      onSelectDog(activeDog);
+                    });
+                    return;
+                  }
                   onSelectDog(activeDog);
                 }}
                 className="flex-1 py-2.5 rounded-xl bg-obsidian-100 dark:bg-white/10 hover:bg-obsidian-200 dark:hover:bg-white/20 text-obsidian-950 dark:text-white font-black text-xs transition-all cursor-pointer text-center"
@@ -285,8 +291,10 @@ export const PawMap: React.FC<PawMapProps> = ({
               <button
                 onClick={() => {
                   playPawPop();
-                  setSelectedDog(activeDog);
-                  setIsApplyModalOpen(true);
+                  requireAuth(`Please verify your mobile number with OTP to apply for adopting ${activeDog.name}.`, () => {
+                    setSelectedDog(activeDog);
+                    setIsApplyModalOpen(true);
+                  });
                 }}
                 className="flex-1 py-2.5 rounded-xl btn-primary text-white font-black text-xs shadow-glow-coral transition-all cursor-pointer flex items-center justify-center gap-1"
               >
