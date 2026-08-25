@@ -76,8 +76,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
 
   useEffect(() => {
     if (isOpen) {
-      if (currentUser) {
-        // Logged in user editing profile
+      if (initialStep === 'profile' && currentUser) {
+        // Logged in user explicitly editing profile
         setStep('profile');
         setName(currentUser.name || '');
         setPhoneDigits(currentUser.phone ? currentUser.phone.replace(/\D/g, '').slice(-10) : '');
@@ -94,7 +94,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
         fetchLiveLocation();
       }
     }
-  }, [isOpen, currentUser]);
+  }, [isOpen, initialStep, currentUser]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
