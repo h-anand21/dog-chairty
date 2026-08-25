@@ -188,19 +188,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // 3. Navigation Tab
   const [activeTab, setActiveTab] = useState<'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin'>('discover');
 
-  // 4. Dogs State
+  // 4. Dogs State (Only real user-listed dogs)
   const [dogs, setDogs] = useState<Dog[]>(() => {
     const saved = localStorage.getItem('pawconnect_dogs');
     if (saved) {
       try {
         const parsed: Dog[] = JSON.parse(saved);
-        if (parsed && parsed.length > 0) return parsed;
+        const mockIds = ['dog_bruno', 'dog_luna', 'dog_milo', 'dog_rocky', 'dog_coco'];
+        return parsed.filter(d => !mockIds.includes(d.id));
       } catch (e) {
-        return INITIAL_DOGS;
+        return [];
       }
     }
-    return INITIAL_DOGS;
+    return [];
   });
+
+  // Persist dogs state to localStorage whenever dogs list changes
+  useEffect(() => {
+    localStorage.setItem('pawconnect_dogs', JSON.stringify(dogs));
+  }, [dogs]);
   const [selectedDog, setSelectedDog] = useState<Dog | null>(null);
 
   // 4. Applications State (Only keep applications for currently existing listed dogs)
