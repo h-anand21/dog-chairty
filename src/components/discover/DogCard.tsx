@@ -11,12 +11,29 @@ interface DogCardProps {
 }
 
 export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
-  const { toggleLikeDog, setIsApplyModalOpen, setSelectedDog, requireAuth, openChatForDog } = useApp();
+  const { currentUser, toggleLikeDog, setIsApplyModalOpen, setSelectedDog, requireAuth, openChatForDog } = useApp();
   const { playPawPop } = useAudio();
+
+  const handleCardClick = () => {
+    playPawPop();
+    if (!currentUser) {
+      requireAuth(`Log in with your mobile number to view full details, vet records, and contact ${dog.name}'s guardian!`, () => {
+        onSelect(dog);
+      });
+      return;
+    }
+    onSelect(dog);
+  };
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
     playPawPop();
+    if (!currentUser) {
+      requireAuth(`Log in with your mobile number to save ${dog.name} to your favorites!`, () => {
+        toggleLikeDog(dog.id);
+      });
+      return;
+    }
     toggleLikeDog(dog.id);
   };
 
@@ -39,7 +56,7 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
 
   return (
     <div
-      onClick={() => onSelect(dog)}
+      onClick={handleCardClick}
       className="group relative bg-white dark:bg-[#101725] rounded-4xl overflow-hidden border border-obsidian-200/90 dark:border-white/10 shadow-card hover:shadow-card-hover transition-all duration-400 hover:-translate-y-2 cursor-pointer flex flex-col justify-between"
     >
       {/* Dog Photo Container with Gradient Edge */}
