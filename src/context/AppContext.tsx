@@ -194,15 +194,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try {
         const parsed: Dog[] = JSON.parse(saved);
-        const mockKeywords = ['bruno', 'luna', 'milo', 'rocky', 'coco', 'bella', 'cooper', 'daisy', 'max'];
-        return parsed.filter(d =>
-          !mockKeywords.some(kw => d.id.toLowerCase().includes(kw) || d.name.toLowerCase().includes(kw))
-        );
+        if (parsed && parsed.length > 0) return parsed;
       } catch (e) {
-        return [];
+        return INITIAL_DOGS;
       }
     }
-    return [];
+    return INITIAL_DOGS;
   });
   const [selectedDog, setSelectedDog] = useState<Dog | null>(null);
 
