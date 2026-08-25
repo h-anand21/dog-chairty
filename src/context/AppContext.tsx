@@ -188,19 +188,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // 3. Navigation Tab
   const [activeTab, setActiveTab] = useState<'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin'>('discover');
 
-  // 4. Dogs State (Only real user-listed dogs)
+  // 4. Dogs State (Real user-listed dogs & Dipu Anand's Pogo)
   const [dogs, setDogs] = useState<Dog[]>(() => {
     const saved = localStorage.getItem('pawconnect_dogs');
     if (saved) {
       try {
         const parsed: Dog[] = JSON.parse(saved);
         const mockIds = ['dog_bruno', 'dog_luna', 'dog_milo', 'dog_rocky', 'dog_coco'];
-        return parsed.filter(d => !mockIds.includes(d.id));
+        const filteredings = parsed.filter(d => !mockIds.includes(d.id));
+        if (filteredings.length > 0) return filteredings;
       } catch (e) {
-        return [];
+        return INITIAL_DOGS;
       }
     }
-    return [];
+    return INITIAL_DOGS;
   });
 
   // Persist dogs state to localStorage whenever dogs list changes
