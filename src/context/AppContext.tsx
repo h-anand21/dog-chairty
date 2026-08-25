@@ -489,6 +489,66 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('pawconnect_reports', JSON.stringify(reports));
   }, [reports]);
 
+  // ☁️ Live Fetch & Sync Convex Cloud Database
+  useEffect(() => {
+    let isMounted = true;
+
+    // Trigger Cloud Table Initialization (Seeds Dipu Anand & Pogo if empty)
+    try {
+      convexClient.mutation(api.init.initializeTables).catch(() => {});
+    } catch (e) {}
+
+    const fetchConvexCloudData = async () => {
+      try {
+        const cloudDogs = await convexClient.query(api.dogs.list);
+        if (isMounted && Array.isArray(cloudDogs) && cloudDogs.length > 0) {
+          const formatted: Dog[] = cloudDogs.map((d: any) => ({
+            id: d.id,
+            name: d.name,
+            breed: d.breed,
+            age: d.age,
+            gender: d.gender,
+            size: d.size,
+            energy: d.energy,
+            location: d.location,
+            lat: d.lat,
+            lng: d.lng,
+            city: d.city || 'Kolkata',
+            coverPhoto: d.coverPhoto,
+            photos: d.photos || [d.coverPhoto],
+            bio: d.bio,
+            reasonForAdoption: d.reasonForAdoption,
+            adoptionType: d.adoptionType,
+            status: d.status,
+            currentOwnerId: d.currentOwnerId,
+            currentOwnerName: d.currentOwnerName,
+            currentOwnerAvatar: d.currentOwnerAvatar,
+            currentOwnerPhone: d.currentOwnerPhone,
+            isOwnerVerified: d.isOwnerVerified,
+            vaccinated: d.vaccinated,
+            neutered: d.neutered,
+            microchipped: d.microchipped,
+            medicalNotes: d.medicalNotes,
+            favoriteThings: d.favoriteThings || [],
+            personalityTraits: d.personalityTraits || [],
+            interestedCount: d.interestedCount || 0,
+            likesCount: d.likesCount || 0,
+          }));
+          setDogs(formatted);
+        }
+      } catch (err) {
+        // Fallback to local state
+      }
+    };
+
+    fetchConvexCloudData();
+    const interval = setInterval(fetchConvexCloudData, 4000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
   // ⚡ Live Bidirectional Web Socket Subscription
   useEffect(() => {
     const unsubscribe = socketEngine.subscribe((payload: SocketMessagePayload) => {
