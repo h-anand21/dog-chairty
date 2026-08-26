@@ -3,7 +3,7 @@ import { Dog } from '../types';
 import { DogCard } from '../components/discover/DogCard';
 import { PawMap } from '../components/map/PawMap';
 import { CitySearchInput } from '../components/common/CitySearchInput';
-import { HowItWorksAnimated } from '../components/discover/HowItWorksAnimated';
+import { VerifiedImpactShowcase } from '../components/discover/VerifiedImpactShowcase';
 import { PillarDetailModal, PillarType } from '../components/common/PillarDetailModal';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
@@ -542,8 +542,8 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
         </div>
       </section>
 
-      {/* 🐾 2. HOW PAWCONNECT WORKS (Interactive Animated Journey & Live Simulator) */}
-      <HowItWorksAnimated />
+      {/* 🐾 2. PAWCONNECT VERIFIED IMPACT & CATEGORIES HUB */}
+      <VerifiedImpactShowcase />
 
       {/* 🐶 3. DOGS MARKETPLACE (GRID / MAP VIEW) */}
       <section id="marketplace-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28 space-y-6">
