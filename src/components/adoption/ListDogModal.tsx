@@ -164,29 +164,29 @@ export const ListDogModal: React.FC = () => {
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-obsidian-300 hover:bg-obsidian-400 flex items-center justify-center text-obsidian-700 transition-colors"
+          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-obsidian-100 dark:bg-white/10 text-obsidian-700 dark:text-slate-200 hover:bg-coral-50 dark:hover:bg-coral-950/60 transition-colors flex items-center justify-center cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Wizard Header */}
         <div className="text-left mb-6">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 text-coral-600 font-bold text-xs mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 font-bold text-xs mb-2 border border-coral-200 dark:border-coral-800/40">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Owner Listing Wizard • Step {step} of 4</span>
           </div>
-          <h2 className="text-2xl font-black font-display text-obsidian-900">
+          <h2 className="text-2xl font-black font-display text-obsidian-950 dark:text-white">
             {step === 1 && 'Basic Dog Information'}
             {step === 2 && 'Health, Vet Care & Personality'}
             {step === 3 && 'Adoption Details & Requirements'}
             {step === 4 && 'Photos & Review Listing'}
           </h2>
-          <p className="text-xs text-obsidian-600 mt-1">
+          <p className="text-xs text-obsidian-600 dark:text-slate-300 mt-1">
             Dogs listed on PawConnect are verified to ensure transparent communication & safe handovers.
           </p>
 
           {/* Progress Bar */}
-          <div className="w-full bg-obsidian-300 h-1.5 rounded-full mt-4 overflow-hidden">
+          <div className="w-full bg-obsidian-200 dark:bg-white/10 h-1.5 rounded-full mt-4 overflow-hidden">
             <div
               className="bg-coral-500 h-full transition-all duration-300 rounded-full"
               style={{ width: `${(step / 4) * 100}%` }}
@@ -202,7 +202,7 @@ export const ListDogModal: React.FC = () => {
             <div className="space-y-4 text-left">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-obsidian-800 mb-1">
+                  <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
                     Dog&apos;s Name *
                   </label>
                   <input
@@ -211,7 +211,7 @@ export const ListDogModal: React.FC = () => {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="e.g. Bruno, Max, Daisy"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 focus:ring-2 focus:ring-coral-200 text-sm outline-hidden"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                   />
                 </div>
 
@@ -230,7 +230,7 @@ export const ListDogModal: React.FC = () => {
                       setShowBreedDropdown(true);
                     }}
                     placeholder="e.g. Golden, Beagle, Indie..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 dark:border-white/15 focus:border-coral-500 focus:ring-2 focus:ring-coral-200 text-sm outline-hidden dark:bg-[#121A2B] dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                   />
 
                   {/* 🐶 Interactive Breed Autocomplete Dropdown */}
@@ -259,22 +259,22 @@ export const ListDogModal: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-obsidian-800 mb-1">Age</label>
+                  <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">Age</label>
                   <input
                     type="text"
                     value={age}
                     onChange={e => setAge(e.target.value)}
                     placeholder="e.g. 2 Years / 6 Months"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-obsidian-800 mb-1">Gender</label>
+                  <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">Gender</label>
                   <select
                     value={gender}
                     onChange={e => setGender(e.target.value as 'Male' | 'Female')}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                   >
                     <option value="Male">Male ♂</option>
                     <option value="Female">Female ♀</option>
@@ -282,11 +282,11 @@ export const ListDogModal: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-obsidian-800 mb-1">Size</label>
+                  <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">Size</label>
                   <select
                     value={size}
                     onChange={e => setSize(e.target.value as typeof size)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                   >
                     <option value="Small">Small (under 10kg)</option>
                     <option value="Medium">Medium (10-25kg)</option>
@@ -298,13 +298,13 @@ export const ListDogModal: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-obsidian-800 mb-1">
+                  <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
                     Energy Level
                   </label>
                   <select
                     value={energy}
                     onChange={e => setEnergy(e.target.value as typeof energy)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                   >
                     <option value="Low (Couch Potato)">Low (Couch Potato 🛋️)</option>
                     <option value="Moderate">Moderate (Regular Walks 🌳)</option>
@@ -331,7 +331,7 @@ export const ListDogModal: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-obsidian-800 mb-1">
+                <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
                   About Dog (Bio & Habits)
                 </label>
                 <textarea
@@ -339,7 +339,7 @@ export const ListDogModal: React.FC = () => {
                   value={bio}
                   onChange={e => setBio(e.target.value)}
                   placeholder="Describe your dog's temperament, favorite games, leash manners, and routine..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                 />
               </div>
             </div>
@@ -348,12 +348,12 @@ export const ListDogModal: React.FC = () => {
           {/* STEP 2: Health & Personality */}
           {step === 2 && (
             <div className="space-y-4 text-left">
-              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200">
-                <p className="text-xs font-bold text-emerald-900 mb-3">
+              <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40">
+                <p className="text-xs font-bold text-emerald-900 dark:text-emerald-200 mb-3">
                   Veterinary & Medical Badges
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-obsidian-800">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-obsidian-800 dark:text-slate-200">
                     <input
                       type="checkbox"
                       checked={vaccinated}
@@ -363,7 +363,7 @@ export const ListDogModal: React.FC = () => {
                     <span>Vaccinated ✓</span>
                   </label>
 
-                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-obsidian-800">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-obsidian-800 dark:text-slate-200">
                     <input
                       type="checkbox"
                       checked={neutered}
@@ -373,7 +373,7 @@ export const ListDogModal: React.FC = () => {
                     <span>Spayed / Neutered ✓</span>
                   </label>
 
-                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-obsidian-800">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-obsidian-800 dark:text-slate-200">
                     <input
                       type="checkbox"
                       checked={microchipped}
@@ -386,7 +386,7 @@ export const ListDogModal: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-obsidian-800 mb-1">
+                <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
                   Medical Notes & Health History
                 </label>
                 <input
@@ -394,12 +394,12 @@ export const ListDogModal: React.FC = () => {
                   value={medicalNotes}
                   onChange={e => setMedicalNotes(e.target.value)}
                   placeholder="e.g. Up to date on rabies & DHPP. Regular vet visits."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-obsidian-800 mb-1">
+                <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
                   Favorite Things (Comma-separated)
                 </label>
                 <input
@@ -407,12 +407,12 @@ export const ListDogModal: React.FC = () => {
                   value={favoriteInput}
                   onChange={e => setFavoriteInput(e.target.value)}
                   placeholder="e.g. 🎾 Tennis Balls, 🍗 Chicken, 🛋️ Sofa Naps"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-obsidian-800 mb-1">
+                <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
                   Personality Traits (Comma-separated)
                 </label>
                 <input
@@ -420,7 +420,7 @@ export const ListDogModal: React.FC = () => {
                   value={personalityInput}
                   onChange={e => setPersonalityInput(e.target.value)}
                   placeholder="e.g. Playful, Good with Kids, House-Trained"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                 />
               </div>
             </div>
@@ -430,7 +430,7 @@ export const ListDogModal: React.FC = () => {
           {step === 3 && (
             <div className="space-y-4 text-left">
               <div>
-                <label className="block text-xs font-bold text-obsidian-800 mb-1">
+                <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
                   Reason for Adoption / Rehoming *
                 </label>
                 <textarea
@@ -439,26 +439,26 @@ export const ListDogModal: React.FC = () => {
                   value={reasonForAdoption}
                   onChange={e => setReasonForAdoption(e.target.value)}
                   placeholder="Explain why you are seeking a new family for your dog (relocation, allergy, foster handover...)"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-400/80 focus:border-coral-500 text-sm outline-hidden"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-sm outline-hidden transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-obsidian-800 mb-1">
+                <label className="block text-xs font-bold text-obsidian-800 dark:text-slate-200 mb-1">
                   Adoption Type
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setAdoptionType('Free Adoption')}
-                    className={`p-3 rounded-2xl border text-left text-xs font-bold transition-all ${
+                    className={`p-3 rounded-2xl border text-left text-xs font-bold transition-all cursor-pointer ${
                       adoptionType === 'Free Adoption'
-                        ? 'border-coral-500 bg-coral-50 text-coral-700'
-                        : 'border-obsidian-400/80 hover:bg-obsidian-300/40 text-obsidian-700'
+                        ? 'border-coral-500 bg-coral-50 dark:bg-coral-950/50 text-coral-700 dark:text-coral-300 shadow-xs'
+                        : 'border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-800 dark:text-slate-200 hover:bg-obsidian-50 dark:hover:bg-white/5'
                     }`}
                   >
                     <div>🎁 Free Adoption</div>
-                    <p className="font-normal text-[11px] text-obsidian-600 mt-1">
+                    <p className="font-normal text-[11px] text-obsidian-600 dark:text-slate-400 mt-1">
                       No fee charged to adopter.
                     </p>
                   </button>
@@ -466,21 +466,21 @@ export const ListDogModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setAdoptionType('Adoption Fee')}
-                    className={`p-3 rounded-2xl border text-left text-xs font-bold transition-all ${
+                    className={`p-3 rounded-2xl border text-left text-xs font-bold transition-all cursor-pointer ${
                       adoptionType === 'Adoption Fee'
-                        ? 'border-coral-500 bg-coral-50 text-coral-700'
-                        : 'border-obsidian-400/80 hover:bg-obsidian-300/40 text-obsidian-700'
+                        ? 'border-coral-500 bg-coral-50 dark:bg-coral-950/50 text-coral-700 dark:text-coral-300 shadow-xs'
+                        : 'border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-800 dark:text-slate-200 hover:bg-obsidian-50 dark:hover:bg-white/5'
                     }`}
                   >
                     <div>🏷️ Rehoming Support Fee</div>
-                    <p className="font-normal text-[11px] text-obsidian-600 mt-1">
+                    <p className="font-normal text-[11px] text-obsidian-600 dark:text-slate-400 mt-1">
                       Nominal medical / vaccination fee.
                     </p>
                   </button>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 text-xs text-sky-900 leading-relaxed">
+              <div className="p-3.5 rounded-2xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/40 text-xs text-sky-900 dark:text-sky-200 leading-relaxed">
                 ℹ️ <strong>Safety Guarantee:</strong> Once an applicant applies, you will review their full living profile, work schedule, and pet experience before accepting. Chat unlocks only upon your approval.
               </div>
             </div>
@@ -523,7 +523,7 @@ export const ListDogModal: React.FC = () => {
                     value={coverPhoto}
                     onChange={e => setCoverPhoto(e.target.value)}
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full px-3.5 py-2 rounded-xl border border-obsidian-400/80 dark:border-white/15 text-xs outline-hidden dark:bg-[#121A2B] dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-obsidian-300 dark:border-white/15 bg-white dark:bg-[#121A2B] text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 text-xs outline-hidden transition-all"
                   />
                 </div>
 
@@ -538,7 +538,7 @@ export const ListDogModal: React.FC = () => {
                         key={i}
                         type="button"
                         onClick={() => setCoverPhoto(opt.url)}
-                        className={`relative rounded-xl overflow-hidden aspect-square border-2 transition-all ${
+                        className={`relative rounded-xl overflow-hidden aspect-square border-2 transition-all cursor-pointer ${
                           coverPhoto === opt.url
                             ? 'border-coral-500 scale-95 shadow-md'
                             : 'border-transparent hover:opacity-80'
@@ -585,12 +585,12 @@ export const ListDogModal: React.FC = () => {
           )}
 
           {/* Wizard Footer Navigation */}
-          <div className="pt-4 border-t border-obsidian-400/40 flex items-center justify-between">
+          <div className="pt-4 border-t border-obsidian-200 dark:border-white/10 flex items-center justify-between">
             {step > 1 ? (
               <button
                 type="button"
                 onClick={handleBack}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-obsidian-400 text-xs font-bold text-obsidian-700 hover:bg-obsidian-300"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-obsidian-300 dark:border-white/20 text-xs font-bold text-obsidian-700 dark:text-slate-200 hover:bg-obsidian-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back</span>
@@ -601,7 +601,7 @@ export const ListDogModal: React.FC = () => {
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex items-center gap-1.5 px-6 py-2.5 rounded-full bg-coral-500 hover:bg-coral-600 text-white text-xs font-bold shadow-soft transition-all"
+                className="flex items-center gap-1.5 px-6 py-2.5 rounded-full bg-coral-500 hover:bg-coral-600 text-white text-xs font-bold shadow-glow-coral transition-all cursor-pointer"
               >
                 <span>Continue</span>
                 <ArrowRight className="w-4 h-4" />
@@ -609,7 +609,7 @@ export const ListDogModal: React.FC = () => {
             ) : (
               <button
                 type="submit"
-                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white text-xs font-black shadow-soft hover:shadow-soft-hover transition-all"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white text-xs font-black shadow-glow-coral transition-all cursor-pointer"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Publish Dog for Adoption 🐾</span>
