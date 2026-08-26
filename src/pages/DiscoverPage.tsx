@@ -74,6 +74,40 @@ function checkFuzzyTokenMatch(token: string, targetText: string): boolean {
   return false;
 }
 
+// Curated High-Resolution Clean Hero Dogs (Without flowers in mouth) for 3-Second Slider
+const HERO_DOG_SLIDES = [
+  {
+    name: 'Bruno',
+    breed: 'Labrador Retriever',
+    url: 'https://images.unsplash.com/photo-1579202673506-ca3ce28943ef?w=1000&auto=format&fit=crop&q=80',
+    tag: 'Friendly & Playful 🐾'
+  },
+  {
+    name: 'Simba',
+    breed: 'Golden Retriever',
+    url: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=1000&auto=format&fit=crop&q=80',
+    tag: 'Gentle & Loving 💛'
+  },
+  {
+    name: 'Chiku',
+    breed: 'Indian Indie Rescue',
+    url: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1000&auto=format&fit=crop&q=80',
+    tag: 'Smart & Active ⚡'
+  },
+  {
+    name: 'Max',
+    breed: 'German Shepherd',
+    url: 'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=1000&auto=format&fit=crop&q=80',
+    tag: 'Loyal Guardian 🛡️'
+  },
+  {
+    name: 'Rocky',
+    breed: 'Beagle',
+    url: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=1000&auto=format&fit=crop&q=80',
+    tag: 'Curious Explorer 🔍'
+  }
+];
+
 export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
   const { dogs, setSelectedDog, setIsApplyModalOpen, setIsListDogOpen } = useApp();
   const { playPawPop, playDogBark } = useAudio();
@@ -88,6 +122,18 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // 🐾 3-Second Auto-Rotating Hero Dog Slider State
+  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroSlideIndex(prev => (prev + 1) % HERO_DOG_SLIDES.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const currentHeroSlide = HERO_DOG_SLIDES[heroSlideIndex];
 
   // Click outside to dismiss search suggestions
   useEffect(() => {
@@ -221,14 +267,14 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
             <div className="lg:col-span-7 space-y-6 text-left">
               
               {/* Top Tag Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1A2333] border border-white/10 text-white font-extrabold text-xs tracking-wider uppercase shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-coral-50 dark:bg-[#1A2333] border border-coral-200 dark:border-white/10 text-coral-700 dark:text-white font-extrabold text-xs tracking-wider uppercase shadow-xs">
                 <span className="text-coral-500">🐾</span>
                 <span>100% Direct Pet Guardian Adoption Across India</span>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black font-display tracking-tight text-white leading-[1.05]">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black font-display tracking-tight text-obsidian-950 dark:text-white leading-[1.05]">
                 Find Your Canine <br />
                 Friend. <br />
                 <span className="text-gradient-coral inline-flex items-center gap-2">
@@ -238,7 +284,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-sm sm:text-base text-slate-300 max-w-xl leading-relaxed font-normal">
+              <p className="text-sm sm:text-base text-obsidian-600 dark:text-slate-300 max-w-xl leading-relaxed font-normal">
                 Direct connection between pet parents and loving adopters. Verified vet clearances, interactive map pins, direct private chat, park meetups, and digital legal handovers.
               </p>
 
@@ -250,9 +296,9 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     playPawPop();
                     setSelectedPillar('chat');
                   }}
-                  className="px-3.5 py-1.5 rounded-full bg-[#131B2A] border border-white/10 text-slate-200 text-xs font-bold flex items-center gap-1.5 hover:border-coral-500 transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-full bg-white dark:bg-[#131B2A] border border-obsidian-200 dark:border-white/10 text-obsidian-800 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 hover:border-coral-500 transition-colors cursor-pointer shadow-xs"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                   <span>Verified Guardians</span>
                 </button>
 
@@ -262,9 +308,9 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     playPawPop();
                     setSelectedPillar('medicals');
                   }}
-                  className="px-3.5 py-1.5 rounded-full bg-[#131B2A] border border-white/10 text-slate-200 text-xs font-bold flex items-center gap-1.5 hover:border-coral-500 transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-full bg-white dark:bg-[#131B2A] border border-obsidian-200 dark:border-white/10 text-obsidian-800 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 hover:border-coral-500 transition-colors cursor-pointer shadow-xs"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" />
                   <span>Vet Cleared</span>
                 </button>
 
@@ -274,9 +320,9 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     playPawPop();
                     setSelectedPillar('park_meetup');
                   }}
-                  className="px-3.5 py-1.5 rounded-full bg-[#131B2A] border border-white/10 text-slate-200 text-xs font-bold flex items-center gap-1.5 hover:border-coral-500 transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-full bg-white dark:bg-[#131B2A] border border-obsidian-200 dark:border-white/10 text-obsidian-800 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 hover:border-coral-500 transition-colors cursor-pointer shadow-xs"
                 >
-                  <Heart className="w-3.5 h-3.5 text-purple-400" />
+                  <Heart className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />
                   <span>Safe Meets</span>
                 </button>
 
@@ -286,36 +332,75 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     playPawPop();
                     setSelectedPillar('dual_handover');
                   }}
-                  className="px-3.5 py-1.5 rounded-full bg-[#131B2A] border border-white/10 text-slate-200 text-xs font-bold flex items-center gap-1.5 hover:border-coral-500 transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-full bg-white dark:bg-[#131B2A] border border-obsidian-200 dark:border-white/10 text-obsidian-800 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 hover:border-coral-500 transition-colors cursor-pointer shadow-xs"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                   <span>Legal Handover</span>
                 </button>
               </div>
 
             </div>
 
-            {/* Right Column: Hero Dog Photo & Floating Card */}
+            {/* Right Column: Seamless Blended Hero Dog & Floating Card */}
             <div className="lg:col-span-5 relative flex justify-center lg:justify-end">
+              
+              {/* Warm Bokeh Light Blobs behind Dog */}
+              <div className="absolute -top-10 -right-10 w-[380px] h-[380px] bg-amber-500/20 rounded-full blur-[90px] pointer-events-none" />
+              <div className="absolute top-20 right-10 w-[260px] h-[260px] bg-coral-500/25 rounded-full blur-[70px] pointer-events-none" />
+
               <div className="relative w-full max-w-md">
                 
-                {/* Main Hero Dog Photo */}
-                <div className="relative rounded-4xl overflow-hidden shadow-2xl border-2 border-white/10 group">
-                  <img
-                    src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&auto=format&fit=crop&q=80"
-                    alt="Happy Golden Retriever Adoption Pup"
-                    className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                {/* Floating Orange Accent Doodle Lines فوق Dog Head */}
+                <div className="absolute -top-6 right-20 z-20 flex items-center gap-1 text-coral-500 dark:text-coral-400 font-bold text-lg pointer-events-none select-none tracking-widest opacity-90 animate-pulse">
+                  \ | /
                 </div>
 
-                {/* Floating Dark Card on Bottom Right */}
-                <div className="absolute -bottom-5 -right-3 p-4 rounded-3xl bg-[#101726]/95 border border-white/15 shadow-2xl backdrop-blur-xl max-w-[210px] space-y-1.5 text-left animate-in fade-in zoom-in-95 duration-300">
-                  <div className="w-9 h-9 rounded-2xl bg-coral-500/20 text-coral-500 flex items-center justify-center text-lg font-black border border-coral-500/30">
+                {/* Main Hero Dog Photo Slider with Smooth Fade Transition */}
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl group border border-obsidian-200 dark:border-white/10 bg-slate-900 dark:bg-[#0B0F19]">
+                  <img
+                    key={currentHeroSlide.url}
+                    src={currentHeroSlide.url}
+                    alt={currentHeroSlide.name}
+                    className="w-full h-[440px] sm:h-[460px] object-cover object-center group-hover:scale-105 transition-all duration-700 ease-out animate-in fade-in zoom-in-95"
+                  />
+                  
+                  {/* Seamless Vignette Fades to blend into website background */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 dark:from-[#0B0F19] via-transparent to-black/30 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-950/30 dark:from-[#0B0F19]/40 via-transparent to-slate-950/30 dark:to-[#0B0F19]/40 pointer-events-none" />
+
+                  {/* Live Breed Badge Overlay at top left of hero photo */}
+                  <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
+                    <span className="px-3 py-1 rounded-full bg-black/65 backdrop-blur-md text-white text-xs font-black border border-white/20 shadow-md animate-in fade-in duration-300">
+                      🐶 {currentHeroSlide.name} ({currentHeroSlide.breed})
+                    </span>
+                  </div>
+
+                  {/* Slider Pagination Dots at bottom left */}
+                  <div className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15">
+                    {HERO_DOG_SLIDES.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          playPawPop();
+                          setHeroSlideIndex(idx);
+                        }}
+                        className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                          idx === heroSlideIndex ? 'w-6 bg-coral-500' : 'w-2 bg-white/40 hover:bg-white'
+                        }`}
+                        title={`Show ${HERO_DOG_SLIDES[idx].breed}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Floating Card on Bottom Right */}
+                <div className="absolute bottom-6 -right-3 p-4 rounded-3xl bg-white/95 dark:bg-[#101726]/95 border border-obsidian-200 dark:border-white/15 shadow-2xl backdrop-blur-xl max-w-[200px] text-left space-y-1.5 z-20 animate-in fade-in zoom-in-95 duration-300">
+                  <div className="w-8 h-8 rounded-xl bg-coral-500/20 text-coral-500 flex items-center justify-center text-base font-black border border-coral-500/30">
                     ♡
                   </div>
-                  <p className="text-xs font-bold text-slate-200 leading-snug">
-                    Every adoption writes a new <span className="text-coral-400 font-extrabold">happy story.</span>
+                  <p className="text-xs font-bold text-obsidian-900 dark:text-slate-200 leading-snug">
+                    Every adoption writes a new <span className="text-coral-600 dark:text-coral-400 font-extrabold">happy story.</span>
                   </p>
                 </div>
 
@@ -324,8 +409,8 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
           </div>
 
-          {/* 🔍 SEARCH & FILTER CONTAINER BOX (Full Dark Width Box) */}
-          <div className="bg-[#101726] rounded-3xl p-4 sm:p-6 border border-white/10 shadow-elevated space-y-4 text-left">
+          {/* 🔍 SEARCH & FILTER CONTAINER BOX */}
+          <div className="bg-white dark:bg-[#101726] rounded-3xl p-4 sm:p-6 border border-obsidian-200 dark:border-white/10 shadow-elevated space-y-4 text-left">
             
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
               
@@ -341,7 +426,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                   }}
                   onFocus={() => setIsSearchFocused(true)}
                   placeholder="Search breed, name, traits (e.g. Labrador, Golden, Indie)..."
-                  className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-[#162033] border border-white/10 text-xs sm:text-sm font-semibold text-white placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 outline-hidden transition-all shadow-inner"
+                  className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-obsidian-50 dark:bg-[#162033] border border-obsidian-200 dark:border-white/10 text-xs sm:text-sm font-semibold text-obsidian-950 dark:text-white placeholder:text-obsidian-400 dark:placeholder:text-slate-400 focus:border-coral-500 focus:ring-2 focus:ring-coral-500/20 outline-hidden transition-all shadow-inner"
                 />
                 {searchQuery && (
                   <button
@@ -350,7 +435,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                       playPawPop();
                       setSearchQuery('');
                     }}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 flex items-center justify-center text-xs transition-colors cursor-pointer"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-obsidian-200 dark:bg-white/10 hover:bg-obsidian-300 dark:hover:bg-white/20 text-obsidian-700 dark:text-slate-300 flex items-center justify-center text-xs transition-colors cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -358,12 +443,12 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
                 {/* Live Auto-Complete Dropdown */}
                 {isSearchFocused && (
-                  <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-[#0E1526] rounded-3xl shadow-2xl border-2 border-coral-500/50 overflow-hidden max-h-84 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 text-left divide-y divide-white/10 ring-4 ring-black/50">
+                  <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-50 bg-white dark:bg-[#0E1526] rounded-3xl shadow-2xl border-2 border-coral-500/50 overflow-hidden max-h-84 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-150 text-left divide-y divide-obsidian-100 dark:divide-white/10 ring-4 ring-black/10 dark:ring-black/50">
                     {searchSuggestions.matchingDogs.length > 0 && (
-                      <div className="p-2.5 bg-[#0E1526]">
-                        <div className="px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-coral-400 bg-[#152035] rounded-xl mb-1.5 flex items-center justify-between">
+                      <div className="p-2.5 bg-white dark:bg-[#0E1526]">
+                        <div className="px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-coral-600 dark:text-coral-400 bg-coral-50 dark:bg-[#152035] rounded-xl mb-1.5 flex items-center justify-between">
                           <span>🐾 Available Puppies</span>
-                          <span className="text-[10px] text-slate-400 font-bold">Guardian Verified</span>
+                          <span className="text-[10px] text-obsidian-500 dark:text-slate-400 font-bold">Guardian Verified</span>
                         </div>
                         <div className="space-y-1">
                           {searchSuggestions.matchingDogs.map(d => (
@@ -375,7 +460,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                                 setSearchQuery(d.name);
                                 setIsSearchFocused(false);
                               }}
-                              className="w-full px-3 py-2 rounded-2xl bg-[#0E1526] hover:bg-coral-500/15 flex items-center justify-between gap-3 text-left transition-colors cursor-pointer group border border-transparent hover:border-coral-500/30"
+                              className="w-full px-3 py-2 rounded-2xl bg-white dark:bg-[#0E1526] hover:bg-coral-50 dark:hover:bg-coral-500/15 flex items-center justify-between gap-3 text-left transition-colors cursor-pointer group border border-transparent hover:border-coral-500/30"
                             >
                               <div className="flex items-center gap-2.5 min-w-0">
                                 <img
@@ -384,15 +469,15 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                                   className="w-9 h-9 rounded-xl object-cover ring-2 ring-coral-400 shrink-0"
                                 />
                                 <div className="truncate">
-                                  <div className="text-xs font-black text-white group-hover:text-coral-400 truncate">
+                                  <div className="text-xs font-black text-obsidian-950 dark:text-white group-hover:text-coral-600 dark:group-hover:text-coral-400 truncate">
                                     {d.name}
                                   </div>
-                                  <div className="text-[10px] text-slate-300 font-semibold truncate">
+                                  <div className="text-[10px] text-obsidian-600 dark:text-slate-300 font-semibold truncate">
                                     {d.breed} • 📍 {d.location}
                                   </div>
                                 </div>
                               </div>
-                              <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-coral-950 text-coral-300 shrink-0 border border-coral-800">
+                              <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-coral-100 dark:bg-coral-950 text-coral-700 dark:text-coral-300 shrink-0 border border-coral-200 dark:border-coral-800">
                                 {d.age}
                               </span>
                             </button>
@@ -431,10 +516,10 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
             </div>
 
             {/* Category Chips & View Switches Row */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/10">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-obsidian-200/80 dark:border-white/10">
               
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-400 mr-1">Filter by:</span>
+                <span className="text-xs font-bold text-obsidian-500 dark:text-slate-400 mr-1">Filter by:</span>
 
                 {[
                   { id: 'all', label: '🐾 All Dogs' },
@@ -453,7 +538,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                       selectedCategory === cat.id
                         ? 'bg-coral-500 text-white shadow-glow-coral'
-                        : 'bg-[#162033] hover:bg-white/10 text-slate-300 border border-white/10'
+                        : 'bg-obsidian-100 dark:bg-[#162033] hover:bg-obsidian-200 dark:hover:bg-white/10 text-obsidian-800 dark:text-slate-300 border border-obsidian-200/80 dark:border-white/10'
                     }`}
                   >
                     {cat.label}
@@ -463,14 +548,14 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
               <div className="flex items-center gap-4">
                 {/* View Mode Switcher */}
-                <div className="p-1 bg-[#162033] rounded-xl flex items-center gap-1 border border-white/10">
+                <div className="p-1 bg-obsidian-100 dark:bg-[#162033] rounded-xl flex items-center gap-1 border border-obsidian-200 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => setViewMode('grid')}
                     className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                       viewMode === 'grid'
                         ? 'bg-coral-500 text-white shadow-xs'
-                        : 'text-slate-400 hover:text-white'
+                        : 'text-obsidian-600 dark:text-slate-400 hover:text-obsidian-950 dark:hover:text-white'
                     }`}
                   >
                     <Grid className="w-3.5 h-3.5" />
@@ -482,7 +567,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                       viewMode === 'map'
                         ? 'bg-coral-500 text-white shadow-xs'
-                        : 'text-slate-400 hover:text-white'
+                        : 'text-obsidian-600 dark:text-slate-400 hover:text-obsidian-950 dark:hover:text-white'
                     }`}
                   >
                     <MapIcon className="w-3.5 h-3.5" />
@@ -490,7 +575,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                   </button>
                 </div>
 
-                <div className="text-xs font-extrabold text-coral-400 flex items-center gap-1">
+                <div className="text-xs font-extrabold text-coral-600 dark:text-coral-400 flex items-center gap-1">
                   <span>{filteredDogs.length}+ pups available 🐾</span>
                 </div>
               </div>
@@ -507,13 +592,13 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
       <section id="marketplace-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28 space-y-6">
         
         {/* Sleek Direct Adoption Header matching mockup */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-obsidian-200 dark:border-white/10">
           <div className="space-y-1 text-left">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black font-display text-white flex items-center gap-2">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black font-display text-obsidian-950 dark:text-white flex items-center gap-2">
               <span>Meet Your New Best Friend</span>
               <span className="text-coral-500">🐾</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 font-normal">
+            <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-300 font-normal">
               Lovable dogs waiting for their forever homes
             </p>
           </div>
@@ -527,7 +612,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                 setSelectedCity('All');
                 setSearchQuery('');
               }}
-              className="px-4 py-2 rounded-xl bg-[#162033] hover:bg-white/10 border border-white/10 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-white dark:bg-[#162033] hover:bg-obsidian-100 dark:hover:bg-white/10 border border-obsidian-200 dark:border-white/10 text-obsidian-800 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
             >
               <span>View All Dogs</span>
               <ArrowRight className="w-3.5 h-3.5 text-coral-500" />

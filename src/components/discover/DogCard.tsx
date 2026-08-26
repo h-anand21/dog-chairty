@@ -57,10 +57,10 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
   return (
     <div
       onClick={handleCardClick}
-      className="group relative bg-[#121927] rounded-3xl overflow-hidden border border-white/10 shadow-xl hover:shadow-2xl transition-all duration-400 hover:-translate-y-2 cursor-pointer flex flex-col justify-between"
+      className="group relative bg-white dark:bg-[#121927] rounded-3xl overflow-hidden border border-obsidian-200 dark:border-white/10 shadow-card hover:shadow-card-hover transition-all duration-400 hover:-translate-y-2 cursor-pointer flex flex-col justify-between"
     >
       {/* Dog Photo Container with Gradient Overlay */}
-      <div className="relative w-full h-64 sm:h-72 overflow-hidden bg-[#0B0F19]">
+      <div className="relative w-full h-64 sm:h-72 overflow-hidden bg-obsidian-100 dark:bg-[#0B0F19]">
         <img
           src={dog.coverPhoto}
           alt={dog.name}
@@ -69,7 +69,7 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
         />
 
         {/* Dark Gradient Overlay for text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#121927] via-black/30 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
 
         {/* Top Badges Floating Bar */}
         <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none z-10">
@@ -85,7 +85,7 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
             onClick={handleLike}
             className={`pointer-events-auto w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 shadow-md ${
               dog.isLiked
-                ? 'bg-coral-500 text-white shadow-glow-coral'
+                ? 'bg-rose-500 text-white shadow-glow-coral'
                 : 'bg-black/50 hover:bg-black/80 text-white border border-white/20'
             }`}
           >
@@ -124,13 +124,13 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3.5 text-left">
         
         {/* Location & Energy */}
-        <div className="flex items-center justify-between text-xs font-medium text-slate-300">
+        <div className="flex items-center justify-between text-xs font-medium text-obsidian-600 dark:text-slate-300">
           <div className="flex items-center gap-1.5 truncate">
             <MapPin className="w-3.5 h-3.5 text-coral-500 shrink-0" />
-            <span className="truncate font-semibold text-slate-300">{dog.location}</span>
+            <span className="truncate font-semibold text-obsidian-700 dark:text-slate-300">{dog.location}</span>
           </div>
-          <div className="flex items-center gap-1 text-sky-400 font-bold bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 rounded-full shrink-0 text-[11px]">
-            <Sparkles className="w-3 h-3 text-sky-400" />
+          <div className="flex items-center gap-1 text-sky-700 dark:text-sky-400 font-bold bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/30 px-2 py-0.5 rounded-full shrink-0 text-[11px]">
+            <Sparkles className="w-3 h-3 text-sky-500 dark:text-sky-400" />
             <span>{dog.energy.split(' ')[0]}</span>
           </div>
         </div>
