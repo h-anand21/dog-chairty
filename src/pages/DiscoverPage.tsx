@@ -3,7 +3,6 @@ import { Dog } from '../types';
 import { DogCard } from '../components/discover/DogCard';
 import { PawMap } from '../components/map/PawMap';
 import { CitySearchInput } from '../components/common/CitySearchInput';
-import { VerifiedImpactShowcase } from '../components/discover/VerifiedImpactShowcase';
 import { PillarDetailModal, PillarType } from '../components/common/PillarDetailModal';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
@@ -542,11 +541,56 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
         </div>
       </section>
 
-      {/* 🐾 2. PAWCONNECT VERIFIED IMPACT & CATEGORIES HUB */}
-      <VerifiedImpactShowcase />
 
-      {/* 🐶 3. DOGS MARKETPLACE (GRID / MAP VIEW) */}
+
+      {/* 🐶 2. DIRECT DOG ADOPTION MARKETPLACE (GRID / MAP VIEW) */}
       <section id="marketplace-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-28 space-y-6">
+        
+        {/* Sleek Direct Adoption Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-obsidian-200/80 dark:border-white/10">
+          <div className="space-y-1 text-left">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-500/10 text-coral-600 dark:text-coral-400 font-extrabold text-xs uppercase tracking-wider border border-coral-200 dark:border-coral-800/40">
+              <Sparkles className="w-3.5 h-3.5 text-coral-500" />
+              <span>Direct Adoption Marketplace</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black font-display text-obsidian-950 dark:text-white">
+              Adoptable Pups & Dogs 🐕
+            </h2>
+            <p className="text-xs sm:text-sm text-obsidian-600 dark:text-slate-300 font-normal">
+              Verified dogs listed directly by real pet guardians. Click any dog card to view full details or apply for free adoption!
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
+            {/* View Mode Switcher Pills */}
+            <div className="p-1 bg-obsidian-100 dark:bg-white/10 rounded-2xl flex items-center gap-1 border border-obsidian-200 dark:border-white/10">
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+                  viewMode === 'grid'
+                    ? 'bg-coral-500 text-white shadow-glow-coral'
+                    : 'text-obsidian-700 dark:text-slate-300 hover:text-obsidian-950 dark:hover:text-white'
+                }`}
+              >
+                <Grid className="w-3.5 h-3.5" />
+                <span>Grid View</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('map')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
+                  viewMode === 'map'
+                    ? 'bg-coral-500 text-white shadow-glow-coral'
+                    : 'text-obsidian-700 dark:text-slate-300 hover:text-obsidian-950 dark:hover:text-white'
+                }`}
+              >
+                <MapIcon className="w-3.5 h-3.5" />
+                <span>Paw Map</span>
+              </button>
+            </div>
+          </div>
+        </div>
         
         {/* VIEW 1: INTERACTIVE REAL MAP */}
         {viewMode === 'map' && (
