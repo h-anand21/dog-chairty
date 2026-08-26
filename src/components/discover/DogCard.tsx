@@ -57,10 +57,10 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
   return (
     <div
       onClick={handleCardClick}
-      className="group relative bg-white dark:bg-[#101725] rounded-4xl overflow-hidden border border-obsidian-200/90 dark:border-white/10 shadow-card hover:shadow-card-hover transition-all duration-400 hover:-translate-y-2 cursor-pointer flex flex-col justify-between"
+      className="group relative bg-[#121927] rounded-3xl overflow-hidden border border-white/10 shadow-xl hover:shadow-2xl transition-all duration-400 hover:-translate-y-2 cursor-pointer flex flex-col justify-between"
     >
-      {/* Dog Photo Container with Gradient Edge */}
-      <div className="relative w-full h-72 sm:h-80 overflow-hidden bg-obsidian-200 dark:bg-obsidian-800">
+      {/* Dog Photo Container with Gradient Overlay */}
+      <div className="relative w-full h-64 sm:h-72 overflow-hidden bg-[#0B0F19]">
         <img
           src={dog.coverPhoto}
           alt={dog.name}
@@ -68,21 +68,25 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
           loading="lazy"
         />
 
-        {/* Ambient Dark Gradient for Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+        {/* Dark Gradient Overlay for text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#121927] via-black/30 to-black/40" />
 
         {/* Top Badges Floating Bar */}
-        <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
-          <div className="pointer-events-auto">
+        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none z-10">
+          <div className="pointer-events-auto flex items-center gap-2">
+            <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-extrabold border border-white/20 shadow-xs">
+              📍 2 km away
+            </span>
             <StatusBadge status={dog.status} size="sm" />
           </div>
 
           <button
+            type="button"
             onClick={handleLike}
-            className={`pointer-events-auto w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-115 active:scale-90 shadow-md ${
+            className={`pointer-events-auto w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 shadow-md ${
               dog.isLiked
-                ? 'bg-rose-500 text-white shadow-glow-coral'
-                : 'bg-white/80 dark:bg-obsidian-900/80 hover:bg-white text-obsidian-900 dark:text-white hover:text-rose-500'
+                ? 'bg-coral-500 text-white shadow-glow-coral'
+                : 'bg-black/50 hover:bg-black/80 text-white border border-white/20'
             }`}
           >
             <Heart className={`w-4 h-4 ${dog.isLiked ? 'fill-white' : ''}`} />
@@ -90,45 +94,43 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
         </div>
 
         {/* Bottom Info Floating Over Image */}
-        <div className="absolute bottom-4 left-4 right-4 text-white">
+        <div className="absolute bottom-3 left-4 right-4 text-white z-10">
           <div className="flex items-end justify-between gap-2">
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-white drop-shadow-md">
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-xl sm:text-2xl font-black font-display text-white drop-shadow-md">
                   {dog.name}
                 </h3>
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white border border-white/20">
-                  {dog.age}
+                <span className="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                  ✓
                 </span>
               </div>
-              <p className="text-xs text-white/90 font-medium drop-shadow-sm flex items-center gap-1.5 mt-0.5">
-                <span>{dog.breed}</span>
-                <span>•</span>
-                <span>{dog.gender}</span>
+              <p className="text-xs text-slate-300 font-medium mt-0.5">
+                {dog.breed}
               </p>
             </div>
 
-            {dog.interestedCount > 0 && (
-              <div className="flex items-center gap-1.5 bg-coral-500/95 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-black shadow-md">
-                <Flame className="w-3.5 h-3.5 fill-amber-300 text-amber-300 animate-pulse" />
-                <span>{dog.interestedCount} active</span>
-              </div>
-            )}
+            {/* Age & Gender Pill */}
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-200 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/20">
+              <span>📅 {dog.age}</span>
+              <span>•</span>
+              <span>{dog.gender === 'Male' ? '♂ Male' : '♀ Female'}</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Content Body */}
-      <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3.5 text-left">
         
         {/* Location & Energy */}
-        <div className="flex items-center justify-between text-xs font-medium text-obsidian-600 dark:text-obsidian-300">
+        <div className="flex items-center justify-between text-xs font-medium text-slate-300">
           <div className="flex items-center gap-1.5 truncate">
-            <MapPin className="w-4 h-4 text-coral-500 shrink-0" />
-            <span className="truncate font-semibold">{dog.location}</span>
+            <MapPin className="w-3.5 h-3.5 text-coral-500 shrink-0" />
+            <span className="truncate font-semibold text-slate-300">{dog.location}</span>
           </div>
-          <div className="flex items-center gap-1 text-sky-700 dark:text-sky-300 font-bold bg-sky-50 dark:bg-sky-950/60 border border-sky-100 dark:border-sky-800/60 px-2.5 py-0.5 rounded-full shrink-0">
-            <Sparkles className="w-3.5 h-3.5 text-sky-500" />
+          <div className="flex items-center gap-1 text-sky-400 font-bold bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 rounded-full shrink-0 text-[11px]">
+            <Sparkles className="w-3 h-3 text-sky-400" />
             <span>{dog.energy.split(' ')[0]}</span>
           </div>
         </div>
