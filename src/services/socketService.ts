@@ -16,6 +16,8 @@ export interface SocketMessagePayload {
   timestamp: string;
   dogId?: string;
   dogName?: string;
+  dogAvatar?: string;
+  participants?: string[];
   isDogBark?: boolean;
 }
 

@@ -574,19 +574,62 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
       });
 
-      setConversations(prev =>
-        prev.map(c =>
-          c.id === payload.conversationId
-            ? {
-                ...c,
-                lastMessage: payload.isDogBark ? '🐾 Woof! (Audio Bark)' : payload.text,
-                lastMessageTimestamp: 'Just now'
-              }
-            : c
-        )
-      );
+      setConversations(prev => {
+        const exists = prev.some(c => c.id === payload.conversationId);
+        if (exists) {
+          return prev.map(c =>
+            c.id === payload.conversationId
+              ? {
+                  ...c,
+                  lastMessage: payload.isDogBark ? '🐾 Woof! (Audio Bark)' : payload.text,
+                  lastMessageTimestamp: 'Just now',
+                  unreadCount: c.id === activeConversationId ? c.unreadCount : c.unreadCount + 1
+                }
+              : c
+          );
+        } else {
+          // ⚡ Automatically add new conversation thread on recipient side!
+          const newThread: Conversation = {
+            id: payload.conversationId,
+            dogId: payload.dogId || 'dog_general',
+            dogName: payload.dogName || 'Adoptable Pup',
+            dogAvatar: payload.dogAvatar || payload.senderAvatar,
+            participants: payload.participants || [payload.senderId, payload.recipientId],
+            lastMessage: payload.isDogBark ? '🐾 Woof! (Audio Bark)' : payload.text,
+            lastMessageTimestamp: 'Just now',
+            unreadCount: 1
+          };
+          return [newThread, ...prev];
+        }
+      });
     });
     return () => unsubscribe();
+  }, [activeConversationId]);
+
+  // ⚡ Cross-Tab Storage Event Listener for Instant Synchronized State Across 5173 & 5174
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'pawconnect_messages' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed && typeof parsed === 'object') setMessages(parsed);
+        } catch (err) {}
+      }
+      if (e.key === 'pawconnect_conversations' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setConversations(parsed);
+        } catch (err) {}
+      }
+      if (e.key === 'pawconnect_dogs' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setDogs(parsed);
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
 
@@ -1237,13 +1280,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const senderName = currentUser?.name || 'Guest User';
     const senderAvatar = currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
 
+    const targetConv = conversations.find(c => c.id === convId);
+    const recipientId = targetConv?.participants.find(p => p !== senderId) || '';
+
     const newMsg: ChatMessage = {
       id: `msg_${Date.now()}`,
       conversationId: convId,
       senderId,
       senderName,
       senderAvatar,
-      recipientId: '',
+      recipientId,
       text,
       image,
       isDogBark,
@@ -1251,18 +1297,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       read: false
     };
 
-    // Emit live socket payload
+    // Emit live socket payload with conversation metadata
     socketEngine.emitMessage({
       id: newMsg.id,
       conversationId: convId,
       senderId,
       senderName,
       senderAvatar,
-      recipientId: '',
+      recipientId,
       text,
       image,
       timestamp: newMsg.timestamp,
-      isDogBark
+      isDogBark,
+      dogId: targetConv?.dogId,
+      dogName: targetConv?.dogName,
+      dogAvatar: targetConv?.dogAvatar,
+      participants: targetConv?.participants
     });
 
     setMessages(prev => ({
@@ -1318,11 +1368,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       read: true
     };
 
-    setConversations(prev => [newConv, ...prev]);
+    setConversations(prev => [newConv, ...prev.filter(c => c.id !== convId)]);
     setMessages(prev => ({
       ...prev,
       [convId]: [initialMsg]
     }));
+
+    // ⚡ Emit live socket payload so dog owner instantly gets conversation & message on their tab/window!
+    socketEngine.emitMessage({
+      id: initialMsg.id,
+      conversationId: convId,
+      senderId: currentUserId,
+      senderName: currentUser?.name || 'Interested Adopter',
+      senderAvatar: currentUser?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
+      recipientId: dog.currentOwnerId,
+      text: initialMsg.text,
+      timestamp: initialMsg.timestamp,
+      dogId: dog.id,
+      dogName: dog.name,
+      dogAvatar: dog.coverPhoto,
+      participants: [dog.currentOwnerId, currentUserId]
+    });
+
     setActiveConversationId(convId);
     setActiveTab('chat');
   };
