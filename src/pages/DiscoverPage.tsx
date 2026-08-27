@@ -784,43 +784,69 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
       {/* 🐾 5. LIST A DOG / REHOMING SUPPORT BANNER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-4xl sm:rounded-5xl p-8 sm:p-14 bg-gradient-to-r from-obsidian-950 via-[#131C2E] to-obsidian-950 text-white overflow-hidden shadow-2xl border border-obsidian-800 dark:border-white/15 text-left">
+        <div className="relative rounded-4xl sm:rounded-5xl p-8 sm:p-12 bg-gradient-to-r from-obsidian-950 via-[#131C2E] to-obsidian-950 text-white overflow-hidden shadow-2xl border border-obsidian-800 dark:border-white/15 text-left">
           
-          {/* Ambient Orange Background Glow */}
+          {/* Ambient Background Glow Blobs */}
           <div className="absolute right-0 top-0 w-96 h-96 bg-coral-500/25 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute left-0 bottom-0 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 max-w-2xl space-y-6">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-coral-300 font-black text-xs uppercase tracking-wider backdrop-blur-md border border-white/15">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Safe Rehoming Guaranteed</span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+            
+            {/* Left Column: Headline & Action */}
+            <div className="lg:col-span-7 space-y-5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-coral-300 font-black text-xs uppercase tracking-wider backdrop-blur-md border border-white/15">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Safe Rehoming Guaranteed</span>
+              </div>
+
+              <h2 className="text-3xl sm:text-5xl font-black font-display tracking-tight text-white leading-tight">
+                Need to Find a Loving Home for Your Dog?
+              </h2>
+
+              <p className="text-xs sm:text-base text-slate-200 leading-relaxed font-normal max-w-xl">
+                Life circumstances change. Ensure your companion gets the best possible home with our verified adopter questionnaires, in-person park meets, and legal adoption agreements. 100% Free.
+              </p>
+
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    playPawPop();
+                    setIsListDogOpen(true);
+                  }}
+                  className="btn-primary text-white px-8 py-4 rounded-full font-black text-sm shadow-glow-coral flex items-center gap-2 cursor-pointer transition-transform hover:scale-105"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Post Your Dog for Adoption (Free) 🚀</span>
+                </button>
+
+                <span className="text-xs text-slate-300 font-semibold flex items-center gap-1">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>12,000+ happy Indian adoptions</span>
+                </span>
+              </div>
             </div>
 
-            <h2 className="text-3xl sm:text-5xl font-black font-display tracking-tight text-white leading-tight">
-              Need to Find a Loving Home for Your Dog?
-            </h2>
-
-            <p className="text-xs sm:text-base text-slate-200 leading-relaxed font-normal">
-              Life circumstances change. Ensure your companion gets the best possible home with our verified adopter questionnaires, in-person park meets, and legal adoption agreements. 100% Free.
-            </p>
-
-            <div className="pt-2 flex flex-wrap items-center gap-4">
-              <button
-                type="button"
-                onClick={() => {
-                  playPawPop();
-                  setIsListDogOpen(true);
-                }}
-                className="btn-primary text-white px-8 py-4 rounded-full font-black text-sm shadow-glow-coral flex items-center gap-2 cursor-pointer transition-transform hover:scale-105"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Post Your Dog for Adoption (Free) 🚀</span>
-              </button>
-
-              <span className="text-xs text-slate-300 font-semibold">
-                ✓ Over 12,000+ happy Indian adoptions completed
-              </span>
+            {/* Right Column: Dog Photo Feature Card */}
+            <div className="lg:col-span-5 relative flex justify-center lg:justify-end">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-white/20 w-full max-w-sm group">
+                <img
+                  src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&auto=format&fit=crop&q=80"
+                  alt="Happy adoption dogs"
+                  className="w-full h-64 sm:h-72 object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-3.5 left-4 right-4 text-white text-left">
+                  <span className="text-[11px] font-black px-3 py-1 rounded-full bg-coral-500 text-white shadow-md inline-block mb-1">
+                    🐾 100% Verified Pet Guardians
+                  </span>
+                  <p className="text-xs text-slate-200 font-medium">
+                    Zero fees • Free legal contract • Vet clearance
+                  </p>
+                </div>
+              </div>
             </div>
+
           </div>
 
         </div>
