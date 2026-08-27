@@ -949,6 +949,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ]
         }));
 
+        // ⚡ Emit live socket payload so applicant instantly gets approved conversation on tab/window!
+        socketEngine.emitMessage({
+          id: `msg_auto_${Date.now()}`,
+          conversationId: convId,
+          senderId: targetDog.currentOwnerId,
+          senderName: guardianName,
+          senderAvatar: guardianAvatar,
+          recipientId: data.applicantId,
+          text: `Hi ${data.applicantName}! 👋 I reviewed your adoption request for ${data.dogName}. Your home setup and experience look fantastic! Let's arrange a Park Meet & Greet so you can spend time with ${data.dogName}.`,
+          timestamp: 'Just now',
+          dogId: data.dogId,
+          dogName: data.dogName,
+          dogAvatar: data.dogPhoto,
+          participants: [targetDog.currentOwnerId, data.applicantId]
+        });
+
         const acceptNotif: NotificationItem = {
           id: `notif_accept_${Date.now()}`,
           userId: data.applicantId,
@@ -999,22 +1015,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ];
     });
 
+    const msgId = `msg_${Date.now()}`;
+    const msgText = `🎉 Hi ${app.applicantName}! I loved your application for ${app.dogName}. The chat is now unlocked so we can coordinate questions and schedule our Meet & Greet!`;
+
     setMessages(prev => ({
       ...prev,
       [convId]: [
         {
-          id: `msg_${Date.now()}`,
+          id: msgId,
           conversationId: convId,
           senderId: currentUserId,
           senderName: currentUserName,
           senderAvatar: currentUserAvatar,
           recipientId: app.applicantId,
-          text: `🎉 Hi ${app.applicantName}! I loved your application for ${app.dogName}. The chat is now unlocked so we can coordinate questions and schedule our Meet & Greet!`,
+          text: msgText,
           timestamp: 'Just now',
           read: false
         }
       ]
     }));
+
+    // ⚡ Emit live socket payload so applicant instantly gets approved conversation on tab/window!
+    socketEngine.emitMessage({
+      id: msgId,
+      conversationId: convId,
+      senderId: currentUserId,
+      senderName: currentUserName,
+      senderAvatar: currentUserAvatar,
+      recipientId: app.applicantId,
+      text: msgText,
+      timestamp: 'Just now',
+      dogId: app.dogId,
+      dogName: app.dogName,
+      dogAvatar: app.dogPhoto,
+      participants: [currentUserId, app.applicantId]
+    });
 
     const dog = dogs.find(d => d.id === app.dogId) || null;
     const applicant = allUsers.find(u => u.id === app.applicantId) || {
@@ -1335,7 +1370,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const openChatForDog = (dog: Dog, initialMessage?: string) => {
     const currentUserId = currentUser?.id || 'user_guest';
-    const existingConv = conversations.find(c => c.dogId === dog.id);
+    const existingConv = conversations.find(
+      c => c.dogId === dog.id && (c.participants.includes(currentUserId) || c.id.includes(currentUserId))
+    );
 
     if (existingConv) {
       setActiveConversationId(existingConv.id);
