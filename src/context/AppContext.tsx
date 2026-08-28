@@ -545,7 +545,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             let changed = false;
             cloudMsgs.forEach((m: any) => {
               const convMsgs = updated[m.conversationId] || [];
-              if (!convMsgs.some((existing: ChatMessage) => existing.id === m.id)) {
+              if (!convMsgs.some((existing: ChatMessage) => existing.id === m.id || (existing.senderId === m.senderId && existing.text === m.text && existing.timestamp === m.timestamp))) {
                 const incomingMsg: ChatMessage = {
                   id: m.id,
                   conversationId: m.conversationId,
@@ -618,7 +618,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const unsubscribe = socketEngine.subscribe((payload: SocketMessagePayload) => {
       setMessages(prev => {
         const existing = prev[payload.conversationId] || [];
-        if (existing.some(m => m.id === payload.id)) return prev;
+        if (existing.some(m => m.id === payload.id || (m.senderId === payload.senderId && m.text === payload.text && m.timestamp === payload.timestamp))) return prev;
         const incomingMsg: ChatMessage = {
           id: payload.id,
           conversationId: payload.conversationId,
@@ -1431,10 +1431,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }).catch(() => {});
     } catch (e) {}
 
-    setMessages(prev => ({
-      ...prev,
-      [convId]: [...(prev[convId] || []), newMsg]
-    }));
+    setMessages(prev => {
+      const existing = prev[convId] || [];
+      if (existing.some(m => m.id === newMsg.id || (m.senderId === senderId && m.text === text && m.timestamp === newMsg.timestamp))) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [convId]: [...existing, newMsg]
+      };
+    });
 
     setConversations(prev =>
       prev.map(c =>
