@@ -79,11 +79,17 @@ export const ChatPage: React.FC = () => {
               conversations.map((conv: Conversation) => {
                 const isActive = conv.id === activeConversationId;
                 const matchingDog = dogs.find(d => d.id === conv.dogId);
-                const otherParticipantId = conv.participants.find(p => p !== currentUser?.id) || conv.participants[0];
+                const isOwner = currentUser?.id === matchingDog?.currentOwnerId || currentUser?.role === 'owner';
+                const otherParticipantId = conv.participants.find(p => p !== currentUser?.id) || (isOwner ? conv.participants[1] : conv.participants[0]);
                 const otherUser = allUsers.find(u => u.id === otherParticipantId);
                 
-                const displayName = otherUser?.name || (currentUser?.role === 'owner' ? 'Interested Adopter' : matchingDog?.currentOwnerName || 'Pet Guardian');
-                const displayAvatar = otherUser?.avatar || (currentUser?.role === 'owner' ? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400' : conv.dogAvatar);
+                const displayName = isOwner
+                  ? (otherUser?.name || 'Interested Adopter')
+                  : (matchingDog?.currentOwnerName || otherUser?.name || 'Pet Guardian');
+
+                const displayAvatar = isOwner
+                  ? (otherUser?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400')
+                  : (matchingDog?.currentOwnerAvatar || conv.dogAvatar);
 
                 return (
                   <div

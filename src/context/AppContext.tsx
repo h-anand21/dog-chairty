@@ -1370,8 +1370,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const openChatForDog = (dog: Dog, initialMessage?: string) => {
     const currentUserId = currentUser?.id || 'user_guest';
+    const isOwner = currentUserId === dog.currentOwnerId;
+
     const existingConv = conversations.find(
-      c => c.dogId === dog.id && (c.participants.includes(currentUserId) || c.id.includes(currentUserId))
+      c => c.dogId === dog.id && (isOwner || c.participants.includes(currentUserId) || c.id.includes(currentUserId))
     );
 
     if (existingConv) {
@@ -1381,13 +1383,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     // Create a new dedicated thread for this dog
-    const convId = `conv_${dog.id}_${currentUserId}`;
+    const adopterId = isOwner ? 'user_adopter' : currentUserId;
+    const convId = `conv_${dog.id}_${adopterId}`;
     const newConv: Conversation = {
       id: convId,
       dogId: dog.id,
       dogName: dog.name,
       dogAvatar: dog.coverPhoto,
-      participants: [dog.currentOwnerId, currentUserId],
+      participants: [dog.currentOwnerId, adopterId],
       lastMessage: initialMessage || `Hi ${dog.currentOwnerName}! I am interested in adopting ${dog.name}.`,
       lastMessageTimestamp: 'Just now',
       unreadCount: 0
@@ -1397,9 +1400,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `msg_${Date.now()}`,
       conversationId: convId,
       senderId: currentUserId,
-      senderName: currentUser?.name || 'Interested Adopter',
-      senderAvatar: currentUser?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-      recipientId: dog.currentOwnerId,
+      senderName: currentUser?.name || (isOwner ? dog.currentOwnerName : 'Interested Adopter'),
+      senderAvatar: currentUser?.avatar || (isOwner ? dog.currentOwnerAvatar : 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400'),
+      recipientId: isOwner ? adopterId : dog.currentOwnerId,
       text: initialMessage || `Hi ${dog.currentOwnerName}! I am interested in learning more about ${dog.name} and would love to ask a few questions about their daily routine.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       read: true
@@ -1408,7 +1411,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setConversations(prev => [newConv, ...prev.filter(c => c.id !== convId)]);
     setMessages(prev => ({
       ...prev,
-      [convId]: [initialMsg]
+      [convId]: [...(prev[convId] || []), initialMsg]
     }));
 
     // ⚡ Emit live socket payload so dog owner instantly gets conversation & message on their tab/window!
@@ -1416,15 +1419,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: initialMsg.id,
       conversationId: convId,
       senderId: currentUserId,
-      senderName: currentUser?.name || 'Interested Adopter',
-      senderAvatar: currentUser?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-      recipientId: dog.currentOwnerId,
+      senderName: initialMsg.senderName,
+      senderAvatar: initialMsg.senderAvatar,
+      recipientId: initialMsg.recipientId,
       text: initialMsg.text,
       timestamp: initialMsg.timestamp,
       dogId: dog.id,
       dogName: dog.name,
       dogAvatar: dog.coverPhoto,
-      participants: [dog.currentOwnerId, currentUserId]
+      participants: [dog.currentOwnerId, adopterId]
     });
 
     setActiveConversationId(convId);
