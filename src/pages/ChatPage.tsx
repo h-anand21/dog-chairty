@@ -6,7 +6,7 @@ import { Conversation } from '../types';
 import { MessageCircle, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 export const ChatPage: React.FC = () => {
-  const { conversations, activeConversationId, setActiveConversationId, dogs } = useApp();
+  const { conversations, activeConversationId, setActiveConversationId, dogs, currentUser, allUsers } = useApp();
   const { playPawPop } = useAudio();
 
   // Mobile navigation state: 'list' or 'chat'
@@ -72,18 +72,24 @@ export const ChatPage: React.FC = () => {
                 <div className="text-4xl">🐾💬</div>
                 <p className="font-bold text-obsidian-800 dark:text-slate-200">No active chats yet.</p>
                 <p className="text-[11px] text-obsidian-500 dark:text-slate-400">
-                  Click &ldquo;Message Guardian&rdquo; on any dog in Discover to start a chat!
+                  Click &ldquo;Message Guardian&rdquo; or &ldquo;I&apos;m Interested in Adopting&rdquo; on any dog in Discover to start a chat!
                 </p>
               </div>
             ) : (
               conversations.map((conv: Conversation) => {
                 const isActive = conv.id === activeConversationId;
                 const matchingDog = dogs.find(d => d.id === conv.dogId);
+                const otherParticipantId = conv.participants.find(p => p !== currentUser?.id) || conv.participants[0];
+                const otherUser = allUsers.find(u => u.id === otherParticipantId);
+                
+                const displayName = otherUser?.name || (currentUser?.role === 'owner' ? 'Interested Adopter' : matchingDog?.currentOwnerName || 'Pet Guardian');
+                const displayAvatar = otherUser?.avatar || (currentUser?.role === 'owner' ? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400' : conv.dogAvatar);
+
                 return (
                   <div
                     key={conv.id}
                     onClick={() => handleSelectConv(conv.id)}
-                    className={`p-3 rounded-2xl cursor-pointer transition-all flex items-center gap-3 text-left ${
+                    className={`p-3.5 rounded-2xl cursor-pointer transition-all flex items-center gap-3 text-left ${
                       isActive
                         ? 'bg-coral-50 dark:bg-coral-950/60 border-2 border-coral-400 shadow-xs ring-2 ring-coral-100 dark:ring-coral-500/20'
                         : 'hover:bg-obsidian-100 dark:hover:bg-white/5 border border-obsidian-100 dark:border-white/5'
@@ -91,37 +97,38 @@ export const ChatPage: React.FC = () => {
                   >
                     <div className="relative shrink-0">
                       <img
-                        src={conv.dogAvatar}
-                        alt={conv.dogName}
-                        className="w-12 h-12 rounded-2xl object-cover ring-2 ring-coral-300 shadow-2xs"
+                        src={displayAvatar}
+                        alt={displayName}
+                        className="w-12 h-12 rounded-2xl object-cover ring-2 ring-coral-400 shadow-2xs"
                       />
-                      <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-obsidian-900 rounded-full" />
+                      <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-obsidian-900 rounded-full" title="Online now" />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h4 className="text-xs font-black text-obsidian-950 dark:text-white truncate flex items-center gap-1">
-                          <span>{conv.dogName}</span>
-                          <span className="text-[10px] text-obsidian-500 dark:text-slate-400 font-semibold truncate">
-                            • {matchingDog?.breed || 'Pup'}
-                          </span>
+                          <span>{displayName}</span>
                         </h4>
                         <span className="text-[10px] text-obsidian-400 dark:text-slate-500 shrink-0 font-medium">
                           {conv.lastMessageTimestamp}
                         </span>
                       </div>
 
+                      <div className="text-[10px] font-extrabold text-coral-600 dark:text-coral-400 truncate mt-0.5">
+                        Interested in adopting {conv.dogName} 🐶
+                      </div>
+
                       <p className="text-[11px] text-obsidian-600 dark:text-slate-300 truncate mt-0.5 font-normal">
-                        {conv.lastMessage}
+                        &ldquo;{conv.lastMessage}&rdquo;
                       </p>
 
                       <div className="flex items-center justify-between mt-1 pt-1 border-t border-obsidian-100 dark:border-white/5">
-                        <span className="text-[10px] text-coral-600 dark:text-coral-400 font-bold truncate">
-                          Guardian: {matchingDog?.currentOwnerName || 'Pet Parent'}
+                        <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded-sm border border-emerald-200 dark:border-emerald-800/60">
+                          {matchingDog?.breed || 'Pup'} • {matchingDog?.city || 'Kolkata'}
                         </span>
                         {conv.unreadCount > 0 && (
                           <span className="px-1.5 py-0.2 text-[9px] font-black bg-coral-500 text-white rounded-full">
-                            {conv.unreadCount}
+                            {conv.unreadCount} new
                           </span>
                         )}
                       </div>

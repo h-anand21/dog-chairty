@@ -220,6 +220,20 @@ export const ChatView: React.FC = () => {
         <div className="flex items-center gap-2 self-end sm:self-center">
           {targetDog && (
             <button
+              type="button"
+              onClick={() => {
+                playPawPop();
+                setSelectedDog(targetDog);
+              }}
+              className="bg-obsidian-100 dark:bg-white/10 hover:bg-obsidian-200 dark:hover:bg-white/20 text-obsidian-900 dark:text-white border border-obsidian-200 dark:border-white/15 px-3 py-2 rounded-full text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-xs shrink-0"
+              title="Open full dog profile & photo gallery"
+            >
+              <span>🔍 View Listing</span>
+            </button>
+          )}
+
+          {targetDog && (
+            <button
               onClick={handleDirectAdopt}
               className="btn-primary text-white px-3.5 py-2 rounded-full text-xs font-black shadow-glow-coral flex items-center gap-1.5 cursor-pointer shrink-0"
             >

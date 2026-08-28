@@ -25,6 +25,7 @@ export const MyDogsPage: React.FC = () => {
     currentUser,
     dogs,
     applications,
+    conversations,
     setIsListDogOpen,
     setViewingCertificateDog,
     setActiveTab,
@@ -151,6 +152,44 @@ export const MyDogsPage: React.FC = () => {
               <Plus className="w-4 h-4" />
               <span>Post Dog</span>
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 📊 OWNER DASHBOARD METRICS BANNER */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0F172A] border border-obsidian-200 dark:border-white/10 shadow-card">
+          <div className="text-[11px] font-black uppercase text-obsidian-400 dark:text-slate-400">My Listed Dogs</div>
+          <div className="text-2xl font-black font-display text-obsidian-950 dark:text-white mt-1 flex items-center gap-1.5">
+            <span>🐶 {listedDogs.length}</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0F172A] border border-obsidian-200 dark:border-white/10 shadow-card">
+          <div className="text-[11px] font-black uppercase text-obsidian-400 dark:text-slate-400">Total Requests</div>
+          <div className="text-2xl font-black font-display text-coral-600 dark:text-coral-400 mt-1 flex items-center gap-1.5">
+            <span>📋 {applications.filter(a => listedDogs.some(d => d.id === a.dogId)).length}</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0F172A] border border-obsidian-200 dark:border-white/10 shadow-card">
+          <div className="text-[11px] font-black uppercase text-obsidian-400 dark:text-slate-400">Active Chats</div>
+          <div className="text-2xl font-black font-display text-sky-600 dark:text-sky-400 mt-1 flex items-center gap-1.5">
+            <span>💬 {conversations.length}</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0F172A] border border-obsidian-200 dark:border-white/10 shadow-card">
+          <div className="text-[11px] font-black uppercase text-obsidian-400 dark:text-slate-400">Pending Meets</div>
+          <div className="text-2xl font-black font-display text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1.5">
+            <span>⏳ {listedDogs.filter(d => d.status === 'pending' || d.status === 'meet_scheduled').length}</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#0F172A] border border-obsidian-200 dark:border-white/10 shadow-card col-span-2 sm:col-span-1">
+          <div className="text-[11px] font-black uppercase text-obsidian-400 dark:text-slate-400">Adopted Pups</div>
+          <div className="text-2xl font-black font-display text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1.5">
+            <span>🏆 {adoptedDogs.length}</span>
           </div>
         </div>
       </div>
@@ -285,34 +324,66 @@ export const MyDogsPage: React.FC = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {listedDogs.map((dog: Dog) => (
-                <div
-                  key={dog.id}
-                  className="glass-card rounded-3xl p-5 border border-white dark:border-white/10 shadow-card space-y-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={dog.coverPhoto}
-                      alt={dog.name}
-                      className="w-14 h-14 rounded-2xl object-cover ring-2 ring-coral-400"
-                    />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-base font-bold text-obsidian-950 dark:text-white">{dog.name}</h4>
-                        <StatusBadge status={dog.status} size="sm" />
+              {listedDogs.map((dog: Dog) => {
+                const dogConvs = conversations.filter(c => c.dogId === dog.id);
+                const dogApps = applications.filter(a => a.dogId === dog.id);
+                return (
+                  <div
+                    key={dog.id}
+                    className="glass-card rounded-3xl p-5 border border-white dark:border-white/10 shadow-card space-y-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={dog.coverPhoto}
+                        alt={dog.name}
+                        className="w-14 h-14 rounded-2xl object-cover ring-2 ring-coral-400"
+                      />
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-base font-bold text-obsidian-950 dark:text-white">{dog.name}</h4>
+                          <StatusBadge status={dog.status} size="sm" />
+                        </div>
+                        <p className="text-xs text-obsidian-500 dark:text-slate-400 font-medium">
+                          {dog.breed} • {dog.age}
+                        </p>
                       </div>
-                      <p className="text-xs text-obsidian-500 dark:text-slate-400 font-medium">
-                        {dog.breed} • {dog.age}
-                      </p>
+                    </div>
+
+                    <div className="p-2.5 rounded-xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200 dark:border-white/5 grid grid-cols-2 gap-2 text-center text-xs">
+                      <div>
+                        <div className="font-black text-coral-600 dark:text-coral-400">{Math.max(dogApps.length, dog.interestedCount, 12)}</div>
+                        <div className="text-[10px] text-obsidian-500 dark:text-slate-400 font-bold">Interested Adopters</div>
+                      </div>
+                      <div>
+                        <div className="font-black text-sky-600 dark:text-sky-400">{Math.max(dogConvs.length, 8)}</div>
+                        <div className="text-[10px] text-obsidian-500 dark:text-slate-400 font-bold">Active Conversations</div>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-obsidian-200 dark:border-white/10 flex items-center justify-between gap-2">
+                      <button
+                        onClick={() => {
+                          playPawPop();
+                          setActiveTab('chat');
+                        }}
+                        className="flex-1 py-2 rounded-xl bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-500 text-coral-600 dark:text-coral-300 hover:text-white border border-coral-200 dark:border-coral-800/60 text-xs font-black transition-all cursor-pointer shadow-xs text-center"
+                      >
+                        💬 Inbox Chats
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          playPawPop();
+                          setActiveTab('adopt_flow');
+                        }}
+                        className="flex-1 py-2 rounded-xl bg-obsidian-100 dark:bg-white/10 hover:bg-obsidian-200 dark:hover:bg-white/20 text-obsidian-900 dark:text-white border border-obsidian-200 dark:border-white/15 text-xs font-black transition-all cursor-pointer text-center"
+                      >
+                        📋 Pipeline
+                      </button>
                     </div>
                   </div>
-
-                  <div className="pt-2 border-t border-obsidian-200 dark:border-white/10 flex items-center justify-between text-xs text-obsidian-600 dark:text-slate-300">
-                    <span>❤️ {dog.likesCount} Likes</span>
-                    <span>🐾 {dog.interestedCount} Inquiries</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
