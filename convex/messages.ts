@@ -11,6 +11,13 @@ export const listByConversation = query({
   },
 });
 
+export const listAll = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("messages").collect();
+  },
+});
+
 export const send = mutation({
   args: {
     id: v.string(),

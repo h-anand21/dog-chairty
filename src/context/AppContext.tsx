@@ -536,18 +536,82 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           }));
           setDogs(formatted);
         }
+
+        // ☁️ Sync Cloud Messages across all ports (5173, 5174, 5175, etc.)
+        const cloudMsgs = await convexClient.query(api.messages.listAll);
+        if (isMounted && Array.isArray(cloudMsgs) && cloudMsgs.length > 0) {
+          setMessages(prev => {
+            const updated = { ...prev };
+            let changed = false;
+            cloudMsgs.forEach((m: any) => {
+              const convMsgs = updated[m.conversationId] || [];
+              if (!convMsgs.some((existing: ChatMessage) => existing.id === m.id)) {
+                const incomingMsg: ChatMessage = {
+                  id: m.id,
+                  conversationId: m.conversationId,
+                  senderId: m.senderId,
+                  senderName: m.senderName,
+                  senderAvatar: m.senderAvatar,
+                  recipientId: m.recipientId,
+                  text: m.text,
+                  image: m.image,
+                  isDogBark: m.isDogBark,
+                  timestamp: m.timestamp,
+                  read: true
+                };
+                updated[m.conversationId] = [...convMsgs, incomingMsg];
+                changed = true;
+              }
+            });
+            return changed ? updated : prev;
+          });
+
+          // Ensure conversation entries exist for all cloud messages
+          setConversations(prev => {
+            let convsUpdated = false;
+            let currentConvs = [...prev];
+            cloudMsgs.forEach((m: any) => {
+              const exists = currentConvs.some(c => c.id === m.conversationId);
+              if (!exists) {
+                const dogId = m.conversationId.split('_')[1] || 'dog_pogo';
+                const matchedDog = dogs.find(d => d.id === dogId || d.id === `dog_${dogId}`);
+                currentConvs = [
+                  {
+                    id: m.conversationId,
+                    dogId: matchedDog?.id || 'dog_pogo',
+                    dogName: matchedDog?.name || 'Pogo',
+                    dogAvatar: matchedDog?.coverPhoto || m.senderAvatar,
+                    participants: [m.senderId, m.recipientId],
+                    lastMessage: m.text,
+                    lastMessageTimestamp: 'Just now',
+                    unreadCount: 1
+                  },
+                  ...currentConvs
+                ];
+                convsUpdated = true;
+              } else {
+                currentConvs = currentConvs.map(c =>
+                  c.id === m.conversationId
+                    ? { ...c, lastMessage: m.text, lastMessageTimestamp: 'Just now' }
+                    : c
+                );
+              }
+            });
+            return convsUpdated ? currentConvs : prev;
+          });
+        }
       } catch (err) {
         // Fallback to local state
       }
     };
 
     fetchConvexCloudData();
-    const interval = setInterval(fetchConvexCloudData, 4000);
+    const interval = setInterval(fetchConvexCloudData, 1500);
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [dogs]);
 
   // ⚡ Live Bidirectional Web Socket Subscription
   useEffect(() => {
@@ -1349,6 +1413,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       dogAvatar: targetConv?.dogAvatar,
       participants: targetConv?.participants
     });
+
+    // ☁️ Persist to Convex Cloud Database for multi-origin & multi-port real-time syncing
+    try {
+      convexClient.mutation(api.messages.send, {
+        id: newMsg.id,
+        conversationId: convId,
+        senderId,
+        senderName,
+        senderAvatar,
+        recipientId,
+        text,
+        image: image || undefined,
+        isDogBark: isDogBark || undefined,
+        timestamp: newMsg.timestamp,
+        read: true,
+      }).catch(() => {});
+    } catch (e) {}
 
     setMessages(prev => ({
       ...prev,
