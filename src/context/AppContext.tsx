@@ -274,14 +274,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return [];
   });
 
-  // 8. Chat Conversations
+  // 8. Chat Conversations — deduplicated by dogId (one thread per dog)
   const [conversations, setConversations] = useState<Conversation[]>(() => {
     const saved = localStorage.getItem('pawconnect_conversations');
     if (saved) {
       try {
         const parsed: Conversation[] = JSON.parse(saved);
         const validDogIds = dogs.map(d => d.id);
-        if (Array.isArray(parsed)) return parsed.filter(c => validDogIds.includes(c.dogId));
+        const filtered = Array.isArray(parsed)
+          ? parsed.filter(c => validDogIds.includes(c.dogId))
+          : [];
+        // Deduplicate: keep only the latest conversation per dogId
+        const deduped = Object.values(
+          filtered.reduce((acc: Record<string, Conversation>, conv) => {
+            const existing = acc[conv.dogId];
+            // Prefer the one with more recent timestamp or higher unread count
+            if (!existing || (conv.unreadCount || 0) >= (existing.unreadCount || 0)) {
+              acc[conv.dogId] = conv;
+            }
+            return acc;
+          }, {})
+        );
+        if (deduped.length > 0) {
+          // Persist the cleaned-up version back immediately
+          try { localStorage.setItem('pawconnect_conversations', JSON.stringify(deduped)); } catch (e) {}
+          return deduped;
+        }
       } catch (e) {
         // fallback
       }
@@ -659,8 +677,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
 
       setConversations(prev => {
-        const exists = prev.some(c => c.id === payload.conversationId);
-        if (exists) {
+        const existsByConvId = prev.some(c => c.id === payload.conversationId);
+        const existsByDogId = payload.dogId ? prev.some(c => c.dogId === payload.dogId) : false;
+
+        if (existsByConvId) {
+          // Update last message on the existing conversation
           return prev.map(c =>
             c.id === payload.conversationId
               ? {
@@ -671,8 +692,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 }
               : c
           );
+        } else if (existsByDogId) {
+          // A conversation for this dog already exists with a different convId — don't add a new one
+          return prev;
         } else {
-          // ⚡ Automatically add new conversation thread on recipient side!
+          // Genuinely new dog conversation — add it
           const newThread: Conversation = {
             id: payload.conversationId,
             dogId: payload.dogId || 'dog_general',
@@ -1516,7 +1540,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       read: true
     };
 
-    setConversations(prev => [newConv, ...prev.filter(c => c.id !== convId)]);
+    // Remove ALL existing conversations for this dog (regardless of convId) before adding new one
+    setConversations(prev => [newConv, ...prev.filter(c => c.dogId !== dog.id)]);
     setMessages(prev => ({
       ...prev,
       [convId]: [...(prev[convId] || []), initialMsg]
