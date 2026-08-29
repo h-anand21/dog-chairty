@@ -576,31 +576,44 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             return changed ? updated : prev;
           });
 
-          // Add conversation thread only if it doesn't exist yet (do NOT update existing ones here)
+          // Add conversation thread only if we don't already have one for this dogId+sender combo
           setConversations(prev => {
-            const existingIds = new Set(prev.map(c => c.id));
+            const existingConvIds = new Set(prev.map(c => c.id));
+            // Also track which dogIds already have conversations so we don't duplicate
+            const existingDogIds = new Set(prev.map(c => c.dogId));
             const newConvs: Conversation[] = [];
+            const seenInThisBatch = new Set<string>();
+
             cloudMsgs.forEach((m: any) => {
-              if (!existingIds.has(m.conversationId)) {
-                existingIds.add(m.conversationId); // prevent duplicate inserts
-                const currentDogs = dogsRef.current;
-                const dogIdPart = m.conversationId.split('_')[1] || '';
-                const matchedDog = currentDogs.find(
-                  d => d.id === dogIdPart ||
-                       d.id === `dog_${dogIdPart}` ||
-                       m.conversationId.includes(d.id)
-                );
-                newConvs.push({
-                  id: m.conversationId,
-                  dogId: matchedDog?.id || 'dog_pogo',
-                  dogName: matchedDog?.name || 'Pogo',
-                  dogAvatar: matchedDog?.coverPhoto || m.senderAvatar,
-                  participants: [m.senderId, m.recipientId],
-                  lastMessage: m.text,
-                  lastMessageTimestamp: 'Just now',
-                  unreadCount: 1
-                });
-              }
+              // Skip if this exact convId already exists
+              if (existingConvIds.has(m.conversationId)) return;
+              // Skip if we already added this convId in this batch
+              if (seenInThisBatch.has(m.conversationId)) return;
+
+              const currentDogs = dogsRef.current;
+              // Find which dog this conversation is about
+              const matchedDog = currentDogs.find(d => m.conversationId.includes(d.id));
+              const dogId = matchedDog?.id || '';
+
+              // Skip if we already have ANY conversation for this dogId
+              if (dogId && existingDogIds.has(dogId)) return;
+              // Also skip if we already queued a conversation for this dogId in this batch
+              if (dogId && seenInThisBatch.has(`dog_${dogId}`)) return;
+
+              seenInThisBatch.add(m.conversationId);
+              if (dogId) seenInThisBatch.add(`dog_${dogId}`);
+              if (dogId) existingDogIds.add(dogId);
+
+              newConvs.push({
+                id: m.conversationId,
+                dogId: matchedDog?.id || 'dog_pogo',
+                dogName: matchedDog?.name || 'Pogo',
+                dogAvatar: matchedDog?.coverPhoto || m.senderAvatar,
+                participants: [m.senderId, m.recipientId],
+                lastMessage: m.text,
+                lastMessageTimestamp: 'Just now',
+                unreadCount: 1
+              });
             });
             return newConvs.length > 0 ? [...newConvs, ...prev] : prev;
           });
@@ -1468,9 +1481,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const currentUserId = currentUser?.id || 'user_guest';
     const isOwner = currentUserId === dog.currentOwnerId;
 
-    const existingConv = conversations.find(
-      c => c.dogId === dog.id && (isOwner || c.participants.includes(currentUserId) || c.id.includes(currentUserId))
-    );
+    // If a conversation for this exact dog already exists in state, just open it
+    const existingConv = conversations.find(c => c.dogId === dog.id);
 
     if (existingConv) {
       setActiveConversationId(existingConv.id);
