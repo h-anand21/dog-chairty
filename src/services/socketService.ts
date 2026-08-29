@@ -29,7 +29,7 @@ class PawConnectSocketEngine {
   public isConnected = true;
 
   constructor() {
-    // 1. Cross-Tab/Window BroadcastChannel
+    // 1. Cross-Tab BroadcastChannel (does NOT fire on the SENDER's own tab - browser rule)
     if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
       try {
         this.channel = new BroadcastChannel('pawconnect_live_socket_bus');
@@ -43,7 +43,8 @@ class PawConnectSocketEngine {
       }
     }
 
-    // 2. Cross-Window Storage Event (for separate browser windows)
+    // 2. localStorage storage event fires ONLY on OTHER windows/origins
+    //    This handles cross-port syncing (5173 ↔ 5174)
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', (e: StorageEvent) => {
         if (e.key === 'pawconnect_socket_broadcast' && e.newValue) {
@@ -56,17 +57,11 @@ class PawConnectSocketEngine {
         }
       });
 
-      // 3. Custom Event Bus for same window
-      window.addEventListener('pawconnect_socket_event', (e: Event) => {
-        const customEvent = e as CustomEvent<SocketMessagePayload>;
-        if (customEvent.detail) {
-          this.notifyListeners(customEvent.detail);
-        }
-      });
+      // ⚠️ We do NOT use window.dispatchEvent('pawconnect_socket_event') anymore.
+      // That CustomEvent fires on the SAME tab too, causing duplicate message bubbles.
     }
   }
 
-  // Subscribe to live socket messages
   public subscribe(callback: SocketEventListener) {
     this.listeners.push(callback);
     return () => {
@@ -74,19 +69,20 @@ class PawConnectSocketEngine {
     };
   }
 
-  // Emit a message through the bidirectional live web socket engine
+  /**
+   * Emit a message to OTHER tabs/windows ONLY.
+   * The sender's own UI is updated directly inside AppContext.sendMessage() — NOT here.
+   * ✅ This prevents the duplicate bubble bug entirely.
+   */
   public emitMessage(payload: SocketMessagePayload) {
-    // 1. Broadcast via BroadcastChannel
+    // Broadcast to other tabs via BroadcastChannel (won't fire on sender's own tab)
     if (this.channel) {
       try {
-        this.channel.postMessage({
-          type: 'LIVE_CHAT_MESSAGE',
-          payload
-        });
+        this.channel.postMessage({ type: 'LIVE_CHAT_MESSAGE', payload });
       } catch (e) {}
     }
 
-    // 2. Storage event for cross-window syncing
+    // localStorage write fires storage event ONLY on other windows (different port = different origin)
     if (typeof window !== 'undefined') {
       try {
         localStorage.setItem(
@@ -94,14 +90,11 @@ class PawConnectSocketEngine {
           JSON.stringify({ ...payload, _ts: Date.now() })
         );
       } catch (e) {}
-
-      window.dispatchEvent(
-        new CustomEvent('pawconnect_socket_event', { detail: payload })
-      );
     }
 
-    // 3. Local subscribers
-    this.notifyListeners(payload);
+    // ✅ NOT calling this.notifyListeners(payload) here.
+    // Doing so would deliver the message to the sender's OWN tab's subscriber,
+    // which was the exact root cause of the double-bubble bug.
   }
 
   private notifyListeners(payload: SocketMessagePayload) {
