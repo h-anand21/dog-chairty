@@ -743,9 +743,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: true, isNewUser: false, message: `Welcome back, ${existing.name}!` };
     }
 
-    // If new user, create a default profile so user is instantly logged in
+    // Use phone-based stable ID so SAME phone always gets SAME user ID across all browser windows/ports
+    const stableUserId = `user_${cleanInput}`;
+
     const defaultNewUser: User = {
-      id: `user_${Date.now()}`,
+      id: stableUserId,
       name: `Pet Lover (${cleanInput.slice(-4)})`,
       phone: phone,
       role: 'adopter',
