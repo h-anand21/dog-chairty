@@ -490,6 +490,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [reports]);
 
   // ☁️ Live Fetch & Sync Convex Cloud Database
+  // Use a ref for dogs so we can access it inside the interval without re-creating it on every dogs change.
+  const dogsRef = React.useRef(dogs);
+  useEffect(() => { dogsRef.current = dogs; }, [dogs]);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -537,16 +541,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setDogs(formatted);
         }
 
-        // ☁️ Sync Cloud Messages across all ports (5173, 5174, 5175, etc.)
+        // ☁️ Sync Cloud Messages across all ports (5173 <-> 5174 etc.)
         const cloudMsgs = await convexClient.query(api.messages.listAll);
         if (isMounted && Array.isArray(cloudMsgs) && cloudMsgs.length > 0) {
+          // Only add genuinely NEW messages (by id)
           setMessages(prev => {
+            // Collect all existing message IDs for fast lookup
+            const existingIds = new Set<string>();
+            Object.values(prev).forEach((msgs: ChatMessage[]) =>
+              msgs.forEach(m => existingIds.add(m.id))
+            );
+
             const updated = { ...prev };
             let changed = false;
             cloudMsgs.forEach((m: any) => {
-              const convMsgs = updated[m.conversationId] || [];
-              if (!convMsgs.some((existing: ChatMessage) => existing.id === m.id || (existing.senderId === m.senderId && existing.text === m.text && existing.timestamp === m.timestamp))) {
-                const incomingMsg: ChatMessage = {
+              if (!existingIds.has(m.id)) {
+                const convMsgs = updated[m.conversationId] || [];
+                updated[m.conversationId] = [...convMsgs, {
                   id: m.id,
                   conversationId: m.conversationId,
                   senderId: m.senderId,
@@ -558,46 +569,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   isDogBark: m.isDogBark,
                   timestamp: m.timestamp,
                   read: true
-                };
-                updated[m.conversationId] = [...convMsgs, incomingMsg];
+                }];
                 changed = true;
               }
             });
             return changed ? updated : prev;
           });
 
-          // Ensure conversation entries exist for all cloud messages
+          // Add conversation thread only if it doesn't exist yet (do NOT update existing ones here)
           setConversations(prev => {
-            let convsUpdated = false;
-            let currentConvs = [...prev];
+            const existingIds = new Set(prev.map(c => c.id));
+            const newConvs: Conversation[] = [];
             cloudMsgs.forEach((m: any) => {
-              const exists = currentConvs.some(c => c.id === m.conversationId);
-              if (!exists) {
-                const dogId = m.conversationId.split('_')[1] || 'dog_pogo';
-                const matchedDog = dogs.find(d => d.id === dogId || d.id === `dog_${dogId}`);
-                currentConvs = [
-                  {
-                    id: m.conversationId,
-                    dogId: matchedDog?.id || 'dog_pogo',
-                    dogName: matchedDog?.name || 'Pogo',
-                    dogAvatar: matchedDog?.coverPhoto || m.senderAvatar,
-                    participants: [m.senderId, m.recipientId],
-                    lastMessage: m.text,
-                    lastMessageTimestamp: 'Just now',
-                    unreadCount: 1
-                  },
-                  ...currentConvs
-                ];
-                convsUpdated = true;
-              } else {
-                currentConvs = currentConvs.map(c =>
-                  c.id === m.conversationId
-                    ? { ...c, lastMessage: m.text, lastMessageTimestamp: 'Just now' }
-                    : c
+              if (!existingIds.has(m.conversationId)) {
+                existingIds.add(m.conversationId); // prevent duplicate inserts
+                const currentDogs = dogsRef.current;
+                const dogIdPart = m.conversationId.split('_')[1] || '';
+                const matchedDog = currentDogs.find(
+                  d => d.id === dogIdPart ||
+                       d.id === `dog_${dogIdPart}` ||
+                       m.conversationId.includes(d.id)
                 );
+                newConvs.push({
+                  id: m.conversationId,
+                  dogId: matchedDog?.id || 'dog_pogo',
+                  dogName: matchedDog?.name || 'Pogo',
+                  dogAvatar: matchedDog?.coverPhoto || m.senderAvatar,
+                  participants: [m.senderId, m.recipientId],
+                  lastMessage: m.text,
+                  lastMessageTimestamp: 'Just now',
+                  unreadCount: 1
+                });
               }
             });
-            return convsUpdated ? currentConvs : prev;
+            return newConvs.length > 0 ? [...newConvs, ...prev] : prev;
           });
         }
       } catch (err) {
@@ -606,12 +611,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     fetchConvexCloudData();
-    const interval = setInterval(fetchConvexCloudData, 1500);
+    // Poll every 2 seconds — less aggressive than 1.5s to reduce UI thrashing
+    const interval = setInterval(fetchConvexCloudData, 2000);
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [dogs]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // ← Empty array: run once. dogs accessed via dogsRef to avoid infinite loop.
 
   // ⚡ Live Bidirectional Web Socket Subscription
   useEffect(() => {
