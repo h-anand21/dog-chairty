@@ -103,44 +103,7 @@ export const INITIAL_USERS: User[] = [
   }
 ];
 
-export const INITIAL_DOGS: Dog[] = [
-  {
-    id: 'dog_pogo',
-    name: 'Pogo',
-    breed: 'Golden Retriever Mix',
-    age: '2 Years',
-    gender: 'Male',
-    size: 'Large',
-    energy: 'High Energy',
-    location: 'Kolkata, Salt Lake',
-    lat: 22.5867,
-    lng: 88.4178,
-    city: 'Kolkata',
-    state: 'West Bengal',
-    photos: [
-      'https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&auto=format&fit=crop&q=80'
-    ],
-    coverPhoto: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&auto=format&fit=crop&q=80',
-    bio: 'Super energetic, friendly, and affectionate pup! Loves outdoor park walks, playing fetch, and getting cuddles.',
-    reasonForAdoption: 'Seeking a warm forever family.',
-    adoptionType: 'Free Adoption',
-    status: 'available',
-    currentOwnerId: 'user_dipu_anand',
-    currentOwnerName: 'Dipu Anand',
-    currentOwnerAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&auto=format&fit=crop&q=80',
-    currentOwnerPhone: '+91 8252990057',
-    isOwnerVerified: true,
-    vaccinated: true,
-    neutered: true,
-    microchipped: true,
-    medicalNotes: 'Fully up to date on all vaccinations, clean health checkup.',
-    favoriteThings: ['🎾 Tennis Balls', '🍗 Chicken Treats', '🛋️ Cuddles'],
-    personalityTraits: ['Playful', 'Gentle', 'House-Trained'],
-    interestedCount: 8,
-    likesCount: 65
-  }
-];
+export const INITIAL_DOGS: Dog[] = [];
 
 export const INITIAL_APPLICATIONS: AdoptionApplication[] = [];
 

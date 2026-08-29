@@ -188,20 +188,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // 3. Navigation Tab
   const [activeTab, setActiveTab] = useState<'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin'>('discover');
 
-  // 4. Dogs State (Real user-listed dogs & Dipu Anand's Pogo)
+  // 4. Dogs State (Real user-listed dogs only)
   const [dogs, setDogs] = useState<Dog[]>(() => {
     const saved = localStorage.getItem('pawconnect_dogs');
     if (saved) {
       try {
         const parsed: Dog[] = JSON.parse(saved);
-        const mockIds = ['dog_bruno', 'dog_luna', 'dog_milo', 'dog_rocky', 'dog_coco'];
-        const filteredings = parsed.filter(d => !mockIds.includes(d.id));
-        if (filteredings.length > 0) return filteredings;
+        const mockIds = ['dog_bruno', 'dog_luna', 'dog_milo', 'dog_rocky', 'dog_coco', 'dog_pogo'];
+        const filtered = parsed.filter(d => !mockIds.includes(d.id) && d.breed !== 'Golden Retriever Mix');
+        if (filtered.length > 0) {
+          try { localStorage.setItem('pawconnect_dogs', JSON.stringify(filtered)); } catch (e) {}
+          return filtered;
+        }
       } catch (e) {
-        return INITIAL_DOGS;
+        return [];
       }
     }
-    return INITIAL_DOGS;
+    return [];
   });
 
   // Persist dogs state to localStorage whenever dogs list changes
@@ -624,8 +627,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
               newConvs.push({
                 id: m.conversationId,
-                dogId: matchedDog?.id || 'dog_pogo',
-                dogName: matchedDog?.name || 'Pogo',
+                dogId: matchedDog?.id || currentDogs[0]?.id || 'dog_listed',
+                dogName: matchedDog?.name || currentDogs[0]?.name || 'Adoptable Pup',
                 dogAvatar: matchedDog?.coverPhoto || m.senderAvatar,
                 participants: [m.senderId, m.recipientId],
                 lastMessage: m.text,
