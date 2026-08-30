@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
 import { ChatView } from '../components/chat/ChatView';
-import { Conversation } from '../types';
+import { Conversation, ChatMessage } from '../types';
 import { MessageCircle, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 export const ChatPage: React.FC = () => {
-  const { conversations, activeConversationId, setActiveConversationId, dogs, currentUser, allUsers } = useApp();
+  const { conversations, activeConversationId, setActiveConversationId, dogs, currentUser, allUsers, messages } = useApp();
   const { playPawPop } = useAudio();
 
   // Mobile navigation state: 'list' or 'chat'
@@ -79,17 +79,49 @@ export const ChatPage: React.FC = () => {
               conversations.map((conv: Conversation) => {
                 const isActive = conv.id === activeConversationId;
                 const matchingDog = dogs.find(d => d.id === conv.dogId);
-                const isOwner = currentUser?.id === matchingDog?.currentOwnerId || currentUser?.role === 'owner';
-                const otherParticipantId = conv.participants.find(p => p !== currentUser?.id) || (isOwner ? conv.participants[1] : conv.participants[0]);
-                const otherUser = allUsers.find(u => u.id === otherParticipantId);
-                
-                const displayName = isOwner
-                  ? (otherUser?.name || 'Interested Adopter')
-                  : (matchingDog?.currentOwnerName || otherUser?.name || 'Pet Guardian');
+                const cleanPhone = (p?: string) => (p || '').replace(/\D/g, '').slice(-10);
 
-                const displayAvatar = isOwner
-                  ? (otherUser?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400')
-                  : (matchingDog?.currentOwnerAvatar || conv.dogAvatar);
+                // Determine if currentUser is the Guardian/Owner of this dog
+                const isOwner = Boolean(
+                  currentUser && (
+                    (matchingDog && currentUser.id === matchingDog.currentOwnerId) ||
+                    (matchingDog?.currentOwnerPhone && cleanPhone(currentUser.phone) === cleanPhone(matchingDog.currentOwnerPhone)) ||
+                    (matchingDog?.currentOwnerName && currentUser.name?.toLowerCase().trim() === matchingDog.currentOwnerName?.toLowerCase().trim()) ||
+                    currentUser.role === 'owner'
+                  )
+                );
+
+                // Find the other participant who is NOT the current user
+                const otherParticipantId = conv.participants?.find(p => p !== currentUser?.id && (!matchingDog || p !== matchingDog.currentOwnerId));
+                const otherUser = allUsers.find(u => u.id === otherParticipantId || (u.phone && otherParticipantId?.includes(cleanPhone(u.phone))));
+
+                const convMsgs = messages[conv.id] || [];
+                const otherMsg = convMsgs.find((m: ChatMessage) => {
+                  const isSenderOwner = matchingDog && (m.senderId === matchingDog.currentOwnerId || m.senderName === matchingDog.currentOwnerName);
+                  return isOwner ? !isSenderOwner : isSenderOwner;
+                });
+
+                let displayName = '';
+                let displaySubtitle = '';
+                let roleBadgeText = '';
+                let roleBadgeColor = '';
+                let displayAvatar = '';
+
+                if (isOwner) {
+                  // Current user is the Dog's Guardian -> Show the Applicant/Adopter
+                  displayName = otherUser?.name || otherMsg?.senderName || 'Adoption Applicant';
+                  displayAvatar = otherUser?.avatar || otherMsg?.senderAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
+                  roleBadgeText = 'Applicant';
+                  roleBadgeColor = 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60';
+                  displaySubtitle = `Interested in adopting ${conv.dogName} 🐾`;
+                } else {
+                  // Current user is an Adopter -> Show the Dog's Guardian
+                  displayName = matchingDog?.currentOwnerName || otherUser?.name || otherMsg?.senderName || 'Pet Guardian';
+                  displayAvatar = matchingDog?.currentOwnerAvatar || conv.dogAvatar;
+                  roleBadgeText = 'Dog Guardian';
+                  roleBadgeColor = 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60';
+                  displaySubtitle = `Guardian of ${conv.dogName} 🐶`;
+                }
 
                 return (
                   <div
@@ -111,9 +143,12 @@ export const ChatPage: React.FC = () => {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-black text-obsidian-950 dark:text-white truncate flex items-center gap-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <h4 className="text-xs font-black text-obsidian-950 dark:text-white truncate flex items-center gap-1.5">
                           <span>{displayName}</span>
+                          <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full border ${roleBadgeColor}`}>
+                            {roleBadgeText}
+                          </span>
                         </h4>
                         <span className="text-[10px] text-obsidian-400 dark:text-slate-500 shrink-0 font-medium">
                           {conv.lastMessageTimestamp}
@@ -121,7 +156,7 @@ export const ChatPage: React.FC = () => {
                       </div>
 
                       <div className="text-[10px] font-extrabold text-coral-600 dark:text-coral-400 truncate mt-0.5">
-                        Interested in adopting {conv.dogName} 🐶
+                        {displaySubtitle}
                       </div>
 
                       <p className="text-[11px] text-obsidian-600 dark:text-slate-300 truncate mt-0.5 font-normal">
@@ -130,7 +165,7 @@ export const ChatPage: React.FC = () => {
 
                       <div className="flex items-center justify-between mt-1 pt-1 border-t border-obsidian-100 dark:border-white/5">
                         <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded-sm border border-emerald-200 dark:border-emerald-800/60">
-                          {matchingDog?.breed || 'Pup'} • {matchingDog?.city || 'Kolkata'}
+                          {matchingDog?.name || conv.dogName} • {matchingDog?.breed || 'Pup'}
                         </span>
                         {conv.unreadCount > 0 && (
                           <span className="px-1.5 py-0.2 text-[9px] font-black bg-coral-500 text-white rounded-full">

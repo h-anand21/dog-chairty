@@ -551,6 +551,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               });
               return Array.from(map.values());
             });
+
+            // Also update currentUser in-memory and localStorage if their profile name/role was updated in Cloud
+            setCurrentUser(curr => {
+              if (!curr) return curr;
+              const match = cloudUsers.find((u: any) => cleanPhone(u.phone) === cleanPhone(curr.phone) || u.id === curr.id);
+              if (match && match.name && (match.name !== curr.name || match.role !== curr.role)) {
+                const updatedUser: User = {
+                  ...curr,
+                  name: match.name,
+                  role: match.role || curr.role,
+                  avatar: match.avatar || curr.avatar,
+                  location: match.location || curr.location,
+                  bio: match.bio || curr.bio,
+                };
+                try { localStorage.setItem('pawconnect_current_user', JSON.stringify(updatedUser)); } catch (e) {}
+                return updatedUser;
+              }
+              return curr;
+            });
           }
         } catch (e) {}
 

@@ -2,6 +2,26 @@ import { User, Dog, AdoptionApplication, Post, Story, NotificationItem } from '.
 
 export const INITIAL_USERS: User[] = [
   {
+    id: 'user_dipu_anand',
+    name: 'Dipu Anand',
+    phone: '+91 8252990057',
+    email: 'dipuanand563@gmail.com',
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400',
+    role: 'owner',
+    location: 'Kolkata, Salt Lake',
+    city: 'Kolkata',
+    state: 'West Bengal',
+    lat: 22.5867,
+    lng: 88.4178,
+    isVerified: true,
+    joinedDate: 'February 2025',
+    homeType: 'House',
+    hasYard: true,
+    otherPets: 'None',
+    experienceLevel: 'Expert',
+    bio: 'Loving pet parent looking for a wonderful, caring family for Pogo.'
+  },
+  {
     id: 'user_sarah',
     name: 'Sarah Jenkins',
     phone: '+91 99999 00001',

@@ -27,6 +27,7 @@ export const ChatView: React.FC = () => {
     acceptMeetup,
     applications,
     dogs,
+    allUsers,
     setSelectedDog,
     setIsApplyModalOpen,
   } = useApp();
@@ -71,6 +72,36 @@ export const ChatView: React.FC = () => {
   const targetDog = dogs.find(d => d.id === activeConv?.dogId);
   const relatedApp = applications.find(a => a.dogId === activeConv?.dogId);
   const activeMeet = meetups.find(m => m.dogId === activeConv?.dogId && m.status === 'scheduled');
+
+  const cleanPhone = (p?: string) => (p || '').replace(/\D/g, '').slice(-10);
+
+  // Determine if current user is the Guardian/Owner of this dog
+  const isOwner = Boolean(
+    currentUser && (
+      (targetDog && currentUser.id === targetDog.currentOwnerId) ||
+      (targetDog?.currentOwnerPhone && cleanPhone(currentUser.phone) === cleanPhone(targetDog.currentOwnerPhone)) ||
+      (targetDog?.currentOwnerName && currentUser.name?.toLowerCase().trim() === targetDog.currentOwnerName?.toLowerCase().trim()) ||
+      currentUser.role === 'owner'
+    )
+  );
+
+  const otherParticipantId = activeConv?.participants?.find(p => p !== currentUser?.id && (!targetDog || p !== targetDog.currentOwnerId));
+  const otherUser = allUsers.find(u => u.id === otherParticipantId || (u.phone && otherParticipantId?.includes(cleanPhone(u.phone))));
+
+  const convMsgs = messages[activeConv?.id || ''] || [];
+  const otherMsg = convMsgs.find(m => {
+    const isSenderOwner = targetDog && (m.senderId === targetDog.currentOwnerId || m.senderName === targetDog.currentOwnerName);
+    return isOwner ? !isSenderOwner : isSenderOwner;
+  });
+
+  const chatPartnerName = isOwner
+    ? (otherUser?.name || otherMsg?.senderName || 'Interested Adopter')
+    : (targetDog?.currentOwnerName || otherUser?.name || otherMsg?.senderName || 'Pet Guardian');
+
+  const chatPartnerRole = isOwner ? 'Adoption Applicant' : 'Dog Guardian / Owner';
+  const chatPartnerAvatar = isOwner
+    ? (otherUser?.avatar || otherMsg?.senderAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400')
+    : (targetDog?.currentOwnerAvatar || activeConv?.dogAvatar);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -172,17 +203,21 @@ export const ChatView: React.FC = () => {
         </div>
       )}
 
-      {/* Simple live status bar — shows who you are */}
-      <div className="bg-obsidian-950 dark:bg-[#0A0F1A] text-white px-4 py-2 flex items-center justify-between text-xs border-b border-white/10 shrink-0">
+      {/* Live status bar — shows who you are and who you are chatting with */}
+      <div className="bg-obsidian-950 dark:bg-[#0A0F1A] text-white px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs border-b border-white/10 shrink-0">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-slate-300 font-medium">
-            Logged in as <strong className="text-white font-black">{currentUser?.name || 'Guest'}</strong>
+            You: <strong className="text-white font-black">{currentUser?.name || 'Guest'}</strong>
           </span>
+        </div>
+        <div className="flex items-center gap-1.5 text-coral-300 font-bold text-[11px]">
+          <span>💬 Chatting with:</span>
+          <strong className="text-white bg-white/10 px-2 py-0.5 rounded-full">{chatPartnerName} ({chatPartnerRole})</strong>
         </div>
         <div className="flex items-center gap-1.5 text-emerald-400 text-[11px] font-bold">
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Encrypted</span>
+          <span>Encrypted Direct Thread</span>
         </div>
       </div>
 
@@ -191,8 +226,8 @@ export const ChatView: React.FC = () => {
         <div className="flex items-center gap-3 text-left">
           <div className="relative shrink-0">
             <img
-              src={activeConv.dogAvatar}
-              alt={activeConv.dogName}
+              src={chatPartnerAvatar}
+              alt={chatPartnerName}
               className="w-12 h-12 rounded-2xl object-cover ring-2 ring-coral-400 shadow-sm"
             />
             <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-obsidian-900 rounded-full ring-1 ring-emerald-200" />
@@ -200,11 +235,17 @@ export const ChatView: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-base font-black text-obsidian-950 dark:text-white leading-tight">
-                {activeConv.dogName}
+                {chatPartnerName}
               </h3>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 border border-coral-200 dark:border-coral-800/60">
+                {chatPartnerRole}
+              </span>
             </div>
-            <p className="text-[11px] text-obsidian-500 dark:text-slate-400 font-medium mt-0.5">
-              {targetDog ? `${targetDog.breed} • ${targetDog.age} • 📍 ${targetDog.location}` : 'Adoptable Companion'}
+            <p className="text-[11px] text-obsidian-600 dark:text-slate-300 font-bold mt-0.5 flex items-center gap-1">
+              <span>🐶 Regarding {activeConv.dogName}</span>
+              <span className="text-obsidian-400 dark:text-slate-500 font-normal">
+                {targetDog ? `(${targetDog.breed} • ${targetDog.city || 'Kolkata'})` : ''}
+              </span>
             </p>
           </div>
         </div>
