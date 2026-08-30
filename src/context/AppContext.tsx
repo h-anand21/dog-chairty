@@ -333,89 +333,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) return parsed;
+        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+          // Strip ALL msg_auto_ bot messages and old mock conversation keys
+          const cleaned: Record<string, ChatMessage[]> = {};
+          const OLD_MOCK_KEYS = ['conv_alex_sarah_bruno', 'conv_david_sarah_luna', 'conv_david_sarah_milo', 'conv_david_sarah_rocky'];
+          for (const [convId, msgs] of Object.entries(parsed)) {
+            if (OLD_MOCK_KEYS.includes(convId)) continue; // skip old mock data
+            const realMsgs = (msgs as ChatMessage[]).filter(m => !m.id.startsWith('msg_auto_'));
+            if (realMsgs.length > 0) cleaned[convId] = realMsgs;
+          }
+          if (Object.keys(cleaned).length > 0) return cleaned;
+        }
       } catch (e) {
-        // fallback
+        // fallback to empty
       }
     }
-    return {
-      'conv_alex_sarah_bruno': [
-        {
-          id: 'm1',
-          conversationId: 'conv_alex_sarah_bruno',
-          senderId: 'user_sarah',
-          senderName: 'Sarah Jenkins',
-          senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80',
-          recipientId: 'user_alex',
-          text: 'Hi Alex! I submitted an adoption application for Bruno. We have a huge fenced yard and my Golden Luna is super excited!',
-          timestamp: '10:35 AM',
-          read: true
-        },
-        {
-          id: 'm2',
-          conversationId: 'conv_alex_sarah_bruno',
-          senderId: 'user_alex',
-          senderName: 'Alex Rivera',
-          senderAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-          recipientId: 'user_sarah',
-          text: 'Hi Sarah! Thank you so much for the detailed application. Your home and experience sound wonderful for Bruno!',
-          timestamp: '10:40 AM',
-          read: true
-        },
-        {
-          id: 'm3',
-          conversationId: 'conv_alex_sarah_bruno',
-          senderId: 'user_alex',
-          senderName: 'Alex Rivera',
-          senderAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-          recipientId: 'user_sarah',
-          text: 'Sure! Bruno loves playing with tennis balls at Eco Park. Let us schedule a Meet & Greet!',
-          image: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&auto=format&fit=crop&q=80',
-          timestamp: '10:45 AM',
-          read: true
-        }
-      ],
-      'conv_david_sarah_luna': [
-        {
-          id: 'm_luna_1',
-          conversationId: 'conv_david_sarah_luna',
-          senderId: 'user_david',
-          senderName: 'Dr. David Chen',
-          senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-          recipientId: 'user_sarah',
-          text: 'Hello! Luna is a 1.5-year-old Chocolate Labrador who is 100% vaccinated, spayed, and loves swimming. Let me know if you would like to meet her!',
-          timestamp: '9:30 AM',
-          read: true
-        }
-      ],
-      'conv_david_sarah_milo': [
-        {
-          id: 'm_milo_1',
-          conversationId: 'conv_david_sarah_milo',
-          senderId: 'user_david',
-          senderName: 'Dr. David Chen',
-          senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-          recipientId: 'user_sarah',
-          text: 'Hi there! Milo is a sweet 1-year-old Beagle in Mumbai. He is potty-trained, vaccinated, and loves squeaky toys.',
-          timestamp: 'Yesterday',
-          read: true
-        }
-      ],
-      'conv_david_sarah_rocky': [
-        {
-          id: 'm_rocky_1',
-          conversationId: 'conv_david_sarah_rocky',
-          senderId: 'user_david',
-          senderName: 'Dr. David Chen',
-          senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-          recipientId: 'user_sarah',
-          text: 'Rocky is an energetic German Shepherd in Bengaluru. Strong health records and knows all basic agility commands.',
-          timestamp: 'Yesterday',
-          read: true
-        }
-      ]
-    };
+    return {};
   });
+
 
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
 
