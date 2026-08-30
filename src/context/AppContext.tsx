@@ -1054,7 +1054,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
       setNotifications(prev => [notif, ...prev]);
 
-      // 🌟 Real-Time Guardian Auto-Acceptance & Conversation Unlock (1.5s delay)
+      // 🌟 Conversation Unlock on Application Received (1.5s delay)
       setTimeout(() => {
         setApplications(prev =>
           prev.map(a => (a.id === appId ? { ...a, status: 'accepted', reviewedAt: 'Just now' } : a))
@@ -1062,11 +1062,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateDogStatus(data.dogId, 'pending');
 
         const convId = `conv_${data.dogId}_${data.applicantId}`;
-        const guardianName = targetDog.currentOwnerName || 'Guardian';
-        const guardianAvatar = targetDog.currentOwnerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
 
+        // Only unlock the conversation thread — no auto-generated bot messages
         setConversations(prev => {
-          const exists = prev.some(c => c.id === convId);
+          const exists = prev.some(c => c.id === convId || c.dogId === data.dogId);
           if (exists) return prev;
           return [
             {
@@ -1075,53 +1074,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               dogName: data.dogName,
               dogAvatar: data.dogPhoto,
               participants: [targetDog.currentOwnerId, data.applicantId],
-              lastMessage: `Application approved! Chat & Meetup unlocked.`,
+              lastMessage: `Chat unlocked — say hi to start the conversation!`,
               lastMessageTimestamp: 'Just now',
-              unreadCount: 1
+              unreadCount: 0
             },
             ...prev
           ];
-        });
-
-        setMessages(prev => ({
-          ...prev,
-          [convId]: [
-            ...(prev[convId] || []),
-            {
-              id: `msg_auto_${Date.now()}`,
-              conversationId: convId,
-              senderId: targetDog.currentOwnerId,
-              senderName: guardianName,
-              senderAvatar: guardianAvatar,
-              recipientId: data.applicantId,
-              text: `Hi ${data.applicantName}! 👋 I reviewed your adoption request for ${data.dogName}. Your home setup and experience look fantastic! Let's arrange a Park Meet & Greet so you can spend time with ${data.dogName}.`,
-              timestamp: 'Just now',
-              read: false
-            }
-          ]
-        }));
-
-        // ⚡ Emit live socket payload so applicant instantly gets approved conversation on tab/window!
-        socketEngine.emitMessage({
-          id: `msg_auto_${Date.now()}`,
-          conversationId: convId,
-          senderId: targetDog.currentOwnerId,
-          senderName: guardianName,
-          senderAvatar: guardianAvatar,
-          recipientId: data.applicantId,
-          text: `Hi ${data.applicantName}! 👋 I reviewed your adoption request for ${data.dogName}. Your home setup and experience look fantastic! Let's arrange a Park Meet & Greet so you can spend time with ${data.dogName}.`,
-          timestamp: 'Just now',
-          dogId: data.dogId,
-          dogName: data.dogName,
-          dogAvatar: data.dogPhoto,
-          participants: [targetDog.currentOwnerId, data.applicantId]
         });
 
         const acceptNotif: NotificationItem = {
           id: `notif_accept_${Date.now()}`,
           userId: data.applicantId,
           title: `🎉 Application Approved for ${data.dogName}!`,
-          message: `Guardian ${guardianName} approved your request! Private chat and Meet & Greet scheduling are active.`,
+          message: `Guardian approved your request! Private chat is now active — send them a message.`,
           type: 'application_accepted',
           relatedDogId: targetDog.id,
           relatedApplicationId: appId,
