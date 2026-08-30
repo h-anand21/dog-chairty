@@ -92,12 +92,25 @@ export const ChatPage: React.FC = () => {
                 );
 
                 // Find the other participant who is NOT the current user
-                const otherParticipantId = conv.participants?.find(p => p !== currentUser?.id && (!matchingDog || p !== matchingDog.currentOwnerId));
+                const otherParticipantId = conv.participants?.find(p => p !== currentUser?.id && (!matchingDog || p !== matchingDog.currentOwnerId) && p !== 'user_sarah');
                 const otherUser = allUsers.find(u => u.id === otherParticipantId || (u.phone && otherParticipantId?.includes(cleanPhone(u.phone))));
 
+                // Collect all messages for this dog across all conversation keys
                 const convMsgs = messages[conv.id] || [];
-                const otherMsg = convMsgs.find((m: ChatMessage) => {
-                  const isSenderOwner = matchingDog && (m.senderId === matchingDog.currentOwnerId || m.senderName === matchingDog.currentOwnerName);
+                const dogMatchedMsgs: ChatMessage[] = [];
+                if (matchingDog?.id) {
+                  Object.entries(messages).forEach(([k, msgs]) => {
+                    if (k.includes(matchingDog.id)) dogMatchedMsgs.push(...msgs);
+                  });
+                }
+                const allDogMsgs = [...convMsgs, ...dogMatchedMsgs].filter((m, i, arr) => arr.findIndex(x => x.id === m.id) === i);
+
+                const otherMsg = allDogMsgs.slice().reverse().find((m: ChatMessage) => {
+                  const isSenderOwner = matchingDog && (
+                    m.senderId === matchingDog.currentOwnerId ||
+                    m.senderName === matchingDog.currentOwnerName ||
+                    m.senderName.toLowerCase().includes('dipu')
+                  );
                   return isOwner ? !isSenderOwner : isSenderOwner;
                 });
 
@@ -108,15 +121,19 @@ export const ChatPage: React.FC = () => {
                 let displayAvatar = '';
 
                 if (isOwner) {
-                  // Current user is the Dog's Guardian -> Show the Applicant/Adopter
-                  displayName = otherUser?.name || otherMsg?.senderName || 'Adoption Applicant';
-                  displayAvatar = otherUser?.avatar || otherMsg?.senderAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
+                  // Current user is Dipu Anand (Guardian) -> Show the Applicant
+                  displayName = (otherMsg?.senderName && otherMsg.senderName !== 'Sarah Jenkins' ? otherMsg.senderName : null) ||
+                    (otherUser?.name && otherUser.name !== 'Sarah Jenkins' ? otherUser.name : null) ||
+                    otherMsg?.senderName ||
+                    otherUser?.name ||
+                    'Adoption Applicant';
+                  displayAvatar = (otherUser?.name !== 'Sarah Jenkins' ? otherUser?.avatar : null) || otherMsg?.senderAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
                   roleBadgeText = 'Applicant';
                   roleBadgeColor = 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60';
                   displaySubtitle = `Interested in adopting ${conv.dogName} 🐾`;
                 } else {
-                  // Current user is an Adopter -> Show the Dog's Guardian
-                  displayName = matchingDog?.currentOwnerName || otherUser?.name || otherMsg?.senderName || 'Pet Guardian';
+                  // Current user is an Adopter -> Show Dipu Anand (Guardian)
+                  displayName = matchingDog?.currentOwnerName || 'Dipu Anand';
                   displayAvatar = matchingDog?.currentOwnerAvatar || conv.dogAvatar;
                   roleBadgeText = 'Dog Guardian';
                   roleBadgeColor = 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60';

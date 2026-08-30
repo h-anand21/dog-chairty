@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAudio } from '../../context/AudioContext';
 import { MeetAndGreetModal } from '../adoption/MeetAndGreetModal';
+import { ChatMessage } from '../../types';
 import {
   Send,
   Image as ImageIcon,
@@ -85,22 +86,38 @@ export const ChatView: React.FC = () => {
     )
   );
 
-  const otherParticipantId = activeConv?.participants?.find(p => p !== currentUser?.id && (!targetDog || p !== targetDog.currentOwnerId));
+  const otherParticipantId = activeConv?.participants?.find(p => p !== currentUser?.id && (!targetDog || p !== targetDog.currentOwnerId) && p !== 'user_sarah');
   const otherUser = allUsers.find(u => u.id === otherParticipantId || (u.phone && otherParticipantId?.includes(cleanPhone(u.phone))));
 
   const convMsgs = messages[activeConv?.id || ''] || [];
-  const otherMsg = convMsgs.find(m => {
-    const isSenderOwner = targetDog && (m.senderId === targetDog.currentOwnerId || m.senderName === targetDog.currentOwnerName);
+  const dogMatchedMsgs: ChatMessage[] = [];
+  if (activeConv?.dogId) {
+    Object.entries(messages).forEach(([k, msgs]) => {
+      if (k.includes(activeConv.dogId)) dogMatchedMsgs.push(...msgs);
+    });
+  }
+  const allDogMsgs = [...convMsgs, ...dogMatchedMsgs].filter((m, i, arr) => arr.findIndex(x => x.id === m.id) === i);
+
+  const otherMsg = allDogMsgs.slice().reverse().find(m => {
+    const isSenderOwner = targetDog && (
+      m.senderId === targetDog.currentOwnerId ||
+      m.senderName === targetDog.currentOwnerName ||
+      m.senderName.toLowerCase().includes('dipu')
+    );
     return isOwner ? !isSenderOwner : isSenderOwner;
   });
 
   const chatPartnerName = isOwner
-    ? (otherUser?.name || otherMsg?.senderName || 'Interested Adopter')
-    : (targetDog?.currentOwnerName || otherUser?.name || otherMsg?.senderName || 'Pet Guardian');
+    ? ((otherMsg?.senderName && otherMsg.senderName !== 'Sarah Jenkins' ? otherMsg.senderName : null) ||
+       (otherUser?.name && otherUser.name !== 'Sarah Jenkins' ? otherUser.name : null) ||
+       otherMsg?.senderName ||
+       otherUser?.name ||
+       'Interested Adopter')
+    : (targetDog?.currentOwnerName || 'Dipu Anand');
 
   const chatPartnerRole = isOwner ? 'Adoption Applicant' : 'Dog Guardian / Owner';
   const chatPartnerAvatar = isOwner
-    ? (otherUser?.avatar || otherMsg?.senderAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400')
+    ? ((otherUser?.name !== 'Sarah Jenkins' ? otherUser?.avatar : null) || otherMsg?.senderAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400')
     : (targetDog?.currentOwnerAvatar || activeConv?.dogAvatar);
 
   const scrollToBottom = () => {
