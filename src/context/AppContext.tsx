@@ -470,6 +470,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
 
+  // ☁️ Live Fetch & Sync Convex Cloud Database
+  // Use a ref for dogs so we can access it inside the interval without re-creating it on every dogs change.
+  const dogsRef = React.useRef(dogs);
+  useEffect(() => { dogsRef.current = dogs; }, [dogs]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    // Trigger Cloud Table Initialization (Seeds Dipu Anand & Pogo if empty)
+    try {
+      convexClient.mutation(api.init.initializeTables).catch(() => {});
+    } catch (e) {}
+
     const fetchConvexCloudData = async () => {
       try {
         const cloudDogs = await convexClient.query(api.dogs.list);
@@ -640,6 +653,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // ← Empty array: run once. dogs accessed via dogsRef to avoid infinite loop.
+
 
   // ⚡ Live Bidirectional Web Socket Subscription
   useEffect(() => {
