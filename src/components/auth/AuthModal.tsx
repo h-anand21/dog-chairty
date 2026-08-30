@@ -76,15 +76,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
 
   useEffect(() => {
     if (isOpen) {
-      if (initialStep === 'profile' && currentUser) {
-        // Logged in user explicitly editing profile
+      if (currentUser) {
+        // Logged in user: directly show their profile to view or edit!
         setStep('profile');
         setName(currentUser.name || '');
         setPhoneDigits(currentUser.phone ? currentUser.phone.replace(/\D/g, '').slice(-10) : '');
         setBio(currentUser.bio || 'Loving dog parent seeking a furry companion to give a caring home!');
         setAvatar(currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400');
         setRole(currentUser.role === 'owner' ? 'owner' : 'adopter');
-        if (currentUser.location && currentUser.location !== 'Kolkata, Salt Lake' && currentUser.location !== 'India') {
+        if (currentUser.location && currentUser.location !== 'India') {
           setLocation(currentUser.location);
         } else {
           fetchLiveLocation();
@@ -94,7 +94,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
         fetchLiveLocation();
       }
     }
-  }, [isOpen, initialStep, currentUser]);
+  }, [isOpen, currentUser]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;

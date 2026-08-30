@@ -865,6 +865,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCurrentUser(newUser);
     localStorage.setItem('pawconnect_current_user', JSON.stringify(newUser));
 
+    // Update any dog owned by this user to reflect their latest name, avatar, and phone
+    setDogs(prev =>
+      prev.map(d => {
+        if (d.currentOwnerId === newUser.id || (d.currentOwnerPhone && cleanPhone(d.currentOwnerPhone) === cleanPhone(newUser.phone))) {
+          return {
+            ...d,
+            currentOwnerName: newUser.name,
+            currentOwnerAvatar: newUser.avatar,
+            currentOwnerPhone: newUser.phone,
+          };
+        }
+        return d;
+      })
+    );
+
     // ☁️ Sync to Convex Cloud Users Table
     try {
       convexClient.mutation(api.users.upsertUser, {
