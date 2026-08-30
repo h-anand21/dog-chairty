@@ -1463,12 +1463,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const sendMessage = (convId: string, text: string, image?: string, isDogBark?: boolean) => {
-    const senderId = currentUser?.id || 'user_guest';
-    const senderName = currentUser?.name || 'Guest User';
-    const senderAvatar = currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
+    if (!currentUser) return; // Must be logged in to send
+    const senderId = currentUser.id;
+    const senderName = currentUser.name || 'User';
+    const senderAvatar = currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
 
     const targetConv = conversations.find(c => c.id === convId);
-    const recipientId = targetConv?.participants.find(p => p !== senderId) || '';
+
+    // Resolve recipientId reliably: find the OTHER participant who is NOT the sender
+    // Also fallback to dog's owner if we can't figure it out from participants
+    const targetDogForMsg = targetConv ? dogs.find(d => d.id === targetConv.dogId) : null;
+    let recipientId = targetConv?.participants.find(p => p !== senderId) || '';
+    if (!recipientId && targetDogForMsg) {
+      // If sender IS the owner, recipient is unknown adopter — use first participant
+      // If sender is NOT the owner, recipient is the dog's current owner
+      recipientId = senderId === targetDogForMsg.currentOwnerId
+        ? (targetConv?.participants.find(p => p !== senderId) || 'user_adopter')
+        : targetDogForMsg.currentOwnerId;
+    }
+    if (!recipientId) recipientId = 'user_unknown'; // Absolute fallback — never let it be empty
 
     const newMsg: ChatMessage = {
       id: `msg_${Date.now()}`,
@@ -1544,7 +1557,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const openChatForDog = (dog: Dog, initialMessage?: string) => {
-    const currentUserId = currentUser?.id || 'user_guest';
+    if (!currentUser) return; // Must be logged in
+    const currentUserId = currentUser.id;
     const isOwner = currentUserId === dog.currentOwnerId;
 
     // If a conversation for this exact dog already exists in state, just open it
@@ -1557,14 +1571,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     // Create a new dedicated thread for this dog
+    // Participants: [ownerID, adopterID] — always keep owner as first participant
     const adopterId = isOwner ? 'user_adopter' : currentUserId;
+    const ownerId = isOwner ? currentUserId : dog.currentOwnerId;
     const convId = `conv_${dog.id}_${adopterId}`;
+
     const newConv: Conversation = {
       id: convId,
       dogId: dog.id,
       dogName: dog.name,
       dogAvatar: dog.coverPhoto,
-      participants: [dog.currentOwnerId, adopterId],
+      participants: [ownerId, adopterId],
       lastMessage: initialMessage || `Hi ${dog.currentOwnerName}! I am interested in adopting ${dog.name}.`,
       lastMessageTimestamp: 'Just now',
       unreadCount: 0
@@ -1574,20 +1591,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `msg_${Date.now()}`,
       conversationId: convId,
       senderId: currentUserId,
-      senderName: currentUser?.name || (isOwner ? dog.currentOwnerName : 'Interested Adopter'),
-      senderAvatar: currentUser?.avatar || (isOwner ? dog.currentOwnerAvatar : 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400'),
-      recipientId: isOwner ? adopterId : dog.currentOwnerId,
+      senderName: currentUser.name || 'User',
+      senderAvatar: currentUser.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
+      recipientId: isOwner ? adopterId : ownerId,
       text: initialMessage || `Hi ${dog.currentOwnerName}! I am interested in learning more about ${dog.name} and would love to ask a few questions about their daily routine.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       read: true
     };
 
-    // Remove ALL existing conversations for this dog (regardless of convId) before adding new one
+    // Remove ALL existing conversations for this dog before adding new one
     setConversations(prev => [newConv, ...prev.filter(c => c.dogId !== dog.id)]);
     setMessages(prev => ({
       ...prev,
       [convId]: [...(prev[convId] || []), initialMsg]
     }));
+
+    // ☁️ Persist initial message to Convex Cloud (critical for cross-port sync)
+    try {
+      convexClient.mutation(api.messages.send, {
+        id: initialMsg.id,
+        conversationId: convId,
+        senderId: initialMsg.senderId,
+        senderName: initialMsg.senderName,
+        senderAvatar: initialMsg.senderAvatar,
+        recipientId: initialMsg.recipientId,
+        text: initialMsg.text,
+        timestamp: initialMsg.timestamp,
+        read: true,
+      }).catch(() => {});
+    } catch (e) {}
 
     // ⚡ Emit live socket payload so dog owner instantly gets conversation & message on their tab/window!
     socketEngine.emitMessage({
@@ -1602,12 +1634,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       dogId: dog.id,
       dogName: dog.name,
       dogAvatar: dog.coverPhoto,
-      participants: [dog.currentOwnerId, adopterId]
+      participants: [ownerId, adopterId]
     });
 
     setActiveConversationId(convId);
     setActiveTab('chat');
   };
+
+
 
   const likePost = (postId: string) => {
     const userId = currentUser?.id || 'user_guest';

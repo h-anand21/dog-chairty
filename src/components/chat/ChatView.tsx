@@ -42,7 +42,29 @@ export const ChatView: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const activeConv = conversations.find(c => c.id === activeConversationId) || conversations[0];
-  const activeMessages = activeConv ? messages[activeConv.id] || [] : [];
+
+  const activeMessages = React.useMemo(() => {
+    if (!activeConv) return [];
+    const direct = messages[activeConv.id] || [];
+    // Also include any messages matching the active dog's ID across any conversation key
+    const dogMatched: typeof direct = [];
+    if (activeConv.dogId) {
+      Object.entries(messages).forEach(([k, msgs]) => {
+        if (k !== activeConv.id && k.includes(activeConv.dogId)) {
+          dogMatched.push(...msgs);
+        }
+      });
+    }
+    const seen = new Set<string>();
+    const allCombined: typeof direct = [];
+    [...direct, ...dogMatched].forEach(m => {
+      if (!seen.has(m.id)) {
+        seen.add(m.id);
+        allCombined.push(m);
+      }
+    });
+    return allCombined.sort((a, b) => (a.id > b.id ? 1 : -1));
+  }, [activeConv, messages]);
   
   const targetDog = dogs.find(d => d.id === activeConv?.dogId);
   const relatedApp = applications.find(a => a.dogId === activeConv?.dogId);
@@ -289,7 +311,14 @@ export const ChatView: React.FC = () => {
 
         {/* Message Bubbles */}
         {activeMessages.map(msg => {
-          const isMine = msg.senderId === currentUser?.id;
+          const userPhoneDigits = (currentUser?.phone || '').replace(/\D/g, '').slice(-4);
+          const isMine =
+            msg.senderId === currentUser?.id ||
+            (userPhoneDigits.length >= 4 && (
+              msg.senderId.includes(userPhoneDigits) ||
+              msg.senderName.includes(userPhoneDigits)
+            )) ||
+            (Boolean(currentUser?.name) && msg.senderName.toLowerCase() === currentUser?.name?.toLowerCase());
           return (
             <div
               key={msg.id}
