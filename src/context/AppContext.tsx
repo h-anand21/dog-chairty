@@ -417,7 +417,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   });
 
-  const [activeConversationId, setActiveConversationId] = useState<string | null>('conv_alex_sarah_bruno');
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
 
   // 9. Social Posts & Stories
   const [posts, setPosts] = useState<Post[]>(() => {
@@ -562,12 +562,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setDogs(formatted);
         }
 
+        // ☁️ Sync Cloud Users across all ports
+        try {
+          const cloudUsers = await convexClient.query(api.users.list);
+          if (isMounted && Array.isArray(cloudUsers) && cloudUsers.length > 0) {
+            setAllUsers(prev => {
+              const map = new Map<string, User>();
+              prev.forEach(u => map.set(u.id, u));
+              cloudUsers.forEach((u: any) => {
+                if (u.id && u.name) {
+                  map.set(u.id, {
+                    id: u.id,
+                    name: u.name,
+                    phone: u.phone || '',
+                    email: u.email || '',
+                    avatar: u.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
+                    role: u.role || 'adopter',
+                    location: u.location || 'Kolkata',
+                    isVerified: u.isVerified ?? true,
+                    joinedDate: u.joinedDate || 'February 2025',
+                    homeType: u.homeType || 'Apartment',
+                    hasYard: u.hasYard ?? false,
+                    otherPets: u.otherPets || 'None',
+                    experienceLevel: u.experienceLevel || 'Intermediate',
+                    bio: u.bio || 'Verified pet lover',
+                  });
+                }
+              });
+              return Array.from(map.values());
+            });
+          }
+        } catch (e) {}
+
         // ☁️ Sync Cloud Messages across all ports (5173 <-> 5174 etc.)
         const cloudMsgs = await convexClient.query(api.messages.listAll);
         if (isMounted && Array.isArray(cloudMsgs) && cloudMsgs.length > 0) {
           // Only add genuinely NEW messages (by id)
           setMessages(prev => {
-            // Collect all existing message IDs for fast lookup
             const existingIds = new Set<string>();
             Object.values(prev).forEach((msgs: ChatMessage[]) =>
               msgs.forEach(m => existingIds.add(m.id))
@@ -597,46 +628,54 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             return changed ? updated : prev;
           });
 
-          // Add conversation thread only if we don't already have one for this dogId+sender combo
+          // Sync conversations with the latest messages from cloud
           setConversations(prev => {
-            const existingConvIds = new Set(prev.map(c => c.id));
-            // Also track which dogIds already have conversations so we don't duplicate
-            const existingDogIds = new Set(prev.map(c => c.dogId));
-            const newConvs: Conversation[] = [];
-            const seenInThisBatch = new Set<string>();
+            const currentDogs = dogsRef.current;
+            let updated = [...prev];
+            let changed = false;
 
+            // Group cloud messages by dogId to get the latest message for each dog
+            const dogLatestMsgMap = new Map<string, any>();
             cloudMsgs.forEach((m: any) => {
-              // Skip if this exact convId already exists
-              if (existingConvIds.has(m.conversationId)) return;
-              // Skip if we already added this convId in this batch
-              if (seenInThisBatch.has(m.conversationId)) return;
-
-              const currentDogs = dogsRef.current;
-              // Find which dog this conversation is about
               const matchedDog = currentDogs.find(d => m.conversationId.includes(d.id));
-              const dogId = matchedDog?.id || '';
-
-              // Skip if we already have ANY conversation for this dogId
-              if (dogId && existingDogIds.has(dogId)) return;
-              // Also skip if we already queued a conversation for this dogId in this batch
-              if (dogId && seenInThisBatch.has(`dog_${dogId}`)) return;
-
-              seenInThisBatch.add(m.conversationId);
-              if (dogId) seenInThisBatch.add(`dog_${dogId}`);
-              if (dogId) existingDogIds.add(dogId);
-
-              newConvs.push({
-                id: m.conversationId,
-                dogId: matchedDog?.id || currentDogs[0]?.id || 'dog_listed',
-                dogName: matchedDog?.name || currentDogs[0]?.name || 'Adoptable Pup',
-                dogAvatar: matchedDog?.coverPhoto || m.senderAvatar,
-                participants: [m.senderId, m.recipientId],
-                lastMessage: m.text,
-                lastMessageTimestamp: 'Just now',
-                unreadCount: 1
-              });
+              const dogId = matchedDog?.id || currentDogs[0]?.id || '';
+              if (dogId) {
+                const prevMsg = dogLatestMsgMap.get(dogId);
+                if (!prevMsg || m.id > prevMsg.id) {
+                  dogLatestMsgMap.set(dogId, { ...m, dogId, matchedDog });
+                }
+              }
             });
-            return newConvs.length > 0 ? [...newConvs, ...prev] : prev;
+
+            dogLatestMsgMap.forEach((latest, dogId) => {
+              const existingIndex = updated.findIndex(c => c.dogId === dogId);
+              if (existingIndex >= 0) {
+                const existing = updated[existingIndex];
+                if (existing.lastMessage !== latest.text) {
+                  updated[existingIndex] = {
+                    ...existing,
+                    lastMessage: latest.text,
+                    lastMessageTimestamp: latest.timestamp || 'Just now',
+                  };
+                  changed = true;
+                }
+              } else {
+                // Add conversation thread
+                updated.unshift({
+                  id: latest.conversationId,
+                  dogId: dogId,
+                  dogName: latest.matchedDog?.name || 'Adoptable Pup',
+                  dogAvatar: latest.matchedDog?.coverPhoto || latest.senderAvatar,
+                  participants: [latest.senderId, latest.recipientId],
+                  lastMessage: latest.text,
+                  lastMessageTimestamp: latest.timestamp || 'Just now',
+                  unreadCount: 1
+                });
+                changed = true;
+              }
+            });
+
+            return changed ? updated : prev;
           });
         }
       } catch (err) {
