@@ -58,6 +58,8 @@ export const ChatView: React.FC = () => {
     const seen = new Set<string>();
     const allCombined: typeof direct = [];
     [...direct, ...dogMatched].forEach(m => {
+      // Never show auto-generated bot messages
+      if (m.id.startsWith('msg_auto_')) return;
       if (!seen.has(m.id)) {
         seen.add(m.id);
         allCombined.push(m);
