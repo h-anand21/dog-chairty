@@ -805,15 +805,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // Use phone-based stable ID so SAME phone always gets SAME user ID across all browser windows/ports
     const stableUserId = `user_${cleanInput}`;
+    const userAvatar = cleanInput.includes('8252990057')
+      ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400'
+      : cleanInput.includes('8252627123')
+      ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'
+      : 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400';
 
     const defaultNewUser: User = {
       id: stableUserId,
-      name: `Pet Lover (${cleanInput.slice(-4)})`,
+      name: cleanInput.includes('8252990057') ? 'Dipu Anand' : `Pet Lover (${cleanInput.slice(-4)})`,
       phone: phone,
-      role: 'adopter',
-      location: '',
-      bio: 'Loving dog guardian and verified pet adopter.',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
+      role: cleanInput.includes('8252990057') ? 'owner' : 'adopter',
+      location: cleanInput.includes('8252990057') ? 'Kolkata, Salt Lake' : 'Kolkata',
+      bio: cleanInput.includes('8252990057') ? 'Loving dog parent looking for a warm, caring forever family for Pogo.' : 'Loving dog guardian and verified pet adopter.',
+      avatar: userAvatar,
       isVerified: true,
       homeType: 'Apartment',
       hasYard: false,
