@@ -445,18 +445,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('pawconnect_reports', JSON.stringify(reports));
   }, [reports]);
 
-  // ☁️ Live Fetch & Sync Convex Cloud Database
-  // Use a ref for dogs so we can access it inside the interval without re-creating it on every dogs change.
-  const dogsRef = React.useRef(dogs);
-  useEffect(() => { dogsRef.current = dogs; }, [dogs]);
-
+  // 🧹 One-time startup cleanup: purge old auto-bot messages & mock data from localStorage
   useEffect(() => {
-    let isMounted = true;
+    const CLEANUP_VERSION = 'v3_no_auto_msgs';
+    if (localStorage.getItem('pawconnect_cleanup') !== CLEANUP_VERSION) {
+      const OLD_MOCK_KEYS = ['conv_alex_sarah_bruno', 'conv_david_sarah_luna', 'conv_david_sarah_milo', 'conv_david_sarah_rocky'];
+      const savedMsgs = localStorage.getItem('pawconnect_messages');
+      if (savedMsgs) {
+        try {
+          const parsed = JSON.parse(savedMsgs);
+          const cleaned: Record<string, unknown[]> = {};
+          for (const [convId, msgs] of Object.entries(parsed)) {
+            if (OLD_MOCK_KEYS.includes(convId)) continue;
+            const realMsgs = (msgs as Array<{ id: string }>).filter(m => !m.id.startsWith('msg_auto_'));
+            if (realMsgs.length > 0) cleaned[convId] = realMsgs;
+          }
+          localStorage.setItem('pawconnect_messages', JSON.stringify(cleaned));
+          // Also purge from in-memory state
+          setMessages(cleaned as Record<string, ChatMessage[]>);
+        } catch (e) {}
+      }
+      localStorage.setItem('pawconnect_cleanup', CLEANUP_VERSION);
+    }
+  }, []);
 
-    // Trigger Cloud Table Initialization (Seeds Dipu Anand & Pogo if empty)
-    try {
-      convexClient.mutation(api.init.initializeTables).catch(() => {});
-    } catch (e) {}
 
     const fetchConvexCloudData = async () => {
       try {
@@ -542,6 +554,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             const updated = { ...prev };
             let changed = false;
             cloudMsgs.forEach((m: any) => {
+              if (m.id.startsWith('msg_auto_')) return; // Block auto bot messages from cloud sync
               if (!existingIds.has(m.id)) {
                 const convMsgs = updated[m.conversationId] || [];
                 updated[m.conversationId] = [...convMsgs, {
