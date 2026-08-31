@@ -176,7 +176,9 @@ class FirebaseAuthService {
     } catch (err: any) {
       console.error('Firebase signInWithPhoneNumber failed:', err);
       let errorText = err.message || 'Firebase Phone Auth dispatch failed.';
-      if (err.code === 'auth/invalid-app-credential') {
+      if (err.code === 'auth/billing-not-enabled' || err.message?.includes('billing-not-enabled')) {
+        errorText = 'Firebase Error: Google Cloud Identity Platform requires a linked Billing account (or Test Phone Numbers in Firebase Console) to send real carrier SMS to Indian numbers.';
+      } else if (err.code === 'auth/invalid-app-credential') {
         errorText = 'Firebase Phone Auth not active or domain blocked. Please add your number in Firebase Console > Authentication > Sign-in method > Phone > "Phone numbers for testing" for instant verification.';
       } else if (err.code === 'auth/operation-not-allowed') {
         errorText = 'SMS for India (+91) needs to be enabled in Firebase Console: Go to Authentication > Settings > SMS Region Policy > Enable India (+91), or enable Phone provider under Sign-in method.';

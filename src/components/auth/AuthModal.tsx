@@ -52,7 +52,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
   const [phoneDigits, setPhoneDigits] = useState('');
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
   const [errorMsg, setErrorMsg] = useState('');
-  const [activeOtpBanner, setActiveOtpBanner] = useState<string | null>(null);
   const [resendTimer, setResendTimer] = useState(30);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -155,12 +154,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
         setErrorMsg(result.message || 'Failed to dispatch SMS OTP. Check your connection.');
         setIsSendingOtp(false);
         return;
-      }
-
-      if (result.code) {
-        setActiveOtpBanner(result.code);
-      } else {
-        setActiveOtpBanner(null);
       }
 
       setStep('otp');
@@ -465,30 +458,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
                 We sent a verification code to <strong className="text-obsidian-950 dark:text-white">+91 {phoneDigits}</strong>. Please check the SMS message on your mobile phone.
               </p>
             </div>
-
-            {/* Instant OTP Fallback Banner */}
-            {activeOtpBanner && (
-              <div
-                onClick={() => {
-                  const digits = activeOtpBanner.slice(0, 6).split('');
-                  const newArr = ['', '', '', '', '', ''];
-                  for (let i = 0; i < digits.length; i++) newArr[i] = digits[i];
-                  setOtpDigits(newArr);
-                }}
-                className="p-3 bg-amber-50 dark:bg-amber-950/60 border-2 border-amber-300 dark:border-amber-700/70 rounded-2xl flex items-center justify-between gap-3 text-xs font-bold text-amber-900 dark:text-amber-200 cursor-pointer hover:bg-amber-100/80 transition-all shadow-xs"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-base">🔑</span>
-                  <div>
-                    <div className="font-black text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400">Instant Verification Code</div>
-                    <div className="text-xs">Click here to auto-fill OTP</div>
-                  </div>
-                </div>
-                <span className="text-sm font-black tracking-widest px-3 py-1 rounded-xl bg-white dark:bg-[#121A2B] text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700 shadow-inner">
-                  {activeOtpBanner}
-                </span>
-              </div>
-            )}
 
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               
