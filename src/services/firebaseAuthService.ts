@@ -18,15 +18,6 @@ export interface FirebaseClientConfig {
 
 const FIREBASE_CONFIG_KEY = 'pawconnect_firebase_config';
 
-const DEFAULT_FIREBASE_CONFIG: FirebaseClientConfig = {
-  apiKey: 'AIzaSyCnM9lxfd-aYv4nVYFLYXhwacI8Qa2EVCQ',
-  authDomain: 'gen-lang-client-0305830492.firebaseapp.com',
-  projectId: 'gen-lang-client-0305830492',
-  storageBucket: 'gen-lang-client-0305830492.firebasestorage.app',
-  messagingSenderId: '955766871610',
-  appId: '1:955766871610:web:f2a7613bfa66d1cfe48703',
-};
-
 class FirebaseAuthService {
   private app: FirebaseApp | null = null;
   private auth: Auth | null = null;
@@ -45,7 +36,7 @@ class FirebaseAuthService {
       console.warn('Could not parse saved Firebase config', e);
     }
 
-    // Fallback to Vite env variables if present
+    // Read strictly from Vite Environment Variables (.env / .env.local / Vercel Env)
     const env = (import.meta as any).env || {};
     const envApiKey = env.VITE_FIREBASE_API_KEY;
     const envAuthDomain = env.VITE_FIREBASE_AUTH_DOMAIN;
@@ -56,13 +47,13 @@ class FirebaseAuthService {
         apiKey: envApiKey,
         authDomain: envAuthDomain,
         projectId: envProjectId,
-        storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || DEFAULT_FIREBASE_CONFIG.storageBucket,
-        messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || DEFAULT_FIREBASE_CONFIG.messagingSenderId,
-        appId: env.VITE_FIREBASE_APP_ID || DEFAULT_FIREBASE_CONFIG.appId,
+        storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || '',
+        messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+        appId: env.VITE_FIREBASE_APP_ID || '',
       };
     }
 
-    return DEFAULT_FIREBASE_CONFIG;
+    return null;
   }
 
   public saveConfig(config: FirebaseClientConfig) {
