@@ -18,6 +18,15 @@ export interface FirebaseClientConfig {
 
 const FIREBASE_CONFIG_KEY = 'pawconnect_firebase_config';
 
+const DEFAULT_FIREBASE_CONFIG: FirebaseClientConfig = {
+  apiKey: 'AIzaSyCnM9lxfd-aYv4nVYFLYXhwacI8Qa2EVCQ',
+  authDomain: 'gen-lang-client-0305830492.firebaseapp.com',
+  projectId: 'gen-lang-client-0305830492',
+  storageBucket: 'gen-lang-client-0305830492.firebasestorage.app',
+  messagingSenderId: '955766871610',
+  appId: '1:955766871610:web:f2a7613bfa66d1cfe48703',
+};
+
 class FirebaseAuthService {
   private app: FirebaseApp | null = null;
   private auth: Auth | null = null;
@@ -47,13 +56,13 @@ class FirebaseAuthService {
         apiKey: envApiKey,
         authDomain: envAuthDomain,
         projectId: envProjectId,
-        storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || '',
-        messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-        appId: env.VITE_FIREBASE_APP_ID || '',
+        storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || DEFAULT_FIREBASE_CONFIG.storageBucket,
+        messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || DEFAULT_FIREBASE_CONFIG.messagingSenderId,
+        appId: env.VITE_FIREBASE_APP_ID || DEFAULT_FIREBASE_CONFIG.appId,
       };
     }
 
-    return null;
+    return DEFAULT_FIREBASE_CONFIG;
   }
 
   public saveConfig(config: FirebaseClientConfig) {
