@@ -86,6 +86,10 @@ class FirebaseAuthService {
     return Boolean(cfg && cfg.apiKey && cfg.projectId);
   }
 
+  public hasActiveConfirmation(): boolean {
+    return Boolean(this.confirmationResult);
+  }
+
   /**
    * Initializes reCAPTCHA on the given container ID (invisible)
    */
