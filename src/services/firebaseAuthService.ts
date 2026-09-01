@@ -91,7 +91,8 @@ class FirebaseAuthService {
   }
 
   /**
-   * Initializes reCAPTCHA on the given container ID (invisible)
+   * Initializes reCAPTCHA following official Firebase Web Modular SDK specifications
+   * https://firebase.google.com/docs/auth/web/phone-auth
    */
   public setupRecaptcha(containerId = 'recaptcha-container'): RecaptchaVerifier | null {
     if (!this.auth) {
@@ -109,17 +110,31 @@ class FirebaseAuthService {
         document.body.appendChild(containerEl);
       }
 
-      if (!this.recaptchaVerifier) {
-        this.recaptchaVerifier = new RecaptchaVerifier(this.auth, containerEl, {
-          size: 'normal',
-          callback: (response: any) => {
-            console.log('Google reCAPTCHA token verified successfully:', response);
-          },
-          'expired-callback': () => {
-            console.warn('reCAPTCHA expired, please check again.');
-          },
-        });
+      // Clear previous verifier instance to avoid widget reuse collision
+      if (this.recaptchaVerifier) {
+        try {
+          this.recaptchaVerifier.clear();
+        } catch (e) {
+          // ignore
+        }
+        this.recaptchaVerifier = null;
       }
+
+      this.recaptchaVerifier = new RecaptchaVerifier(this.auth, containerEl, {
+        size: 'invisible',
+        callback: (response: any) => {
+          console.log('Firebase reCAPTCHA solved successfully:', response);
+        },
+        'expired-callback': () => {
+          console.warn('Firebase reCAPTCHA expired. Resetting verifier...');
+          if (this.recaptchaVerifier) {
+            try {
+              this.recaptchaVerifier.clear();
+            } catch (e) {}
+            this.recaptchaVerifier = null;
+          }
+        },
+      });
 
       return this.recaptchaVerifier;
     } catch (err) {
