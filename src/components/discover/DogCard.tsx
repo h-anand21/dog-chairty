@@ -171,22 +171,25 @@ export const DogCard: React.FC<DogCardProps> = ({ dog, onSelect }) => {
           </div>
 
           {dog.status !== 'adopted' ? (
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <button
+                type="button"
                 onClick={handleChatClick}
-                className="bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-500 text-sky-700 dark:text-sky-300 hover:text-white border border-sky-200 dark:border-sky-800/80 hover:border-sky-500 px-3 py-1.5 rounded-full text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                className="bg-obsidian-100 hover:bg-sky-50 dark:bg-white/10 dark:hover:bg-sky-950/80 text-obsidian-800 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-300 border border-obsidian-200/80 dark:border-white/10 hover:border-sky-300 dark:hover:border-sky-700/80 px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
                 title={`Chat directly with ${dog.currentOwnerName} about ${dog.name}`}
               >
-                <MessageSquare className="w-3.5 h-3.5" />
+                <MessageSquare className="w-3.5 h-3.5 text-sky-500" />
                 <span>Chat</span>
               </button>
 
               <button
+                type="button"
                 onClick={handleAdoptClick}
-                className="bg-coral-50 dark:bg-coral-950/60 hover:bg-coral-500 text-coral-600 dark:text-coral-300 hover:text-white border border-coral-200 dark:border-coral-800/80 hover:border-coral-500 px-3.5 py-1.5 rounded-full text-xs font-black transition-all shrink-0 hover:shadow-glow-coral flex items-center gap-1 cursor-pointer"
+                className="bg-gradient-to-r from-coral-500 via-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white px-4 py-1.5 rounded-full text-xs font-black tracking-wide transition-all shrink-0 shadow-glow-coral hover:shadow-lg flex items-center gap-1.5 cursor-pointer active:scale-95 hover:scale-105"
+                title={`Apply to adopt ${dog.name}`}
               >
                 <span>Adopt</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-white stroke-[2.5]" />
               </button>
             </div>
           ) : (
