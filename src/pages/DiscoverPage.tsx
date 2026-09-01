@@ -109,7 +109,17 @@ const HERO_DOG_SLIDES = [
 ];
 
 export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
-  const { dogs, setSelectedDog, setIsApplyModalOpen, setIsListDogOpen } = useApp();
+  const {
+    dogs,
+    setSelectedDog,
+    setIsApplyModalOpen,
+    setIsListDogOpen,
+    currentUser,
+    requireAuth,
+    successStories,
+    likeSuccessStory,
+    setIsShareStoryOpen,
+  } = useApp();
   const { playPawPop, playDogBark } = useAudio();
 
   // Search & Filter State
@@ -719,65 +729,104 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-black text-obsidian-700 dark:text-slate-300">
-              <Award className="w-4 h-4 text-amber-500" />
-              <span>100% Genuine Handover Verified</span>
+            <div className="flex items-center gap-3 flex-wrap">
+              <button
+                type="button"
+                onClick={() => {
+                  playPawPop();
+                  requireAuth("Log in with your mobile number to share your dog's Happy Tails adoption story!", () => {
+                    setIsShareStoryOpen(true);
+                  });
+                }}
+                className="btn-primary text-white px-5 py-2.5 rounded-full text-xs font-black shadow-glow-coral flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Share My Story 🐾</span>
+              </button>
+
+              <div className="hidden sm:flex items-center gap-1.5 text-xs font-black px-3.5 py-2 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-800 dark:text-amber-300">
+                <Award className="w-4 h-4 text-amber-500" />
+                <span>100% Genuine Handover Verified</span>
+              </div>
             </div>
           </div>
 
-          {realAdoptedDogs.length === 0 ? (
-            <div className="glass-card rounded-4xl p-10 text-center border border-white dark:border-white/10 max-w-lg mx-auto space-y-3">
-              <div className="text-4xl">🏆✨</div>
-              <h3 className="text-lg font-black font-display text-obsidian-950 dark:text-white">
-                No Real Adoption Handovers Yet
-              </h3>
-              <p className="text-xs text-obsidian-600 dark:text-slate-300 leading-relaxed font-medium">
-                When real pet parents complete a verified 6-Stage Handover Protocol, their official Gold Certificate and Happy Tails story will automatically appear here!
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {realAdoptedDogs.map(dog => (
-                <div
-                  key={dog.id}
-                  className="bg-white dark:bg-[#121A2B] rounded-3xl p-6 border border-obsidian-200 dark:border-white/10 shadow-sm flex flex-col justify-between space-y-4 relative hover:shadow-card transition-all"
-                >
-                  <div className="space-y-4">
-                    <div className="relative h-48 rounded-2xl overflow-hidden bg-obsidian-100 dark:bg-white/5">
-                      <img
-                        src={dog.coverPhoto}
-                        alt={dog.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-3 right-3 bg-emerald-500 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-md">
-                        ✓ Adopted
-                      </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {successStories.map(story => (
+              <div
+                key={story.id}
+                className="bg-white dark:bg-[#121A2B] rounded-3xl p-6 border border-obsidian-200 dark:border-white/10 shadow-sm flex flex-col justify-between space-y-4 relative hover:shadow-card transition-all group"
+              >
+                <div className="space-y-4">
+                  <div className="relative h-52 rounded-2xl overflow-hidden bg-obsidian-100 dark:bg-white/5">
+                    <img
+                      src={story.dogPhoto}
+                      alt={story.dogName}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 right-3 bg-emerald-500 text-white px-3 py-1 rounded-full text-[11px] font-black shadow-md flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span>Adopted</span>
                     </div>
+                  </div>
 
-                    <div>
-                      <h3 className="text-base font-black text-obsidian-950 dark:text-white">
-                        {dog.name} ({dog.breed})
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-black text-obsidian-950 dark:text-white">
+                        {story.dogName} ({story.dogBreed})
                       </h3>
-                      <p className="text-xs font-semibold text-obsidian-500 dark:text-slate-400">
-                        Adopted by <strong className="text-obsidian-900 dark:text-white">{dog.newOwnerName || 'Verified Parent'}</strong> • {dog.location}
+                      <span className="text-[10px] font-bold text-obsidian-400 dark:text-slate-500">
+                        {story.date}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      {story.adopterAvatar ? (
+                        <img
+                          src={story.adopterAvatar}
+                          alt={story.adopterName}
+                          className="w-5 h-5 rounded-full object-cover ring-1 ring-coral-300"
+                        />
+                      ) : (
+                        <span className="w-5 h-5 rounded-full bg-coral-100 dark:bg-coral-900/60 text-coral-600 dark:text-coral-400 text-[10px] font-black flex items-center justify-center">
+                          {story.adopterName.charAt(0)}
+                        </span>
+                      )}
+                      <p className="text-xs font-semibold text-obsidian-600 dark:text-slate-300 truncate">
+                        Adopted by <strong className="text-obsidian-900 dark:text-white">{story.adopterName}</strong> • {story.location}
                       </p>
                     </div>
-
-                    <p className="text-xs text-obsidian-700 dark:text-slate-300 leading-relaxed italic font-normal">
-                      &ldquo;Completed verified handover on PawConnect with full vet records.&rdquo;
-                    </p>
                   </div>
 
-                  <div className="pt-3 border-t border-obsidian-200 dark:border-white/10 flex items-center justify-between text-[11px] font-bold text-obsidian-500 dark:text-slate-400">
-                    <span>{dog.adoptedDate || 'Recently Adopted'}</span>
-                    <span className="text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-lg border border-amber-200 dark:border-amber-800/60">
-                      Gold Cert #{dog.certificateId || 'CERT-PAW'}
-                    </span>
-                  </div>
+                  <p className="text-xs text-obsidian-700 dark:text-slate-300 leading-relaxed italic font-normal bg-obsidian-50 dark:bg-white/5 p-3.5 rounded-2xl border border-obsidian-100 dark:border-white/5">
+                    &ldquo;{story.story}&rdquo;
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
+
+                <div className="pt-2 flex items-center justify-between border-t border-obsidian-100 dark:border-white/10 text-xs">
+                  <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-bold text-[11px]">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                    <span>Verified Protocol Handover</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPawPop();
+                      likeSuccessStory(story.id);
+                    }}
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition-all cursor-pointer ${
+                      story.isLiked
+                        ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 border border-rose-200 dark:border-rose-800/80'
+                        : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-700 dark:text-slate-300 hover:text-rose-600'
+                    }`}
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${story.isLiked ? 'fill-rose-500 text-rose-500' : ''}`} />
+                    <span>{story.likesCount}</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
 
         </div>
       </section>

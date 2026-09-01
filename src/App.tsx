@@ -15,6 +15,7 @@ import { ListDogModal } from './components/adoption/ListDogModal';
 import { ReportListingModal } from './components/adoption/ReportListingModal';
 import { CelebrationModal } from './components/common/CelebrationModal';
 import { AdoptionCertificateModal } from './components/adoption/AdoptionCertificateModal';
+import { ShareStoryModal } from './components/adoption/ShareStoryModal';
 import { AuthModal } from './components/auth/AuthModal';
 
 export const App: React.FC = () => {
@@ -24,6 +25,8 @@ export const App: React.FC = () => {
     setSelectedDog,
     isAuthModalOpen,
     setIsAuthModalOpen,
+    isShareStoryOpen,
+    setIsShareStoryOpen,
   } = useApp();
 
   return (
@@ -54,6 +57,10 @@ export const App: React.FC = () => {
       <ReportListingModal />
       <CelebrationModal />
       <AdoptionCertificateModal />
+      <ShareStoryModal
+        isOpen={isShareStoryOpen}
+        onClose={() => setIsShareStoryOpen(false)}
+      />
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
