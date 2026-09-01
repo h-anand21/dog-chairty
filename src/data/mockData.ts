@@ -213,3 +213,46 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     read: false
   }
 ];
+
+export const INITIAL_SUCCESS_STORIES = [
+  {
+    id: 'story_bella',
+    dogName: 'Bella',
+    dogBreed: 'Golden Retriever',
+    dogPhoto: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=800&auto=format&fit=crop&q=80',
+    adopterName: 'Ananya Sharma',
+    adopterAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
+    location: 'Bandra, Mumbai',
+    story: 'Bella brought so much warmth and energy into our home! The 6-Stage verified handover made everything completely transparent and safe.',
+    date: 'February 2025',
+    likesCount: 142,
+    isLiked: false,
+  },
+  {
+    id: 'story_rocky',
+    dogName: 'Rocky',
+    dogBreed: 'Beagle',
+    dogPhoto: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=800&auto=format&fit=crop&q=80',
+    adopterName: 'Vikram Patel',
+    adopterAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+    location: 'Indiranagar, Bengaluru',
+    story: 'From our first video meet to the park meet & greet, PawConnect made adopting Rocky the smoothest experience. He loves his daily park runs!',
+    date: 'January 2025',
+    likesCount: 98,
+    isLiked: false,
+  },
+  {
+    id: 'story_daisy',
+    dogName: 'Daisy',
+    dogBreed: 'Indie Rescue Pup',
+    dogPhoto: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=800&auto=format&fit=crop&q=80',
+    adopterName: 'Pooja Roy',
+    adopterAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
+    location: 'Salt Lake, Kolkata',
+    story: 'Adopting Daisy was the best decision of our lives. Her foster guardian gave us all medical and vaccination records digitally through PawConnect.',
+    date: 'December 2024',
+    likesCount: 175,
+    isLiked: false,
+  }
+];
+

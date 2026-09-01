@@ -274,3 +274,18 @@ export interface GeocodedLocation {
   lat: number;
   lng: number;
 }
+
+export interface SuccessStory {
+  id: string;
+  dogName: string;
+  dogBreed: string;
+  dogPhoto: string;
+  adopterName: string;
+  adopterAvatar?: string;
+  location: string;
+  story: string;
+  date: string;
+  likesCount: number;
+  isLiked?: boolean;
+}
+

@@ -13,6 +13,7 @@ import {
   ReportItem,
   NotificationItem,
   OtpSession,
+  SuccessStory,
 } from '../types';
 import {
   INITIAL_USERS,
@@ -21,6 +22,7 @@ import {
   INITIAL_POSTS,
   INITIAL_STORIES,
   INITIAL_NOTIFICATIONS,
+  INITIAL_SUCCESS_STORIES,
 } from '../data/mockData';
 import { otpService } from '../services/otpService';
 import { socketEngine, SocketMessagePayload } from '../services/socketService';
@@ -125,6 +127,11 @@ interface AppContextType {
   } | null>>;
   viewingCertificateDog: Dog | null;
   setViewingCertificateDog: (dog: Dog | null) => void;
+  successStories: SuccessStory[];
+  addSuccessStory: (story: SuccessStory) => void;
+  likeSuccessStory: (id: string) => void;
+  isShareStoryOpen: boolean;
+  setIsShareStoryOpen: (open: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -391,6 +398,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     type: 'match' | 'transfer';
   } | null>(null);
   const [viewingCertificateDog, setViewingCertificateDog] = useState<Dog | null>(null);
+  const [isShareStoryOpen, setIsShareStoryOpen] = useState(false);
+
+  // 13. Happy Tails & Adoption Success Stories
+  const [successStories, setSuccessStories] = useState<SuccessStory[]>(() => {
+    const saved = localStorage.getItem('pawconnect_success_stories');
+    return saved ? JSON.parse(saved) : INITIAL_SUCCESS_STORIES;
+  });
+
+  const addSuccessStory = (story: SuccessStory) => {
+    setSuccessStories(prev => {
+      const updated = [story, ...prev];
+      localStorage.setItem('pawconnect_success_stories', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const likeSuccessStory = (id: string) => {
+    setSuccessStories(prev => {
+      const updated = prev.map(s => {
+        if (s.id === id) {
+          return {
+            ...s,
+            isLiked: !s.isLiked,
+            likesCount: s.isLiked ? s.likesCount - 1 : s.likesCount + 1,
+          };
+        }
+        return s;
+      });
+      localStorage.setItem('pawconnect_success_stories', JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   // Sync to LocalStorage
   useEffect(() => {
@@ -1769,6 +1808,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setCelebrationData,
         viewingCertificateDog,
         setViewingCertificateDog,
+        successStories,
+        addSuccessStory,
+        likeSuccessStory,
+        isShareStoryOpen,
+        setIsShareStoryOpen,
       }}
     >
       {children}
