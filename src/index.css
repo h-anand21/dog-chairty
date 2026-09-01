@@ -6,21 +6,17 @@
   body {
     @apply bg-[#F2EDE4] text-[#1A1C20] antialiased selection:bg-coral-500 selection:text-white font-sans transition-colors duration-300;
     background-image: 
-      radial-gradient(circle at 85% 10%, rgba(255, 90, 54, 0.05) 0%, transparent 40%),
-      radial-gradient(circle at 10% 40%, rgba(14, 165, 233, 0.04) 0%, transparent 45%),
-      radial-gradient(circle at 70% 80%, rgba(245, 158, 11, 0.04) 0%, transparent 45%),
-      radial-gradient(circle at 30% 95%, rgba(16, 185, 129, 0.03) 0%, transparent 40%);
+      radial-gradient(circle at 85% 10%, rgba(255, 90, 54, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 10% 40%, rgba(14, 165, 233, 0.03) 0%, transparent 45%),
+      radial-gradient(circle at 70% 80%, rgba(245, 158, 11, 0.03) 0%, transparent 45%);
     background-attachment: fixed;
   }
 
   .dark body {
-    @apply bg-[#0B0F19] text-[#F8FAFC];
+    @apply bg-[#0A0D14] text-[#E2E8F0];
     background-image: 
-      radial-gradient(circle at 85% 10%, rgba(255, 90, 54, 0.15) 0%, transparent 45%),
-      radial-gradient(circle at 15% 35%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
-      radial-gradient(circle at 75% 70%, rgba(14, 165, 233, 0.10) 0%, transparent 45%),
-      radial-gradient(circle at 25% 90%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 50% 50%, rgba(18, 26, 44, 0.95) 0%, rgba(11, 15, 25, 1) 100%);
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255, 90, 54, 0.06), transparent 70%),
+      radial-gradient(ellipse 60% 30% at 80% 60%, rgba(14, 165, 233, 0.03), transparent 60%);
     background-attachment: fixed;
   }
 
@@ -29,18 +25,14 @@
   }
 
   .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
-    @apply text-white;
-  }
-
-  .dark p {
-    color: #CBD5E1;
+    @apply text-[#F8FAFC];
   }
 }
 
 /* Custom modern scrollbars */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -53,7 +45,7 @@
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #242E42;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -70,9 +62,11 @@
 }
 
 .dark .glass-nav {
-  background: rgba(18, 26, 44, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 35px -10px rgba(0, 0, 0, 0.6);
+  background: rgba(12, 16, 26, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
 }
 
 .glass-card {
@@ -84,9 +78,11 @@
 }
 
 .dark .glass-card {
-  background: rgba(22, 32, 54, 0.90);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.5);
+  background: rgba(16, 22, 34, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.5);
 }
 
 .glass-pill {
@@ -97,8 +93,8 @@
 }
 
 .dark .glass-pill {
-  background: rgba(30, 41, 68, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(22, 30, 46, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-dropdown {
@@ -110,9 +106,11 @@
 }
 
 .dark .glass-dropdown {
-  background: rgba(19, 28, 48, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8);
+  background: rgba(14, 19, 30, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
 }
 
 /* Gradient Text Utilities */
