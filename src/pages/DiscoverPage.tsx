@@ -4,6 +4,7 @@ import { DogCard } from '../components/discover/DogCard';
 import { PawMap } from '../components/map/PawMap';
 import { CitySearchInput } from '../components/common/CitySearchInput';
 import { PillarDetailModal, PillarType } from '../components/common/PillarDetailModal';
+import { FaqSection } from '../components/common/FaqSection';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
 import {
@@ -830,6 +831,9 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
         </div>
       </section>
+
+      {/* ❓ FAQ SECTION */}
+      <FaqSection />
 
       {/* 🐾 5. LIST A DOG / REHOMING SUPPORT BANNER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
