@@ -202,8 +202,8 @@ export const FaqSection: React.FC = () => {
         {/* Accordion Questions List */}
         <div className="space-y-3">
           {filteredFaqs.length === 0 ? (
-            <div className="p-10 text-center rounded-3xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/60 dark:border-white/10 space-y-2">
-              <div className="text-3xl">🔍🐶</div>
+            <div className="p-10 text-center rounded-3xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/60 dark:border-white/10 space-y-2 animate-in fade-in zoom-in-95 duration-200">
+              <div className="text-3xl animate-bounce">🔍🐶</div>
               <h4 className="text-sm font-black text-obsidian-900 dark:text-white">
                 No matching questions found
               </h4>
@@ -212,104 +212,117 @@ export const FaqSection: React.FC = () => {
               </p>
             </div>
           ) : (
-            filteredFaqs.map(item => {
+            filteredFaqs.map((item, index) => {
               const isExpanded = expandedId === item.id;
               const userFeedback = feedback[item.id];
 
               return (
                 <div
                   key={item.id}
-                  className={`rounded-3xl border transition-all overflow-hidden ${
+                  style={{ animationDelay: `${index * 40}ms` }}
+                  className={`rounded-3xl border transition-all duration-300 overflow-hidden group animate-in fade-in slide-in-from-bottom-2 ${
                     isExpanded
-                      ? 'bg-white dark:bg-[#121A2B] border-coral-400/80 dark:border-coral-500/60 shadow-md'
-                      : 'bg-white/70 dark:bg-[#121A2B]/70 hover:bg-white dark:hover:bg-[#121A2B] border-obsidian-200/80 dark:border-white/10'
+                      ? 'bg-white dark:bg-[#121A2B] border-coral-400/90 dark:border-coral-500/70 shadow-lg shadow-coral-500/5 ring-2 ring-coral-500/10'
+                      : 'bg-white/80 dark:bg-[#121A2B]/80 hover:bg-white dark:hover:bg-[#121A2B] border-obsidian-200/80 dark:border-white/10 hover:border-coral-300 dark:hover:border-white/20 hover:shadow-sm'
                   }`}
                 >
                   <button
                     type="button"
                     onClick={() => toggleAccordion(item.id)}
-                    className="w-full p-5 sm:p-6 flex items-center justify-between gap-4 text-left cursor-pointer"
+                    className="w-full p-5 sm:p-6 flex items-center justify-between gap-4 text-left cursor-pointer transition-colors duration-200"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center gap-3.5 min-w-0">
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                        className={`w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${
                           isExpanded
-                            ? 'bg-coral-500 text-white'
-                            : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-600 dark:text-slate-300'
+                            ? 'bg-coral-500 text-white shadow-glow-coral scale-105'
+                            : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-600 dark:text-slate-300 group-hover:scale-105 group-hover:text-coral-500'
                         }`}
                       >
-                        <HelpCircle className="w-4 h-4" />
+                        <HelpCircle className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
                       </div>
                       <div className="min-w-0">
-                        <span className="text-[10px] font-black text-coral-600 dark:text-coral-400 uppercase tracking-wider block mb-0.5">
+                        <span className="text-[10px] font-black text-coral-600 dark:text-coral-400 uppercase tracking-wider block mb-0.5 transition-colors">
                           {item.categoryLabel}
                         </span>
-                        <h3 className="text-sm sm:text-base font-black text-obsidian-950 dark:text-white leading-snug">
+                        <h3 className={`text-sm sm:text-base font-black transition-colors duration-200 leading-snug ${
+                          isExpanded ? 'text-coral-600 dark:text-coral-400' : 'text-obsidian-950 dark:text-white group-hover:text-coral-500'
+                        }`}>
                           {item.question}
                         </h3>
                       </div>
                     </div>
 
                     <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center bg-obsidian-100 dark:bg-white/10 shrink-0 transition-transform duration-300 ${
-                        isExpanded ? 'rotate-180 bg-coral-100 dark:bg-coral-950/60 text-coral-600' : 'text-obsidian-500'
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ease-out ${
+                        isExpanded
+                          ? 'rotate-180 bg-coral-100 dark:bg-coral-950/80 text-coral-600 scale-105'
+                          : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-500 group-hover:bg-coral-50 group-hover:text-coral-600'
                       }`}
                     >
-                      <ChevronDown className="w-4 h-4" />
+                      <ChevronDown className="w-4 h-4 transition-transform duration-300" />
                     </div>
                   </button>
 
-                  {isExpanded && (
-                    <div className="px-5 sm:px-6 pb-6 pt-1 text-xs text-obsidian-700 dark:text-slate-300 leading-relaxed space-y-4 border-t border-obsidian-100 dark:border-white/5 animate-in fade-in duration-200">
-                      <p className="text-xs sm:text-sm font-normal">
-                        {item.answer}
-                      </p>
+                  {/* Smooth Animated Accordion Drawer */}
+                  <div
+                    className={`grid transition-all duration-300 ease-in-out ${
+                      isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="px-5 sm:px-6 pb-6 pt-2 text-xs text-obsidian-700 dark:text-slate-300 leading-relaxed space-y-4 border-t border-obsidian-100 dark:border-white/5">
+                        <p className="text-xs sm:text-sm font-normal leading-relaxed">
+                          {item.answer}
+                        </p>
 
-                      {item.highlights && item.highlights.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-1">
-                          {item.highlights.map((tag, idx) => (
-                            <span
-                              key={idx}
-                              className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold text-[11px] border border-emerald-200/80 dark:border-emerald-800/50"
+                        {item.highlights && item.highlights.length > 0 && (
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            {item.highlights.map((tag, idx) => (
+                              <span
+                                key={idx}
+                                style={{ animationDelay: `${idx * 50}ms` }}
+                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 font-bold text-[11px] border border-emerald-200 dark:border-emerald-800/60 shadow-2xs hover:scale-105 transition-transform cursor-default"
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                                <span>{tag}</span>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="pt-3 border-t border-obsidian-100 dark:border-white/5 flex items-center justify-between text-[11px] font-semibold text-obsidian-500 dark:text-slate-400">
+                          <span>Was this explanation helpful?</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={e => handleFeedback(item.id, 'up', e)}
+                              className={`px-2.5 py-1 rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-1 hover:scale-105 active:scale-95 ${
+                                userFeedback === 'up'
+                                  ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 font-bold shadow-xs'
+                                  : 'hover:bg-obsidian-100 dark:hover:bg-white/10'
+                              }`}
                             >
-                              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                              <span>{tag}</span>
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      <div className="pt-3 border-t border-obsidian-100 dark:border-white/5 flex items-center justify-between text-[11px] font-semibold text-obsidian-500 dark:text-slate-400">
-                        <span>Was this helpful?</span>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={e => handleFeedback(item.id, 'up', e)}
-                            className={`p-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1 ${
-                              userFeedback === 'up'
-                                ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700'
-                                : 'hover:bg-obsidian-100 dark:hover:bg-white/10'
-                            }`}
-                          >
-                            <ThumbsUp className="w-3.5 h-3.5" />
-                            <span>Yes</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={e => handleFeedback(item.id, 'down', e)}
-                            className={`p-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1 ${
-                              userFeedback === 'down'
-                                ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-700'
-                                : 'hover:bg-obsidian-100 dark:hover:bg-white/10'
-                            }`}
-                          >
-                            <ThumbsDown className="w-3.5 h-3.5" />
-                            <span>No</span>
-                          </button>
+                              <ThumbsUp className={`w-3.5 h-3.5 ${userFeedback === 'up' ? 'fill-emerald-600' : ''}`} />
+                              <span>Yes</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={e => handleFeedback(item.id, 'down', e)}
+                              className={`px-2.5 py-1 rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-1 hover:scale-105 active:scale-95 ${
+                                userFeedback === 'down'
+                                  ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 font-bold shadow-xs'
+                                  : 'hover:bg-obsidian-100 dark:hover:bg-white/10'
+                              }`}
+                            >
+                              <ThumbsDown className={`w-3.5 h-3.5 ${userFeedback === 'down' ? 'fill-rose-600' : ''}`} />
+                              <span>No</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })
