@@ -833,26 +833,26 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
       {/* 🐾 5. LIST A DOG / REHOMING SUPPORT BANNER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-4xl sm:rounded-5xl p-8 sm:p-12 bg-gradient-to-r from-obsidian-950 via-[#131C2E] to-obsidian-950 text-white overflow-hidden shadow-2xl border border-obsidian-800 dark:border-white/15 text-left">
+        <div className="relative rounded-4xl sm:rounded-5xl p-8 sm:p-12 bg-gradient-to-br from-white via-[#FFF7F4] to-amber-50/80 dark:bg-gradient-to-r dark:from-obsidian-950 dark:via-[#131C2E] dark:to-obsidian-950 text-obsidian-950 dark:text-white overflow-hidden shadow-elevated border border-coral-200/70 dark:border-white/15 text-left transition-colors duration-300">
           
           {/* Ambient Background Glow Blobs */}
-          <div className="absolute right-0 top-0 w-96 h-96 bg-coral-500/25 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute left-0 bottom-0 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute right-0 top-0 w-96 h-96 bg-coral-400/15 dark:bg-coral-500/25 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute left-0 bottom-0 w-80 h-80 bg-amber-400/15 dark:bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             
             {/* Left Column: Headline & Action */}
             <div className="lg:col-span-7 space-y-5">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-coral-300 font-black text-xs uppercase tracking-wider backdrop-blur-md border border-white/15">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-coral-100/90 dark:bg-white/10 text-coral-700 dark:text-coral-300 font-black text-xs uppercase tracking-wider backdrop-blur-md border border-coral-200 dark:border-white/15 shadow-xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>Safe Rehoming Guaranteed</span>
               </div>
 
-              <h2 className="text-3xl sm:text-5xl font-black font-display tracking-tight text-white leading-tight">
+              <h2 className="text-3xl sm:text-5xl font-black font-display tracking-tight text-obsidian-950 dark:text-white leading-tight">
                 Need to Find a Loving Home for Your Dog?
               </h2>
 
-              <p className="text-xs sm:text-base text-slate-200 leading-relaxed font-normal max-w-xl">
+              <p className="text-xs sm:text-base text-obsidian-600 dark:text-slate-200 leading-relaxed font-normal max-w-xl">
                 Life circumstances change. Ensure your companion gets the best possible home with our verified adopter questionnaires, in-person park meets, and legal adoption agreements. 100% Free.
               </p>
 
@@ -863,14 +863,14 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
                     playPawPop();
                     setIsListDogOpen(true);
                   }}
-                  className="btn-primary text-white px-8 py-4 rounded-full font-black text-sm shadow-glow-coral flex items-center gap-2 cursor-pointer transition-transform hover:scale-105"
+                  className="btn-primary text-white px-8 py-4 rounded-full font-black text-sm shadow-glow-coral flex items-center gap-2 cursor-pointer transition-transform hover:scale-105 active:scale-95"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Post Your Dog for Adoption (Free) 🚀</span>
                 </button>
 
-                <span className="text-xs text-slate-300 font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs text-obsidian-600 dark:text-slate-300 font-semibold flex items-center gap-1.5 bg-white/80 dark:bg-white/5 px-3 py-2 rounded-full border border-obsidian-200/60 dark:border-white/10 shadow-xs">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                   <span>12,000+ happy Indian adoptions</span>
                 </span>
               </div>
@@ -878,7 +878,7 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
 
             {/* Right Column: Dog Photo Feature Card */}
             <div className="lg:col-span-5 relative flex justify-center lg:justify-end">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-white/20 w-full max-w-sm group">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-white/20 w-full max-w-sm group">
                 <img
                   src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&auto=format&fit=crop&q=80"
                   alt="Happy adoption dogs"
