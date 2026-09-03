@@ -73,12 +73,15 @@ const FAQ_ITEMS: FaqItem[] = [
 ];
 
 export const FaqSection: React.FC = () => {
-  const { playPawPop } = useAudio();
+  const { playPawPop, playSuccessChime } = useAudio();
 
   const [activeCategory, setActiveCategory] = useState<'all' | 'adoption' | 'safety' | 'rehoming' | 'fees'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>('faq_1');
   const [feedback, setFeedback] = useState<Record<string, 'up' | 'down'>>({});
+  
+  // ⚡ Interactive Simulator State for FAQ 1
+  const [simulationMode, setSimulationMode] = useState<'pawconnect' | 'breeder'>('pawconnect');
 
   const categories = [
     { key: 'all', label: 'All FAQs' },
@@ -117,35 +120,123 @@ export const FaqSection: React.FC = () => {
     switch (faqId) {
       case 'faq_1':
         return (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            {/* Commercial Comparison */}
-            <div className="p-4 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 space-y-2">
-              <div className="flex items-center gap-2 text-rose-700 dark:text-rose-400 font-black text-xs">
-                <XCircle className="w-4 h-4 text-rose-500" />
-                <span>Commercial Breeders / Pet Shops</span>
+          <div className="space-y-3 pt-2">
+            {/* Interactive Toggle Switch */}
+            <div className="flex items-center justify-between p-1.5 rounded-2xl bg-obsidian-100 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10">
+              <span className="text-[11px] font-black text-obsidian-700 dark:text-slate-300 pl-2">
+                🎮 Live Model Comparison:
+              </span>
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    playPawPop();
+                    setSimulationMode('pawconnect');
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    simulationMode === 'pawconnect'
+                      ? 'bg-emerald-500 text-white shadow-md scale-102'
+                      : 'text-obsidian-600 dark:text-slate-400 hover:text-obsidian-900'
+                  }`}
+                >
+                  ✅ PawConnect (₹0)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    playPawPop();
+                    setSimulationMode('breeder');
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    simulationMode === 'breeder'
+                      ? 'bg-rose-500 text-white shadow-md scale-102'
+                      : 'text-obsidian-600 dark:text-slate-400 hover:text-obsidian-900'
+                  }`}
+                >
+                  ❌ Commercial Market
+                </button>
               </div>
-              <ul className="space-y-1.5 text-[11px] font-medium text-rose-900 dark:text-rose-200">
-                <li className="flex items-center gap-1.5">❌ ₹15,000 - ₹50,000 purchase price</li>
-                <li className="flex items-center gap-1.5">❌ Unethical breeding & fake papers</li>
-                <li className="flex items-center gap-1.5">❌ No verified post-adoption support</li>
-              </ul>
             </div>
 
-            {/* PawConnect Protocol */}
-            <div className="p-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 space-y-2 relative overflow-hidden shadow-xs">
-              <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-black text-xs">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>PawConnect Free Handover</span>
+            {/* Dynamic Animated Flow Banner */}
+            {simulationMode === 'pawconnect' ? (
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-white to-emerald-50/80 dark:from-emerald-950/40 dark:via-[#121A2B] dark:to-emerald-950/40 border border-emerald-300 dark:border-emerald-800/80 space-y-3 animate-in fade-in zoom-in-98 duration-300">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                    <span className="text-xs font-black text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
+                      Direct Guardian Handover (Zero Exploitation)
+                    </span>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-emerald-500 text-white font-black text-xs shadow-glow-coral">
+                    Total Cost: ₹0
+                  </span>
+                </div>
+
+                {/* Animated 3-Node Direct Pipeline */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-center text-center">
+                  <div className="p-2.5 rounded-xl bg-white dark:bg-white/5 border border-emerald-200 dark:border-emerald-800/60 shadow-2xs space-y-0.5">
+                    <div className="text-sm">🐶 <strong>Loving Guardian</strong></div>
+                    <div className="text-[10px] text-emerald-700 dark:text-emerald-400 font-extrabold">₹0 Listing Cost</div>
+                  </div>
+
+                  <div className="flex flex-col items-center justify-center text-emerald-600 dark:text-emerald-400 font-black text-[11px] py-1">
+                    <span className="animate-pulse">⚡ Direct Protocol</span>
+                    <ArrowRight className="w-4 h-4" />
+                    <span className="text-[9px] text-emerald-700 dark:text-emerald-400">0% Commission</span>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-white dark:bg-white/5 border border-emerald-200 dark:border-emerald-800/60 shadow-2xs space-y-0.5">
+                    <div className="text-sm">🏡 <strong>Verified Adopter</strong></div>
+                    <div className="text-[10px] text-emerald-700 dark:text-emerald-400 font-extrabold">₹0 Adoption Fee</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-emerald-900 dark:text-emerald-200 pt-1 border-t border-emerald-200/60 dark:border-emerald-800/40">
+                  <div>✓ Free Vet Records</div>
+                  <div>✓ Free Legal Contract</div>
+                  <div>✓ Verified Transfer ID</div>
+                </div>
               </div>
-              <ul className="space-y-1.5 text-[11px] font-bold text-emerald-950 dark:text-emerald-200">
-                <li className="flex items-center gap-1.5">✅ ₹0 Platform Fee • 100% Free</li>
-                <li className="flex items-center gap-1.5">✅ Free Legal Digital Agreement</li>
-                <li className="flex items-center gap-1.5">✅ Original Vet Passbook Included</li>
-              </ul>
-              <div className="absolute right-2 bottom-2 text-[10px] font-black bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-100 px-2 py-0.5 rounded-full">
-                Pure Adoption 🐾
+            ) : (
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-rose-50 via-white to-rose-50/80 dark:from-rose-950/40 dark:via-[#121A2B] dark:to-rose-950/40 border border-rose-300 dark:border-rose-900 space-y-3 animate-in fade-in zoom-in-98 duration-300">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+                    <span className="text-xs font-black text-rose-800 dark:text-rose-400 uppercase tracking-wider">
+                      Commercial Breeder / Pet Shop Trap
+                    </span>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-rose-600 text-white font-black text-xs">
+                    Price: ₹15,000 - ₹50,000+
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-center text-center">
+                  <div className="p-2.5 rounded-xl bg-white dark:bg-white/5 border border-rose-200 dark:border-rose-900/60 shadow-2xs space-y-0.5">
+                    <div className="text-sm">🏭 <strong>Puppy Mill</strong></div>
+                    <div className="text-[10px] text-rose-700 dark:text-rose-400 font-bold">Unethical Breeding</div>
+                  </div>
+
+                  <div className="flex flex-col items-center justify-center text-rose-600 dark:text-rose-400 font-black text-[11px] py-1">
+                    <span>💸 Broker Markup</span>
+                    <ArrowRight className="w-4 h-4" />
+                    <span className="text-[9px] text-rose-700">+ Hidden Hospital Costs</span>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-white dark:bg-white/5 border border-rose-200 dark:border-rose-900/60 shadow-2xs space-y-0.5">
+                    <div className="text-sm">🛒 <strong>Buyer</strong></div>
+                    <div className="text-[10px] text-rose-700 dark:text-rose-400 font-bold">Heavy Financial Burden</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-rose-900 dark:text-rose-300 pt-1 border-t border-rose-200/60 dark:border-rose-900/40">
+                  <div>❌ Fake Paper Risk</div>
+                  <div>❌ Health Defects</div>
+                  <div>❌ No Ownership Trail</div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         );
 
