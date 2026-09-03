@@ -24,75 +24,39 @@ interface FaqItem {
 const FAQ_ITEMS: FaqItem[] = [
   {
     id: 'faq_1',
-    category: 'adoption',
-    categoryLabel: 'Adoption Process',
-    question: 'How does PawConnect’s 6-Stage Adoption Protocol work?',
+    category: 'fees',
+    categoryLabel: '100% Free',
+    question: 'Is adopting a dog on PawConnect completely free?',
     answer:
-      'Our 6-stage protocol guarantees a transparent and humane adoption journey: (1) You submit a comprehensive home & pet experience application; (2) You chat directly with the verified guardian; (3) You conduct an in-person or video Meet & Greet; (4) Both parties sign the legal digital Adoption Agreement; (5) Dual-confirmation handover with OTP and vet record transfer; (6) Lifetime Gold Adoption Certificate issued!',
-    highlights: ['1. Online Application', '2. Direct Chat', '3. Meet & Greet', '4. Digital Contract', '5. Verified Handover', '6. Gold Certificate'],
+      'Yes, 100% free! There are zero adoption fees, zero brokerage charges, and zero platform commissions. Adoptions happen directly between loving pet parents and verified adopters.',
+    highlights: ['Zero Platform Fees', 'Zero Brokerage', 'Direct Free Adoption'],
   },
   {
     id: 'faq_2',
-    category: 'fees',
-    categoryLabel: 'Fees & Costs',
-    question: 'Is adopting a dog on PawConnect 100% free?',
+    category: 'adoption',
+    categoryLabel: 'How It Works',
+    question: 'How does the adoption process work step-by-step?',
     answer:
-      'Yes! Direct adoptions on PawConnect are 100% free with zero platform commissions or hidden brokerage fees. PawConnect is built to rescue, rehome, and support canines, not for commercial profit. Some verified rescue shelters may specify nominal vaccination reimbursements if documented with hospital bills.',
-    highlights: ['Zero Platform Fee', 'Zero Brokerage', '100% Non-Profit Initiative'],
+      'The process is simple and transparent: (1) Find a dog and apply with your phone number; (2) Chat directly with the current guardian; (3) Meet the dog in person at a park or home; (4) Sign a free digital adoption agreement and welcome your new family member!',
+    highlights: ['1. Apply Online', '2. Direct Chat', '3. Meet the Dog', '4. Free Handover Agreement'],
   },
   {
     id: 'faq_3',
     category: 'safety',
-    categoryLabel: 'Verification & Safety',
-    question: 'How do you verify guardians and prevent fake listings or puppy mills?',
+    categoryLabel: 'Trust & Safety',
+    question: 'How do you verify dogs and prevent fake listings?',
     answer:
-      'We enforce strict multi-tier verification: Every guardian authenticates via phone OTP, GPS location coordinates, and government ID/vet clinic proof. Commercial puppy breeders and unlicensed sales are strictly forbidden and instantly removed through automated scam detection and community reporting.',
-    highlights: ['Phone OTP Verification', 'Veterinary Clearance Checks', 'Strict Anti-Breeder Ban'],
+      'Every guardian must verify their phone number with OTP, and every dog listing includes real photos, health status, and vet vaccination records. Commercial puppy breeders are strictly banned.',
+    highlights: ['Phone OTP Verified', 'Vet Health Records', 'No Commercial Breeders'],
   },
   {
     id: 'faq_4',
     category: 'rehoming',
-    categoryLabel: 'Listing & Rehoming',
-    question: 'Can I list my own dog if life circumstances change and I can’t care for them?',
+    categoryLabel: 'List a Dog',
+    question: 'Can I put my dog up for adoption if I can no longer care for them?',
     answer:
-      'Yes. Life circumstances (relocation, health, family emergencies) can be tough. You can list your dog safely on PawConnect by clicking "Post Your Dog for Adoption (Free)". You retain complete control over who interviews, visits, and adopts your dog, ensuring they transition to a loving forever home.',
-    highlights: ['100% Free Listing', 'Guardian Retains Full Control', 'Screened Loving Adopters'],
-  },
-  {
-    id: 'faq_5',
-    category: 'adoption',
-    categoryLabel: 'Adoption Process',
-    question: 'What happens during the Meet & Greet stage?',
-    answer:
-      'The Meet & Greet allows the prospective adopter and dog to interact in a neutral, relaxed environment (such as a local dog park or vet clinic). It ensures the dog’s temperament aligns with your household, children, or existing pets before any legal commitments are made.',
-    highlights: ['Neutral Park Location', 'Temperament Evaluation', 'Zero Pressure Handover'],
-  },
-  {
-    id: 'faq_6',
-    category: 'safety',
-    categoryLabel: 'Verification & Safety',
-    question: 'What health and veterinary records are provided with the dog?',
-    answer:
-      'Every listing highlights vaccination status (Rabies, DHPPiL), neuter/spay confirmation, deworming dates, and microchip number. During handover, the physical vet vaccination passbook is handed over to the adopter along with digital copies archived on PawConnect.',
-    highlights: ['Physical Vet Passbook', 'Vaccination History', 'Digital Medical Archive'],
-  },
-  {
-    id: 'faq_7',
-    category: 'rehoming',
-    categoryLabel: 'Listing & Rehoming',
-    question: 'How long does the verified adoption process typically take?',
-    answer:
-      'Most adoptions complete within 3 to 7 days. This includes application review (24 hours), in-person meet & greet (1-2 days), and digital contract signing upon mutual agreement.',
-    highlights: ['Average 3-7 Days', '24h Application Response', 'Smooth Dual Handover'],
-  },
-  {
-    id: 'faq_8',
-    category: 'fees',
-    categoryLabel: 'Fees & Costs',
-    question: 'Do I get post-adoption support or medical advice?',
-    answer:
-      'Absolutely! Our volunteer community and adoption counselors remain available via WhatsApp and helpline. You also gain lifetime access to your dog’s digital profile, vaccination reminders, and community feed to share milestones.',
-    highlights: ['WhatsApp Counselor Support', 'Vaccination Reminders', 'Community Social Feed'],
+      'Yes. If life circumstances change, you can list your dog for free in under 2 minutes. You review every application, chat with potential adopters, and choose the most loving home for your dog.',
+    highlights: ['Free Listing in 2 Mins', 'You Choose the Adopter', 'Verified Loving Homes'],
   }
 ];
 
@@ -105,11 +69,11 @@ export const FaqSection: React.FC = () => {
   const [feedback, setFeedback] = useState<Record<string, 'up' | 'down'>>({});
 
   const categories = [
-    { key: 'all', label: 'All Questions' },
-    { key: 'adoption', label: 'Adoption Protocol' },
-    { key: 'safety', label: 'Trust & Safety' },
-    { key: 'rehoming', label: 'Listing & Rehoming' },
-    { key: 'fees', label: 'Fees & Transparency' },
+    { key: 'all', label: 'All FAQs' },
+    { key: 'fees', label: '💰 Free Adoption' },
+    { key: 'adoption', label: '🐾 How It Works' },
+    { key: 'safety', label: '🛡️ Safety & Verification' },
+    { key: 'rehoming', label: '🏠 Rehoming Your Dog' },
   ];
 
   const filteredFaqs = useMemo(() => {
