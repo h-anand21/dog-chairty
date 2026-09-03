@@ -264,7 +264,7 @@ export const HowItWorksInteractiveVisualizer: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
         
         {/* Left Info Column */}
-        <div className="lg:col-span-7 space-y-4 animate-in fade-in slide-in-from-left-2 duration-300 key={activeStep.stepNumber}">
+        <div key={activeStep.stepNumber} className="lg:col-span-7 space-y-4 animate-in fade-in slide-in-from-left-2 duration-300">
           <div className="flex items-center gap-2">
             <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${activeStep.badgeColor}`}>
               {activeStep.badge}
@@ -304,7 +304,7 @@ export const HowItWorksInteractiveVisualizer: React.FC = () => {
         </div>
 
         {/* Right Animated Live Visual Mockup Box */}
-        <div className="lg:col-span-5 animate-in fade-in zoom-in-95 duration-300 key={`visual_${activeStep.stepNumber}`}>
+        <div key={`visual_${activeStep.stepNumber}`} className="lg:col-span-5 animate-in fade-in zoom-in-95 duration-300">
           <div className="relative rounded-3xl p-6 bg-gradient-to-tr from-obsidian-900 via-[#182338] to-obsidian-900 text-white shadow-2xl border border-obsidian-700 dark:border-white/20 text-center space-y-4 overflow-hidden">
             
             {/* Ambient background glow */}
