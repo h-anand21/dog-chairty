@@ -9,6 +9,18 @@ import {
   Mail,
   ThumbsUp,
   ThumbsDown,
+  ArrowRight,
+  XCircle,
+  Smartphone,
+  MessageSquare,
+  Trees,
+  FileCheck,
+  FileText,
+  Activity,
+  HeartHandshake,
+  ShieldAlert,
+  Camera,
+  Users,
 } from 'lucide-react';
 import { useAudio } from '../../context/AudioContext';
 
@@ -100,6 +112,180 @@ export const FaqSection: React.FC = () => {
     setFeedback(prev => ({ ...prev, [id]: type }));
   };
 
+  // 🎨 Animated Step-by-Step Visual Explanation Diagrams
+  const renderVisualExplanation = (faqId: string) => {
+    switch (faqId) {
+      case 'faq_1':
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            {/* Commercial Comparison */}
+            <div className="p-4 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 space-y-2">
+              <div className="flex items-center gap-2 text-rose-700 dark:text-rose-400 font-black text-xs">
+                <XCircle className="w-4 h-4 text-rose-500" />
+                <span>Commercial Breeders / Pet Shops</span>
+              </div>
+              <ul className="space-y-1.5 text-[11px] font-medium text-rose-900 dark:text-rose-200">
+                <li className="flex items-center gap-1.5">❌ ₹15,000 - ₹50,000 purchase price</li>
+                <li className="flex items-center gap-1.5">❌ Unethical breeding & fake papers</li>
+                <li className="flex items-center gap-1.5">❌ No verified post-adoption support</li>
+              </ul>
+            </div>
+
+            {/* PawConnect Protocol */}
+            <div className="p-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 space-y-2 relative overflow-hidden shadow-xs">
+              <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-black text-xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>PawConnect Free Handover</span>
+              </div>
+              <ul className="space-y-1.5 text-[11px] font-bold text-emerald-950 dark:text-emerald-200">
+                <li className="flex items-center gap-1.5">✅ ₹0 Platform Fee • 100% Free</li>
+                <li className="flex items-center gap-1.5">✅ Free Legal Digital Agreement</li>
+                <li className="flex items-center gap-1.5">✅ Original Vet Passbook Included</li>
+              </ul>
+              <div className="absolute right-2 bottom-2 text-[10px] font-black bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-100 px-2 py-0.5 rounded-full">
+                Pure Adoption 🐾
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'faq_2':
+        return (
+          <div className="pt-2">
+            <div className="text-[11px] font-black text-obsidian-900 dark:text-white mb-2 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-coral-500" />
+              <span>Visual 4-Stage Adoption Flow:</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-left">
+              {/* Step 1 */}
+              <div className="p-3 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/70 dark:border-white/10 space-y-1 hover:border-coral-400 transition-colors">
+                <div className="w-7 h-7 rounded-xl bg-coral-100 dark:bg-coral-950/60 text-coral-600 flex items-center justify-center font-black text-xs">
+                  <Smartphone className="w-3.5 h-3.5" />
+                </div>
+                <div className="text-xs font-black text-obsidian-950 dark:text-white">1. Apply Online</div>
+                <div className="text-[10px] text-obsidian-500 dark:text-slate-400">Quick form with mobile OTP</div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="p-3 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/70 dark:border-white/10 space-y-1 hover:border-sky-400 transition-colors">
+                <div className="w-7 h-7 rounded-xl bg-sky-100 dark:bg-sky-950/60 text-sky-600 flex items-center justify-center font-black text-xs">
+                  <MessageSquare className="w-3.5 h-3.5" />
+                </div>
+                <div className="text-xs font-black text-obsidian-950 dark:text-white">2. Direct Chat</div>
+                <div className="text-[10px] text-obsidian-500 dark:text-slate-400">Message & video meet guardian</div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="p-3 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/70 dark:border-white/10 space-y-1 hover:border-emerald-400 transition-colors">
+                <div className="w-7 h-7 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center font-black text-xs">
+                  <Trees className="w-3.5 h-3.5" />
+                </div>
+                <div className="text-xs font-black text-obsidian-950 dark:text-white">3. Park Meet</div>
+                <div className="text-[10px] text-obsidian-500 dark:text-slate-400">Walk & test pup&apos;s chemistry</div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="p-3 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/70 dark:border-white/10 space-y-1 hover:border-amber-400 transition-colors">
+                <div className="w-7 h-7 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center font-black text-xs">
+                  <FileCheck className="w-3.5 h-3.5" />
+                </div>
+                <div className="text-xs font-black text-obsidian-950 dark:text-white">4. Welcome Home</div>
+                <div className="text-[10px] text-obsidian-500 dark:text-slate-400">Sign free contract & handover</div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'faq_3':
+        return (
+          <div className="pt-2">
+            <div className="text-[11px] font-black text-obsidian-900 dark:text-white mb-2 uppercase tracking-wider flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>3-Tier Verification Architecture:</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-left">
+              <div className="p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 space-y-1">
+                <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-black text-xs">
+                  <Smartphone className="w-4 h-4 text-emerald-600" />
+                  <span>1. Phone OTP Verification</span>
+                </div>
+                <p className="text-[10px] text-emerald-900 dark:text-emerald-200 font-medium">
+                  Real Indian mobile numbers authenticated via OTP. Zero fake bots.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/60 space-y-1">
+                <div className="flex items-center gap-2 text-sky-800 dark:text-sky-300 font-black text-xs">
+                  <Activity className="w-4 h-4 text-sky-600" />
+                  <span>2. Veterinary Clearance</span>
+                </div>
+                <p className="text-[10px] text-sky-900 dark:text-sky-200 font-medium">
+                  Rabies, DHPPiL vaccination records & physical passbook verified.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/60 space-y-1">
+                <div className="flex items-center gap-2 text-rose-800 dark:text-rose-300 font-black text-xs">
+                  <ShieldAlert className="w-4 h-4 text-rose-600" />
+                  <span>3. Anti-Breeder Ban</span>
+                </div>
+                <p className="text-[10px] text-rose-900 dark:text-rose-200 font-medium">
+                  Commercial sales strictly blocked to protect animal welfare.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'faq_4':
+        return (
+          <div className="pt-2">
+            <div className="text-[11px] font-black text-obsidian-900 dark:text-white mb-2 uppercase tracking-wider flex items-center gap-1.5">
+              <HeartHandshake className="w-3.5 h-3.5 text-coral-500" />
+              <span>How Pet Rehoming Works:</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-left">
+              <div className="p-3.5 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10 space-y-1">
+                <div className="flex items-center gap-2 text-obsidian-900 dark:text-white font-black text-xs">
+                  <Camera className="w-4 h-4 text-coral-500" />
+                  <span>1. Free Listing (2 Mins)</span>
+                </div>
+                <p className="text-[10px] text-obsidian-500 dark:text-slate-400">
+                  Upload dog photos, habits, favourite food, and medical notes.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10 space-y-1">
+                <div className="flex items-center gap-2 text-obsidian-900 dark:text-white font-black text-xs">
+                  <Users className="w-4 h-4 text-sky-500" />
+                  <span>2. Review Adopters</span>
+                </div>
+                <p className="text-[10px] text-obsidian-500 dark:text-slate-400">
+                  Check applicant experience, home type & fenced yard details.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10 space-y-1">
+                <div className="flex items-center gap-2 text-obsidian-900 dark:text-white font-black text-xs">
+                  <FileText className="w-4 h-4 text-emerald-500" />
+                  <span>3. Legal Handover</span>
+                </div>
+                <p className="text-[10px] text-obsidian-500 dark:text-slate-400">
+                  Sign digital transfer agreement and ensure your pup is safe.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-16 text-left">
       <div className="glass-card rounded-5xl p-6 sm:p-12 border border-obsidian-200/80 dark:border-white/10 shadow-elevated space-y-8">
@@ -162,7 +348,7 @@ export const FaqSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Accordion Questions List */}
+        {/* Accordion Questions List with Visual Workflows */}
         <div className="space-y-3">
           {filteredFaqs.length === 0 ? (
             <div className="p-10 text-center rounded-3xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/60 dark:border-white/10 space-y-2 animate-in fade-in zoom-in-95 duration-200">
@@ -171,7 +357,7 @@ export const FaqSection: React.FC = () => {
                 No matching questions found
               </h4>
               <p className="text-xs text-obsidian-500 dark:text-slate-400">
-                Try searching for &quot;protocol&quot;, &quot;free&quot;, &quot;meet&quot;, or &quot;vet&quot;, or reach out on our helpline below!
+                Try searching for &quot;protocol&quot;, &quot;free&quot;, &quot;meet&quot;, or &quot;vet&quot;, or reach out on our email below!
               </p>
             </div>
           ) : (
@@ -238,6 +424,9 @@ export const FaqSection: React.FC = () => {
                         <p className="text-xs sm:text-sm font-normal leading-relaxed">
                           {item.answer}
                         </p>
+
+                        {/* 🌟 Interactive Visual Workflow Graphic */}
+                        {renderVisualExplanation(item.id)}
 
                         {item.highlights && item.highlights.length > 0 && (
                           <div className="flex flex-wrap gap-2 pt-1">
