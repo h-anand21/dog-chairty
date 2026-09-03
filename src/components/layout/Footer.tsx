@@ -100,7 +100,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* 📞 Contact & Support Widget */}
+          {/* 📧 Contact & Support Widget (Email Only) */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="text-obsidian-950 dark:text-white font-black text-sm tracking-wider uppercase flex items-center gap-2">
@@ -108,63 +108,23 @@ export const Footer: React.FC = () => {
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </h4>
               <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
-                Live 9 AM - 9 PM IST
+                Active Inbox
               </span>
             </div>
 
-            {/* Quick Contact Links */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold">
-              <a
-                href="tel:+918252990057"
-                className="p-2.5 rounded-xl bg-obsidian-50 dark:bg-white/5 hover:bg-coral-50 dark:hover:bg-coral-950/40 border border-obsidian-200/80 dark:border-white/10 hover:border-coral-300 dark:hover:border-coral-700 text-obsidian-800 dark:text-slate-200 hover:text-coral-600 dark:hover:text-coral-400 transition-all flex items-center gap-2 group cursor-pointer shadow-xs"
-              >
-                <div className="w-7 h-7 rounded-lg bg-coral-100 dark:bg-coral-900/40 text-coral-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <Phone className="w-3.5 h-3.5" />
-                </div>
-                <div className="truncate">
-                  <div className="text-[10px] font-medium text-obsidian-500 dark:text-slate-400">Helpline</div>
-                  <div className="font-extrabold truncate">+91 82529 90057</div>
-                </div>
-              </a>
-
-              <a
-                href="https://wa.me/918252990057?text=Hi%20PawConnect,%20I%20have%20an%20adoption%20inquiry"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-obsidian-50 dark:bg-white/5 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-obsidian-200/80 dark:border-white/10 hover:border-emerald-300 dark:hover:border-emerald-700 text-obsidian-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all flex items-center gap-2 group cursor-pointer shadow-xs"
-              >
-                <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <MessageCircle className="w-3.5 h-3.5" />
-                </div>
-                <div className="truncate">
-                  <div className="text-[10px] font-medium text-obsidian-500 dark:text-slate-400">WhatsApp</div>
-                  <div className="font-extrabold truncate">Chat on WhatsApp</div>
-                </div>
-              </a>
-
-              <a
-                href="mailto:support@pawconnect.org"
-                className="p-2.5 rounded-xl bg-obsidian-50 dark:bg-white/5 hover:bg-sky-50 dark:hover:bg-sky-950/40 border border-obsidian-200/80 dark:border-white/10 hover:border-sky-300 dark:hover:border-sky-700 text-obsidian-800 dark:text-slate-200 hover:text-sky-600 dark:hover:text-sky-400 transition-all flex items-center gap-2 group cursor-pointer shadow-xs"
-              >
-                <div className="w-7 h-7 rounded-lg bg-sky-100 dark:bg-sky-900/40 text-sky-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <Mail className="w-3.5 h-3.5" />
-                </div>
-                <div className="truncate">
-                  <div className="text-[10px] font-medium text-obsidian-500 dark:text-slate-400">Email</div>
-                  <div className="font-extrabold truncate">support@pawconnect.org</div>
-                </div>
-              </a>
-
-              <div className="p-2.5 rounded-xl bg-obsidian-50 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10 text-obsidian-800 dark:text-slate-200 flex items-center gap-2 shadow-xs">
-                <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 flex items-center justify-center shrink-0">
-                  <MapPin className="w-3.5 h-3.5" />
-                </div>
-                <div className="truncate">
-                  <div className="text-[10px] font-medium text-obsidian-500 dark:text-slate-400">Center</div>
-                  <div className="font-extrabold truncate">Kolkata, Salt Lake</div>
-                </div>
+            {/* Official Support Email Card */}
+            <a
+              href="mailto:work.himu2020@gmail.com?subject=PawConnect%20Adoption%20Inquiry"
+              className="p-3.5 rounded-2xl bg-obsidian-50 dark:bg-white/5 hover:bg-coral-50 dark:hover:bg-coral-950/40 border border-obsidian-200/80 dark:border-white/10 hover:border-coral-300 dark:hover:border-coral-700 text-obsidian-800 dark:text-slate-200 hover:text-coral-600 dark:hover:text-coral-400 transition-all flex items-center gap-3 group cursor-pointer shadow-xs"
+            >
+              <div className="w-10 h-10 rounded-xl bg-coral-100 dark:bg-coral-900/40 text-coral-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <Mail className="w-5 h-5" />
               </div>
-            </div>
+              <div className="min-w-0">
+                <div className="text-[11px] font-bold text-obsidian-500 dark:text-slate-400">Official Support Email</div>
+                <div className="font-black text-sm text-obsidian-950 dark:text-white truncate">work.himu2020@gmail.com</div>
+              </div>
+            </a>
 
             {/* Quick Message Box */}
             <div className="p-3.5 rounded-2xl bg-obsidian-50/80 dark:bg-white/5 border border-obsidian-200/80 dark:border-white/10">

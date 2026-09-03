@@ -6,8 +6,7 @@ import {
   CheckCircle2,
   Sparkles,
   ShieldCheck,
-  Phone,
-  MessageCircle,
+  Mail,
   ThumbsUp,
   ThumbsDown,
 } from 'lucide-react';
@@ -337,27 +336,17 @@ export const FaqSection: React.FC = () => {
               <span>Still have a question or need personalized adoption counseling?</span>
             </div>
             <p className="text-xs text-obsidian-600 dark:text-slate-300">
-              Our verified canine adoption counselors are available 7 days a week (9 AM - 9 PM IST).
+              Our canine adoption team is always here to assist you via email.
             </p>
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0">
             <a
-              href="https://wa.me/918252990057?text=Hi%20PawConnect,%20I%20have%20a%20question%20about%20dog%20adoption"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-full text-xs font-black flex items-center gap-1.5 shadow-xs hover:scale-105 transition-all cursor-pointer"
+              href="mailto:work.himu2020@gmail.com?subject=PawConnect%20Adoption%20Question"
+              className="bg-coral-500 hover:bg-coral-600 text-white px-5 py-2.5 rounded-full text-xs font-black flex items-center gap-2 shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>WhatsApp Us</span>
-            </a>
-
-            <a
-              href="tel:+918252990057"
-              className="bg-white dark:bg-white/10 hover:bg-obsidian-100 text-obsidian-900 dark:text-white border border-obsidian-200 dark:border-white/15 px-4 py-2 rounded-full text-xs font-black flex items-center gap-1.5 shadow-xs hover:scale-105 transition-all cursor-pointer"
-            >
-              <Phone className="w-3.5 h-3.5 text-coral-500" />
-              <span>Call Helpline</span>
+              <Mail className="w-4 h-4" />
+              <span>Email: work.himu2020@gmail.com</span>
             </a>
           </div>
         </div>
