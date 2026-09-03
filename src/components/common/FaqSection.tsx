@@ -24,6 +24,8 @@ import {
 } from 'lucide-react';
 import { useAudio } from '../../context/AudioContext';
 
+import { HowItWorksInteractiveVisualizer } from './HowItWorksInteractiveVisualizer';
+
 interface FaqItem {
   id: string;
   category: 'adoption' | 'safety' | 'rehoming' | 'fees';
@@ -417,6 +419,9 @@ export const FaqSection: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* 🎬 Interactive Live Adoption Visualizer */}
+        <HowItWorksInteractiveVisualizer />
 
         {/* Category Filter Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
