@@ -114,10 +114,10 @@ export const Navbar: React.FC = () => {
             <span className="text-xl">🐾</span>
           </div>
           <div>
-            <span className="text-xl sm:text-2xl font-black font-display tracking-tight text-obsidian-950">
+            <span className="text-xl sm:text-2xl font-black font-display tracking-tight text-obsidian-950 dark:text-white">
               Paw<span className="text-coral-500">Connect</span>
             </span>
-            <p className="hidden md:block text-[10px] font-semibold text-obsidian-500 -mt-0.5">
+            <p className="hidden md:block text-[10px] font-semibold text-obsidian-500 dark:text-slate-400 -mt-0.5">
               Direct Dog Friendship & Adoption
             </p>
           </div>

@@ -24,14 +24,14 @@ export const ChatPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex items-center justify-between gap-4 text-left">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold text-xs mb-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 font-bold text-xs mb-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
             <span>Encrypted Direct Messaging</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black font-display text-obsidian-950">
+          <h1 className="text-2xl sm:text-4xl font-black font-display text-obsidian-950 dark:text-white">
             Adoption Messages & Chats
           </h1>
-          <p className="text-xs text-obsidian-600 font-medium">
+          <p className="text-xs text-obsidian-600 dark:text-slate-400 font-medium">
             Dedicated private threads for each dog connecting you directly with their verified pet guardian.
           </p>
         </div>
@@ -40,7 +40,7 @@ export const ChatPage: React.FC = () => {
         {mobileView === 'chat' && (
           <button
             onClick={() => setMobileView('list')}
-            className="lg:hidden flex items-center gap-1 px-3 py-1.5 rounded-full bg-obsidian-200 text-obsidian-900 font-bold text-xs cursor-pointer"
+            className="lg:hidden flex items-center gap-1 px-3 py-1.5 rounded-full bg-obsidian-200 dark:bg-slate-800 text-obsidian-900 dark:text-white font-bold text-xs cursor-pointer border border-obsidian-300 dark:border-white/10"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>All Chats</span>
@@ -61,7 +61,7 @@ export const ChatPage: React.FC = () => {
               <MessageCircle className="w-4 h-4 text-coral-500" />
               <span>Dog Threads ({conversations.length})</span>
             </h3>
-            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-coral-50 dark:bg-coral-950/60 text-coral-600 dark:text-coral-400 border border-coral-200 dark:border-coral-800/60">
+            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-coral-50 dark:bg-coral-950/70 text-coral-600 dark:text-coral-400 border border-coral-200 dark:border-coral-800/60">
               1-on-1 Chats
             </span>
           </div>
@@ -129,14 +129,14 @@ export const ChatPage: React.FC = () => {
                     'Adoption Applicant';
                   displayAvatar = (otherUser?.name !== 'Sarah Jenkins' ? otherUser?.avatar : null) || otherMsg?.senderAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400';
                   roleBadgeText = 'Applicant';
-                  roleBadgeColor = 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60';
+                  roleBadgeColor = 'bg-sky-50 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/70';
                   displaySubtitle = `Interested in adopting ${conv.dogName} 🐾`;
                 } else {
                   // Current user is an Adopter -> Show Dipu Anand (Guardian)
                   displayName = matchingDog?.currentOwnerName || 'Dipu Anand';
                   displayAvatar = matchingDog?.currentOwnerAvatar || conv.dogAvatar;
                   roleBadgeText = 'Dog Guardian';
-                  roleBadgeColor = 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60';
+                  roleBadgeColor = 'bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/70';
                   displaySubtitle = `Guardian of ${conv.dogName} 🐶`;
                 }
 
@@ -146,7 +146,7 @@ export const ChatPage: React.FC = () => {
                     onClick={() => handleSelectConv(conv.id)}
                     className={`p-3.5 rounded-2xl cursor-pointer transition-all flex items-center gap-3 text-left ${
                       isActive
-                        ? 'bg-coral-50 dark:bg-coral-950/60 border-2 border-coral-400 shadow-xs ring-2 ring-coral-100 dark:ring-coral-500/20'
+                        ? 'bg-coral-50/90 dark:bg-[#1C2438] border-2 border-coral-500 shadow-sm ring-2 ring-coral-200/50 dark:ring-coral-500/30'
                         : 'hover:bg-obsidian-100 dark:hover:bg-white/5 border border-obsidian-100 dark:border-white/5'
                     }`}
                   >
@@ -167,7 +167,7 @@ export const ChatPage: React.FC = () => {
                             {roleBadgeText}
                           </span>
                         </h4>
-                        <span className="text-[10px] text-obsidian-400 dark:text-slate-500 shrink-0 font-medium">
+                        <span className="text-[10px] text-obsidian-400 dark:text-slate-400 shrink-0 font-medium">
                           {conv.lastMessageTimestamp}
                         </span>
                       </div>
@@ -181,7 +181,7 @@ export const ChatPage: React.FC = () => {
                       </p>
 
                       <div className="flex items-center justify-between mt-1 pt-1 border-t border-obsidian-100 dark:border-white/5">
-                        <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded-sm border border-emerald-200 dark:border-emerald-800/60">
+                        <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 px-1.5 py-0.2 rounded-sm border border-emerald-200 dark:border-emerald-800/60">
                           {matchingDog?.name || conv.dogName} • {matchingDog?.breed || 'Pup'}
                         </span>
                         {conv.unreadCount > 0 && (
