@@ -200,19 +200,7 @@ export const INITIAL_STORIES: Story[] = [
   }
 ];
 
-export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: 'notif_1',
-    userId: 'user_alex',
-    title: '🐾 New Adoption Request for Bruno!',
-    message: 'Sarah Jenkins submitted a comprehensive adoption application with a fenced yard in New Town.',
-    type: 'application_received',
-    relatedDogId: 'dog_bruno',
-    relatedApplicationId: 'app_sarah_bruno',
-    timestamp: '10 mins ago',
-    read: false
-  }
-];
+export const INITIAL_NOTIFICATIONS: NotificationItem[] = [];
 
 export const INITIAL_SUCCESS_STORIES = [
   {
