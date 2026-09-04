@@ -306,19 +306,20 @@ export const ChatView: React.FC = () => {
       </div>
 
       {/* SAFETY & DOG DETAIL STRIP */}
-      <div className="bg-amber-50/90 dark:bg-[#1A1813] px-4 py-2 border-b border-amber-200 dark:border-amber-900/40 text-left flex items-center justify-between gap-2 text-xs text-amber-900 dark:text-amber-200 shrink-0 font-medium">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>
-            <strong>Verified Direct Thread for {activeConv.dogName}:</strong> End-to-end encrypted live chat.
+      <div className="bg-gradient-to-r from-emerald-50/90 via-amber-50/70 to-coral-50/90 dark:from-[#0D1527] dark:via-[#131D33] dark:to-[#171A2A] px-4 py-2.5 border-b border-obsidian-200/80 dark:border-white/10 text-left flex flex-wrap items-center justify-between gap-2 text-xs shrink-0 font-medium">
+        <div className="flex items-center gap-2 text-obsidian-800 dark:text-slate-200">
+          <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+          <span className="text-xs">
+            <strong className="text-obsidian-950 dark:text-white font-bold">Verified Direct Thread for {activeConv.dogName}</strong> • End-to-end encrypted live chat
           </span>
         </div>
 
         <button
+          type="button"
           onClick={handleSendDogBark}
-          className="text-[11px] font-black text-coral-700 dark:text-coral-300 hover:text-coral-900 dark:hover:text-coral-200 flex items-center gap-1 bg-coral-100/80 dark:bg-coral-950/80 px-2.5 py-0.5 rounded-full cursor-pointer hover:bg-coral-200 dark:hover:bg-coral-900/80 transition-colors border border-coral-200 dark:border-coral-800/60"
+          className="text-xs font-black text-white bg-gradient-to-r from-coral-500 via-coral-500 to-amber-500 hover:from-coral-600 hover:to-amber-600 px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm hover:shadow-glow-coral transition-all cursor-pointer transform hover:scale-105 active:scale-95 shrink-0"
         >
-          <Volume2 className="w-3 h-3" />
+          <Volume2 className="w-3.5 h-3.5 animate-pulse" />
           <span>Hear {activeConv.dogName} Bark 🔊</span>
         </button>
       </div>

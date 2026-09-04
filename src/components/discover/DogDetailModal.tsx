@@ -111,10 +111,11 @@ export const DogDetailModal: React.FC<DogDetailModalProps> = ({ dog, onClose }) 
               {/* Action Bar over Image */}
               <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
                 <button
+                  type="button"
                   onClick={handleHearBark}
-                  className="flex items-center gap-2 bg-white text-obsidian-950 px-4 py-2 rounded-full text-xs font-black shadow-elevated hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  className="flex items-center gap-2 bg-gradient-to-r from-coral-500 to-amber-500 hover:from-coral-600 hover:to-amber-600 text-white px-4 py-2 rounded-full text-xs font-black shadow-elevated hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 >
-                  <Volume2 className="w-4 h-4 text-coral-500 animate-bounce" />
+                  <Volume2 className="w-4 h-4 text-white animate-pulse" />
                   <span>Hear Bark 🐾</span>
                 </button>
 
