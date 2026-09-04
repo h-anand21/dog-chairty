@@ -11,15 +11,22 @@ interface NavItem {
 }
 
 export const MobileNav: React.FC = () => {
-  const { activeTab, setActiveTab, conversations, applications, currentUser, requireAuth } = useApp();
+  const { activeTab, setActiveTab, conversations, applications, currentUser, dogs, requireAuth } = useApp();
   const { playPawPop } = useAudio();
 
-  const unreadMessagesCount = conversations.reduce((acc, c) => acc + c.unreadCount, 0);
-  const activeAppsCount = applications.filter(
-    a => (a.applicantId === currentUser?.id || currentUser?.role === 'owner') &&
-      a.status !== 'completed' &&
-      a.status !== 'declined'
-  ).length;
+  const unreadMessagesCount = currentUser
+    ? conversations
+        .filter(c => !c.participants || c.participants.length === 0 || c.participants.includes(currentUser.id))
+        .reduce((acc, c) => acc + (c.unreadCount || 0), 0)
+    : 0;
+
+  const activeAppsCount = currentUser
+    ? applications.filter(a => {
+        const isApplicant = a.applicantId === currentUser.id;
+        const isDogOwner = dogs.some(d => d.id === a.dogId && d.currentOwnerId === currentUser.id);
+        return (isApplicant || isDogOwner) && a.status !== 'completed' && a.status !== 'declined';
+      }).length
+    : 0;
 
   const handleTab = (tab: NavItem['id']) => {
     playPawPop();

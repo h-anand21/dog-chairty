@@ -776,6 +776,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => unsubscribe();
   }, [activeConversationId]);
 
+  // Reset unread count when opening a conversation
+  useEffect(() => {
+    if (activeConversationId) {
+      setConversations(prev =>
+        prev.map(c => (c.id === activeConversationId && c.unreadCount > 0 ? { ...c, unreadCount: 0 } : c))
+      );
+    }
+  }, [activeConversationId]);
+
   // ⚡ Cross-Tab Storage Event Listener for Instant Synchronized State Across 5173 & 5174
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
