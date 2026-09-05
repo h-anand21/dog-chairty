@@ -832,8 +832,8 @@ export const DiscoverPage: React.FC<DiscoverPageProps> = ({ onSelectDog }) => {
         </div>
       </section>
 
-      {/* ❓ FAQ SECTION */}
-      <FaqSection />
+      {/* ❓ FAQ SECTION (Shown only for guests / visitors on main screen) */}
+      {!currentUser && <FaqSection />}
 
       {/* 🐾 5. LIST A DOG / REHOMING SUPPORT BANNER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
