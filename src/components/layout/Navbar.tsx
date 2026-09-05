@@ -24,6 +24,7 @@ import {
   LogIn,
   Sun,
   Moon,
+  HelpCircle,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -45,6 +46,7 @@ export const Navbar: React.FC = () => {
     requireAuth,
     theme,
     toggleTheme,
+    openFaq,
   } = useApp();
 
   const { soundEnabled, toggleSound, playPawPop } = useAudio();
