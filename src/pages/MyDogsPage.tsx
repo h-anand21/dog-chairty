@@ -324,7 +324,7 @@ export const MyDogsPage: React.FC = () => {
       )}
 
       {/* SUBTAB 2: LISTED DOGS */}
-      {activeSubTab === 'listed' && (
+      {profileSubTab === 'listed' && (
         <div className="space-y-4">
           {listedDogs.length === 0 ? (
             <div className="glass-card rounded-3xl p-12 text-center border border-white dark:border-white/10 space-y-3 shadow-card">
@@ -408,7 +408,7 @@ export const MyDogsPage: React.FC = () => {
       )}
 
       {/* SUBTAB 3: MY APPLICATIONS */}
-      {activeSubTab === 'applications' && (
+      {profileSubTab === 'applications' && (
         <div className="space-y-4">
           {myApplications.length === 0 ? (
             <div className="glass-card rounded-3xl p-12 text-center border border-white dark:border-white/10 space-y-3 shadow-card">
@@ -461,6 +461,13 @@ export const MyDogsPage: React.FC = () => {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* SUBTAB 4: FREQUENTLY ASKED QUESTIONS (FAQ) */}
+      {profileSubTab === 'faq' && (
+        <div className="animate-in fade-in duration-200 -mx-4 sm:-mx-6 lg:-mx-8">
+          <FaqSection />
         </div>
       )}
 
