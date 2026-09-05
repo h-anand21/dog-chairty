@@ -190,6 +190,19 @@ export const Navbar: React.FC = () => {
             <span>PawFeed</span>
           </button>
 
+          {/* FAQs & Guide */}
+          <button
+            onClick={() => {
+              playPawPop();
+              openFaq();
+            }}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-extrabold text-obsidian-600 dark:text-slate-300 hover:text-obsidian-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/10 transition-all cursor-pointer"
+            title="Frequently Asked Questions (FAQ) & Guide"
+          >
+            <HelpCircle className="w-4 h-4 text-amber-500" />
+            <span>FAQs 🐾</span>
+          </button>
+
         </nav>
 
         {/* RIGHT ACTION CONTROLS */}
@@ -389,6 +402,18 @@ export const Navbar: React.FC = () => {
                     </button>
 
                     <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        playPawPop();
+                        openFaq();
+                      }}
+                      className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-900 dark:text-white text-xs font-extrabold transition-colors cursor-pointer text-left"
+                    >
+                      <HelpCircle className="w-4 h-4 text-amber-500 shrink-0" />
+                      <span>Frequently Asked Questions (FAQ) 🐾</span>
+                    </button>
+
+                    <button
                       onClick={toggleSound}
                       className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-900 dark:text-white text-xs font-extrabold transition-colors cursor-pointer text-left"
                     >
@@ -513,13 +538,22 @@ export const Navbar: React.FC = () => {
               { id: 'feed', label: 'PawFeed Social', icon: Camera },
               { id: 'my_dogs', label: 'My Dogs & Certs', icon: DogIcon },
               { id: 'admin', label: 'Safety Admin', icon: ShieldCheck },
+              { id: 'faq', label: 'Help & FAQs 🐾', icon: HelpCircle, isFaq: true },
             ].map(link => {
               const Icon = link.icon;
               const isActive = activeTab === link.id;
               return (
                 <button
                   key={link.id}
-                  onClick={() => handleTabClick(link.id as typeof activeTab)}
+                  onClick={() => {
+                    if (link.isFaq) {
+                      setShowMobileDrawer(false);
+                      playPawPop();
+                      openFaq();
+                    } else {
+                      handleTabClick(link.id as typeof activeTab);
+                    }
+                  }}
                   className={`flex items-center gap-2.5 p-3 rounded-2xl text-xs font-black transition-all text-left cursor-pointer ${
                     isActive
                       ? 'bg-coral-500 text-white shadow-glow-coral'
