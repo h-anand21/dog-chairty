@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
 import { Dog, AdoptionApplication } from '../types';
 import { StatusBadge } from '../components/common/StatusBadge';
+import { FaqSection } from '../components/common/FaqSection';
 import {
   Dog as DogIcon,
   Award,
@@ -18,6 +19,7 @@ import {
   LogIn,
   MapPin,
   Edit3,
+  HelpCircle,
 } from 'lucide-react';
 
 export const MyDogsPage: React.FC = () => {
@@ -30,10 +32,11 @@ export const MyDogsPage: React.FC = () => {
     setViewingCertificateDog,
     setActiveTab,
     setIsAuthModalOpen,
+    profileSubTab,
+    setProfileSubTab,
   } = useApp();
 
   const { playPawPop } = useAudio();
-  const [activeSubTab, setActiveSubTab] = useState<'adopted' | 'listed' | 'applications'>('adopted');
 
   if (!currentUser) {
     return (
@@ -195,14 +198,14 @@ export const MyDogsPage: React.FC = () => {
       </div>
 
       {/* Sub Tabs */}
-      <div className="flex items-center gap-2 border-b border-obsidian-200 dark:border-white/10 pb-3">
+      <div className="flex items-center gap-2 border-b border-obsidian-200 dark:border-white/10 pb-3 flex-wrap">
         <button
           onClick={() => {
             playPawPop();
-            setActiveSubTab('adopted');
+            setProfileSubTab('adopted');
           }}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
-            activeSubTab === 'adopted'
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
+            profileSubTab === 'adopted'
               ? 'bg-coral-500 text-white shadow-glow-coral'
               : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/20'
           }`}
@@ -214,10 +217,10 @@ export const MyDogsPage: React.FC = () => {
         <button
           onClick={() => {
             playPawPop();
-            setActiveSubTab('listed');
+            setProfileSubTab('listed');
           }}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
-            activeSubTab === 'listed'
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
+            profileSubTab === 'listed'
               ? 'bg-coral-500 text-white shadow-glow-coral'
               : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/20'
           }`}
@@ -229,10 +232,10 @@ export const MyDogsPage: React.FC = () => {
         <button
           onClick={() => {
             playPawPop();
-            setActiveSubTab('applications');
+            setProfileSubTab('applications');
           }}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
-            activeSubTab === 'applications'
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
+            profileSubTab === 'applications'
               ? 'bg-coral-500 text-white shadow-glow-coral'
               : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/20'
           }`}
@@ -240,10 +243,25 @@ export const MyDogsPage: React.FC = () => {
           <FileText className="w-4 h-4" />
           <span>My Applications ({myApplications.length})</span>
         </button>
+
+        <button
+          onClick={() => {
+            playPawPop();
+            setProfileSubTab('faq');
+          }}
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
+            profileSubTab === 'faq'
+              ? 'bg-coral-500 text-white shadow-glow-coral'
+              : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/20'
+          }`}
+        >
+          <HelpCircle className="w-4 h-4 text-amber-500" />
+          <span>Frequently Asked Questions (FAQ) 🐾</span>
+        </button>
       </div>
 
       {/* SUBTAB 1: ADOPTED DOGS */}
-      {activeSubTab === 'adopted' && (
+      {profileSubTab === 'adopted' && (
         <div className="space-y-4">
           {adoptedDogs.length === 0 ? (
             <div className="glass-card rounded-3xl p-12 text-center border border-white dark:border-white/10 space-y-3 shadow-card">

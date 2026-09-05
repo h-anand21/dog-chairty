@@ -380,7 +380,7 @@ export const FaqSection: React.FC = () => {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-16 text-left">
+    <section id="faq-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-16 text-left scroll-mt-24">
       <div className="glass-card rounded-5xl p-6 sm:p-12 border border-obsidian-200/80 dark:border-white/10 shadow-elevated space-y-8">
         
         {/* Header Title & Subtitle */}

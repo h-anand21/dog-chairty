@@ -105,6 +105,9 @@ interface AppContextType {
   // Modals & Navigation Views
   activeTab: 'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin';
   setActiveTab: (tab: 'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin') => void;
+  profileSubTab: 'adopted' | 'listed' | 'applications' | 'faq';
+  setProfileSubTab: (tab: 'adopted' | 'listed' | 'applications' | 'faq') => void;
+  openFaq: () => void;
   isListDogOpen: boolean;
   setIsListDogOpen: (open: boolean) => void;
   isApplyModalOpen: boolean;
@@ -194,6 +197,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // 3. Navigation Tab
   const [activeTab, setActiveTab] = useState<'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin'>('discover');
+  const [profileSubTab, setProfileSubTab] = useState<'adopted' | 'listed' | 'applications' | 'faq'>('adopted');
+
+  const openFaq = () => {
+    if (currentUser) {
+      setProfileSubTab('faq');
+      setActiveTab('my_dogs');
+    } else {
+      setActiveTab('discover');
+      setTimeout(() => {
+        const elem = document.getElementById('faq-section');
+        if (elem) {
+          elem.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  };
 
   // 4. Dogs State (Real user-listed dogs only)
   const [dogs, setDogs] = useState<Dog[]>(() => {
@@ -1807,6 +1826,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         toggleTheme,
         activeTab,
         setActiveTab,
+        profileSubTab,
+        setProfileSubTab,
+        openFaq,
         isListDogOpen,
         setIsListDogOpen,
         isApplyModalOpen,
