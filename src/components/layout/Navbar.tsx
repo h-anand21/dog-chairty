@@ -50,6 +50,7 @@ export const Navbar: React.FC = () => {
     theme,
     toggleTheme,
     openFaq,
+    setProfileSubTab,
   } = useApp();
 
   const { soundEnabled, toggleSound, playPawPop } = useAudio();

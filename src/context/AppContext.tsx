@@ -106,8 +106,8 @@ interface AppContextType {
   // Modals & Navigation Views
   activeTab: 'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin';
   setActiveTab: (tab: 'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin') => void;
-  profileSubTab: 'adopted' | 'listed' | 'applications' | 'faq';
-  setProfileSubTab: (tab: 'adopted' | 'listed' | 'applications' | 'faq') => void;
+  profileSubTab: 'adopted' | 'listed' | 'applications' | 'notifications' | 'faq';
+  setProfileSubTab: (tab: 'adopted' | 'listed' | 'applications' | 'notifications' | 'faq') => void;
   openFaq: () => void;
   isListDogOpen: boolean;
   setIsListDogOpen: (open: boolean) => void;
@@ -198,7 +198,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // 3. Navigation Tab
   const [activeTab, setActiveTab] = useState<'discover' | 'adopt_flow' | 'feed' | 'chat' | 'my_dogs' | 'admin'>('discover');
-  const [profileSubTab, setProfileSubTab] = useState<'adopted' | 'listed' | 'applications' | 'faq'>('adopted');
+  const [profileSubTab, setProfileSubTab] = useState<'adopted' | 'listed' | 'applications' | 'notifications' | 'faq'>('adopted');
 
   const openFaq = () => {
     if (currentUser) {
