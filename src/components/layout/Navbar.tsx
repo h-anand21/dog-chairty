@@ -314,6 +314,20 @@ export const Navbar: React.FC = () => {
                     ))
                   )}
                 </div>
+                <div className="pt-2 border-t border-obsidian-200/80 dark:border-white/10 text-center">
+                  <button
+                    onClick={() => {
+                      playPawPop();
+                      setProfileSubTab('notifications');
+                      setActiveTab('my_dogs');
+                      setShowNotifMenu(false);
+                    }}
+                    className="w-full py-2 px-3 rounded-xl bg-obsidian-100/80 dark:bg-white/5 hover:bg-coral-500/15 dark:hover:bg-coral-500/20 text-coral-600 dark:text-coral-300 text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <span>View All Activity & History in Profile</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             )}
           </div>
