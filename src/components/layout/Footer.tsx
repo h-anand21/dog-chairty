@@ -12,10 +12,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { useApp } from '../../context/AppContext';
-
 export const Footer: React.FC = () => {
-  const { openFaq, currentUser } = useApp();
   const [inquiryName, setInquiryName] = useState('');
   const [inquiryContact, setInquiryContact] = useState('');
   const [inquiryMessage, setInquiryMessage] = useState('');
@@ -99,14 +96,6 @@ export const Footer: React.FC = () => {
               <li className="hover:text-coral-500 transition-colors cursor-pointer">Anti-Scam Guidelines</li>
               <li className="hover:text-coral-500 transition-colors cursor-pointer">Veterinary Health Panels</li>
               <li className="hover:text-coral-500 transition-colors cursor-pointer">Gold Adoption Certificate</li>
-              {!currentUser && (
-                <li
-                  onClick={openFaq}
-                  className="text-coral-600 dark:text-coral-400 font-bold hover:underline transition-colors cursor-pointer flex items-center gap-1 pt-1"
-                >
-                  <span>Frequently Asked Questions (FAQ) 🐾</span>
-                </li>
-              )}
             </ul>
           </div>
 
