@@ -41,6 +41,8 @@ export const Navbar: React.FC = () => {
     markNotificationAsRead,
     markAllNotificationsAsRead,
     conversations,
+    setActiveConversationId,
+    openChatForDog,
     applications,
     dogs,
     setIsAuthModalOpen,
@@ -266,6 +268,14 @@ export const Navbar: React.FC = () => {
                           markNotificationAsRead(notif.id);
                           if (notif.type === 'application_received' || notif.type === 'application_accepted') {
                             setActiveTab('adopt_flow');
+                          } else if (notif.type === 'chat_message') {
+                            if (notif.relatedApplicationId) {
+                              setActiveConversationId(notif.relatedApplicationId);
+                            } else if (notif.relatedDogId) {
+                              const targetDog = dogs.find(d => d.id === notif.relatedDogId);
+                              if (targetDog) openChatForDog(targetDog);
+                            }
+                            setActiveTab('chat');
                           }
                           setShowNotifMenu(false);
                         }}
