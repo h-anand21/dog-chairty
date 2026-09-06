@@ -96,6 +96,7 @@ interface AppContextType {
   // Notifications
   notifications: NotificationItem[];
   markNotificationAsRead: (notifId: string) => void;
+  markAllNotificationsAsRead: () => void;
   unreadNotifsCount: number;
 
   // Theme (Light / Dark Mode)
@@ -1766,8 +1767,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setNotifications(prev => prev.map(n => (n.id === notifId ? { ...n, read: true } : n)));
   };
 
+  const markAllNotificationsAsRead = () => {
+    setNotifications(prev =>
+      prev.map(n => (!currentUser || !n.userId || n.userId === currentUser.id ? { ...n, read: true } : n))
+    );
+  };
+
+  // Sync notifications to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('pawconnect_notifications', JSON.stringify(notifications));
+    } catch (e) {}
+  }, [notifications]);
+
   const unreadNotifsCount = currentUser
-    ? notifications.filter(n => n.userId === currentUser.id && !n.read).length
+    ? notifications.filter(n => (n.userId === currentUser.id || !n.userId) && !n.read).length
     : 0;
 
   return (
@@ -1821,6 +1835,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resolveReport,
         notifications,
         markNotificationAsRead,
+        markAllNotificationsAsRead,
         unreadNotifsCount,
         theme,
         toggleTheme,

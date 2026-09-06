@@ -39,6 +39,7 @@ export const Navbar: React.FC = () => {
     notifications,
     unreadNotifsCount,
     markNotificationAsRead,
+    markAllNotificationsAsRead,
     conversations,
     applications,
     dogs,
@@ -212,12 +213,13 @@ export const Navbar: React.FC = () => {
                 setShowNotifMenu(!showNotifMenu);
                 setShowProfileMenu(false);
               }}
-              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/90 dark:bg-obsidian-900 border border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-obsidian-200 hover:text-coral-500 transition-all shadow-xs cursor-pointer"
+              className="relative w-10 h-10 rounded-full flex items-center justify-center bg-white/90 dark:bg-obsidian-900 border border-obsidian-200 dark:border-white/10 text-obsidian-700 dark:text-obsidian-200 hover:text-coral-500 transition-all shadow-xs cursor-pointer"
+              title="Notifications"
             >
               <Bell className="w-4 h-4" />
               {unreadNotifsCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 rounded-full bg-coral-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse ring-2 ring-white dark:ring-obsidian-900">
-                  {unreadNotifsCount}
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-coral-500 text-white text-[10px] font-black flex items-center justify-center leading-none shadow-glow-coral ring-2 ring-white dark:ring-[#0D121F] animate-pulse pointer-events-none">
+                  {unreadNotifsCount > 9 ? '9+' : unreadNotifsCount}
                 </span>
               )}
             </button>
@@ -226,22 +228,25 @@ export const Navbar: React.FC = () => {
               <div className="absolute right-0 mt-3 w-84 sm:w-96 glass-dropdown rounded-3xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150 shadow-2xl border border-obsidian-200/80 dark:border-white/10">
                 <div className="flex items-center justify-between pb-3 border-b border-obsidian-200/80 dark:border-white/10">
                   <h4 className="font-black text-xs uppercase tracking-wider text-obsidian-900 dark:text-white flex items-center gap-2">
-                    <span className="text-base">🔔</span> Notifications & Updates
+                    <span className="text-base">🔔</span> Notifications
                   </h4>
                   <div className="flex items-center gap-2">
                     {unreadNotifsCount > 0 && (
-                      <span className="text-[10px] font-black text-coral-600 dark:text-coral-400 bg-coral-500/15 dark:bg-coral-500/20 border border-coral-500/30 px-2 py-0.5 rounded-full animate-pulse">
-                        {unreadNotifsCount} new
-                      </span>
+                      <button
+                        onClick={markAllNotificationsAsRead}
+                        className="text-[10px] font-bold text-coral-600 dark:text-coral-400 hover:underline cursor-pointer transition-colors"
+                      >
+                        Mark all read
+                      </button>
                     )}
                     <span className="text-[10px] font-bold text-obsidian-600 dark:text-slate-300 bg-obsidian-100 dark:bg-obsidian-800/90 px-2 py-0.5 rounded-full border border-obsidian-200/60 dark:border-white/10">
-                      {notifications.length}
+                      {(currentUser ? notifications.filter(n => !n.userId || n.userId === currentUser.id) : notifications).length}
                     </span>
                   </div>
                 </div>
 
                 <div className="max-h-80 overflow-y-auto space-y-2.5 my-2.5 pr-1 scrollbar-thin">
-                  {notifications.length === 0 ? (
+                  {(currentUser ? notifications.filter(n => !n.userId || n.userId === currentUser.id) : notifications).length === 0 ? (
                     <div className="py-8 text-center">
                       <div className="w-10 h-10 mx-auto rounded-full bg-obsidian-100 dark:bg-white/5 flex items-center justify-center text-obsidian-400 dark:text-slate-500 mb-2">
                         <Bell className="w-5 h-5" />
@@ -254,7 +259,7 @@ export const Navbar: React.FC = () => {
                       </p>
                     </div>
                   ) : (
-                    notifications.map(notif => (
+                    (currentUser ? notifications.filter(n => !n.userId || n.userId === currentUser.id) : notifications).map(notif => (
                       <div
                         key={notif.id}
                         onClick={() => {
