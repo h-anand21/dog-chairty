@@ -45,7 +45,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
     authPromptReason,
   } = useApp();
 
-  const { playSuccessChime, playPawPop } = useAudio();
+  const { playSuccessChime, playPawPop, playDogBark, playMatchFanfare } = useAudio();
 
   const [step, setStep] = useState<'phone' | 'otp' | 'profile'>(initialStep);
   const countryCode = '+91';
@@ -156,6 +156,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
         return;
       }
 
+      playSuccessChime();
       setStep('otp');
       setResendTimer(30);
       setOtpDigits(['', '', '', '', '', '']);
@@ -174,6 +175,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
     const newDigits = [...otpDigits];
     newDigits[index] = digit;
     setOtpDigits(newDigits);
+
+    if (digit) {
+      playPawPop();
+    }
 
     // Auto-focus next input when digit is entered
     if (digit && index < 5) {
@@ -214,6 +219,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
     e.preventDefault();
     const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
     if (pasted.length > 0) {
+      playPawPop();
       const newDigits = ['', '', '', '', '', ''];
       for (let i = 0; i < pasted.length; i++) {
         newDigits[i] = pasted[i];
@@ -262,9 +268,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
       }
 
       if (result.isNewUser) {
+        playSuccessChime();
         setStep('profile');
       } else {
         playSuccessChime();
+        playDogBark();
         onClose();
       }
     } catch (err: any) {
@@ -284,6 +292,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
     const finalPhone = phoneDigits.trim() ? `+91 ${phoneDigits.trim()}` : (currentUser?.phone || '+91 98765 00000');
 
     playSuccessChime();
+    playMatchFanfare();
     completeRegistration({
       name: name.trim(),
       phone: finalPhone,
@@ -600,7 +609,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialSt
                         return (
                           <div
                             key={i}
-                            onClick={() => setAvatar(item.url)}
+                            onClick={() => {
+                              playPawPop();
+                              setAvatar(item.url);
+                            }}
                             className={`relative shrink-0 cursor-pointer transition-all rounded-full p-0.5 ${
                               isSelected ? 'ring-2 ring-coral-500 scale-110' : 'opacity-60 hover:opacity-100 hover:scale-105'
                             }`}
