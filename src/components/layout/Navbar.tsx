@@ -223,20 +223,36 @@ export const Navbar: React.FC = () => {
             </button>
 
             {showNotifMenu && (
-              <div className="absolute right-0 mt-3 w-80 sm:w-96 glass-dropdown rounded-3xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150">
-                <div className="flex items-center justify-between pb-2.5 border-b border-obsidian-200">
-                  <h4 className="font-bold text-xs uppercase tracking-wider text-obsidian-900 flex items-center gap-1.5">
-                    <span>🔔</span> Notifications & Updates
+              <div className="absolute right-0 mt-3 w-84 sm:w-96 glass-dropdown rounded-3xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150 shadow-2xl border border-obsidian-200/80 dark:border-white/10">
+                <div className="flex items-center justify-between pb-3 border-b border-obsidian-200/80 dark:border-white/10">
+                  <h4 className="font-black text-xs uppercase tracking-wider text-obsidian-900 dark:text-white flex items-center gap-2">
+                    <span className="text-base">🔔</span> Notifications & Updates
                   </h4>
-                  <span className="text-[10px] font-bold text-coral-600 bg-coral-50 px-2 py-0.5 rounded-full">
-                    {notifications.length}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {unreadNotifsCount > 0 && (
+                      <span className="text-[10px] font-black text-coral-600 dark:text-coral-400 bg-coral-500/15 dark:bg-coral-500/20 border border-coral-500/30 px-2 py-0.5 rounded-full animate-pulse">
+                        {unreadNotifsCount} new
+                      </span>
+                    )}
+                    <span className="text-[10px] font-bold text-obsidian-600 dark:text-slate-300 bg-obsidian-100 dark:bg-obsidian-800/90 px-2 py-0.5 rounded-full border border-obsidian-200/60 dark:border-white/10">
+                      {notifications.length}
+                    </span>
+                  </div>
                 </div>
-                <div className="max-h-64 overflow-y-auto divide-y divide-obsidian-200/60 my-2 pr-1">
+
+                <div className="max-h-80 overflow-y-auto space-y-2.5 my-2.5 pr-1 scrollbar-thin">
                   {notifications.length === 0 ? (
-                    <p className="py-6 text-center text-xs text-obsidian-500 font-medium">
-                      No notifications yet.
-                    </p>
+                    <div className="py-8 text-center">
+                      <div className="w-10 h-10 mx-auto rounded-full bg-obsidian-100 dark:bg-white/5 flex items-center justify-center text-obsidian-400 dark:text-slate-500 mb-2">
+                        <Bell className="w-5 h-5" />
+                      </div>
+                      <p className="text-xs text-obsidian-700 dark:text-slate-300 font-bold">
+                        No notifications yet.
+                      </p>
+                      <p className="text-[10px] text-obsidian-500 dark:text-slate-400 mt-0.5">
+                        Updates about adoptions & chats will appear here.
+                      </p>
+                    </div>
                   ) : (
                     notifications.map(notif => (
                       <div
@@ -248,16 +264,36 @@ export const Navbar: React.FC = () => {
                           }
                           setShowNotifMenu(false);
                         }}
-                        className={`p-2.5 text-left hover:bg-coral-50/60 rounded-2xl transition-colors cursor-pointer ${
-                          !notif.read ? 'bg-coral-50/70 font-semibold' : 'opacity-80'
+                        className={`p-3.5 text-left rounded-2xl transition-all cursor-pointer relative group ${
+                          !notif.read
+                            ? 'bg-gradient-to-br from-coral-500/10 via-coral-500/5 to-white/40 dark:from-coral-500/20 dark:via-[#162136] dark:to-[#111A2B] border border-coral-500/40 dark:border-coral-500/40 shadow-sm hover:border-coral-500/70 hover:shadow-md'
+                            : 'bg-obsidian-100/50 hover:bg-obsidian-100/80 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border border-transparent dark:border-white/5'
                         }`}
                       >
-                        <div className="text-xs font-bold text-obsidian-950">
-                          {notif.title}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="text-xs font-black text-obsidian-950 dark:text-white flex items-center gap-1.5 flex-1">
+                            {!notif.read && (
+                              <span className="w-2 h-2 rounded-full bg-coral-500 shrink-0 shadow-glow-coral animate-pulse" />
+                            )}
+                            <span className="line-clamp-1">{notif.title}</span>
+                          </div>
+                          {!notif.read && (
+                            <span className="text-[9px] font-black uppercase tracking-wider text-coral-600 dark:text-coral-400 bg-coral-100 dark:bg-coral-950/80 border border-coral-300/40 dark:border-coral-500/30 px-1.5 py-0.5 rounded-md shrink-0">
+                              NEW
+                            </span>
+                          )}
                         </div>
-                        <p className="text-[11px] text-obsidian-600 mt-0.5 leading-relaxed font-normal">
+                        <p className="text-[11.5px] text-obsidian-700 dark:text-slate-200 mt-1 leading-relaxed font-normal">
                           {notif.message}
                         </p>
+                        {notif.timestamp && (
+                          <div className="mt-2 pt-1.5 border-t border-obsidian-200/40 dark:border-white/5 flex items-center justify-between text-[9.5px] text-obsidian-400 dark:text-slate-400 font-medium">
+                            <span>{notif.timestamp}</span>
+                            <span className="text-coral-600 dark:text-coral-400 font-bold group-hover:translate-x-0.5 transition-transform">
+                              View details →
+                            </span>
+                          </div>
+                        )}
                       </div>
                     ))
                   )}
