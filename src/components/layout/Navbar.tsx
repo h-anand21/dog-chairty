@@ -445,6 +445,26 @@ export const Navbar: React.FC = () => {
 
                     <button
                       onClick={() => {
+                        playPawPop();
+                        setProfileSubTab('notifications');
+                        setActiveTab('my_dogs');
+                        setShowProfileMenu(false);
+                      }}
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-obsidian-100 dark:hover:bg-white/10 text-obsidian-900 dark:text-white text-xs font-extrabold transition-colors cursor-pointer text-left"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Bell className="w-4 h-4 text-coral-500 shrink-0" />
+                        <span>Notification History & Alerts 🔔</span>
+                      </div>
+                      {unreadNotifsCount > 0 && (
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-coral-500 text-white animate-pulse">
+                          {unreadNotifsCount} new
+                        </span>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => {
                         handleTabClick('admin');
                         setShowProfileMenu(false);
                       }}
