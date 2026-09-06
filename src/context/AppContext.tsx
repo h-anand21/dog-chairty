@@ -533,6 +533,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Use a ref for dogs so we can access it inside the interval without re-creating it on every dogs change.
   const dogsRef = React.useRef(dogs);
   useEffect(() => { dogsRef.current = dogs; }, [dogs]);
+  const currentUserRef = React.useRef(currentUser);
+  useEffect(() => { currentUserRef.current = currentUser; }, [currentUser]);
 
   useEffect(() => {
     let isMounted = true;
@@ -558,27 +560,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             lat: d.lat,
             lng: d.lng,
             city: d.city || 'Kolkata',
+            description: d.description,
+            story: d.story,
+            medicalNeeds: d.medicalNeeds,
+            temperament: d.temperament || ['Friendly'],
+            isVaccinated: d.isVaccinated ?? true,
+            isNeutered: d.isNeutered ?? true,
+            healthStatus: d.healthStatus || 'Healthy',
             coverPhoto: d.coverPhoto,
             photos: d.photos || [d.coverPhoto],
-            bio: d.bio,
-            reasonForAdoption: d.reasonForAdoption,
-            adoptionType: d.adoptionType,
-            status: d.status,
+            videoUrl: d.videoUrl,
+            barkAudio: d.barkAudio,
+            status: d.status || 'available',
             currentOwnerId: d.currentOwnerId,
             currentOwnerName: d.currentOwnerName,
             currentOwnerAvatar: d.currentOwnerAvatar,
             currentOwnerPhone: d.currentOwnerPhone,
-            isOwnerVerified: d.isOwnerVerified,
-            vaccinated: d.vaccinated,
-            neutered: d.neutered,
-            microchipped: d.microchipped,
-            medicalNotes: d.medicalNotes,
-            favoriteThings: d.favoriteThings || [],
-            personalityTraits: d.personalityTraits || [],
-            interestedCount: d.interestedCount || 0,
+            previousOwnerId: d.previousOwnerId,
+            previousOwnerName: d.previousOwnerName,
+            newOwnerId: d.newOwnerId,
+            newOwnerName: d.newOwnerName,
+            listedDate: d.listedDate || 'February 2025',
+            adoptedDate: d.adoptedDate,
+            certificateId: d.certificateId,
             likesCount: d.likesCount || 0,
+            likedBy: d.likedBy || [],
+            featured: d.featured ?? false,
           }));
-          setDogs(formatted);
+
+          setDogs(prev => {
+            const map = new Map<string, Dog>();
+            prev.forEach(d => map.set(d.id, d));
+            formatted.forEach(d => map.set(d.id, d));
+            return Array.from(map.values());
+          });
         }
 
         // ☁️ Sync Cloud Users across all ports
@@ -662,6 +677,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                   read: true
                 }];
                 changed = true;
+                
+                // 🔔 Generate Live Notification when a NEW cloud-synced message arrives
+                if (m.senderId && m.senderId !== currentUserRef.current?.id) {
+                    const notifId = `notif_msg_${m.id}`;
+                    setNotifications(prevNotifs => {
+                        if (prevNotifs.some(n => n.id === notifId)) return prevNotifs;
+                        const msgPreview = m.isDogBark ? '🐾 Sent an audio bark message!' : (m.text && m.text.length > 60 ? `${m.text.slice(0, 60)}...` : m.text || 'Sent a new message');
+                        const newNotif: NotificationItem = {
+                          id: notifId,
+                          userId: m.recipientId || currentUserRef.current?.id || '',
+                          title: `💬 New message from ${m.senderName || 'Guardian'}`,
+                          message: msgPreview,
+                          type: 'chat_message',
+                          relatedDogId: m.conversationId.split('_')[1],
+                          relatedApplicationId: m.conversationId,
+                          timestamp: 'Just now',
+                          read: false
+                        };
+                        return [newNotif, ...prevNotifs];
+                    });
+                }
               }
             });
             return changed ? updated : prev;
@@ -757,6 +793,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           [payload.conversationId]: [...existing, incomingMsg]
         };
       });
+
+      // 🔔 Generate Live Notification when an incoming message is received from another user
+      if (payload.senderId && payload.senderId !== currentUserRef.current?.id) {
+        const notifId = `notif_msg_${payload.id}`;
+        setNotifications(prev => {
+          if (prev.some(n => n.id === notifId)) return prev;
+          const msgPreview = payload.isDogBark
+            ? '🐾 Sent an audio bark message!'
+            : (payload.text && payload.text.length > 60
+                ? `${payload.text.slice(0, 60)}...`
+                : payload.text || 'Sent a new message');
+
+          const newNotif: NotificationItem = {
+            id: notifId,
+            userId: payload.recipientId || currentUserRef.current?.id || '',
+            title: `💬 New message from ${payload.senderName || 'Guardian'}`,
+            message: msgPreview,
+            type: 'chat_message',
+            relatedDogId: payload.dogId,
+            relatedApplicationId: payload.conversationId,
+            timestamp: 'Just now',
+            read: false
+          };
+          return [newNotif, ...prev];
+        });
+      }
 
       setConversations(prev => {
         const existsByConvId = prev.some(c => c.id === payload.conversationId);
