@@ -14,6 +14,7 @@ import {
   Bell,
   Check,
   ChevronDown,
+  ChevronRight,
   UserCheck,
   Phone,
   Menu,

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useAudio } from '../context/AudioContext';
-import { Dog, AdoptionApplication } from '../types';
+import { Dog, AdoptionApplication, NotificationItem } from '../types';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { FaqSection } from '../components/common/FaqSection';
 import {
@@ -20,6 +20,11 @@ import {
   MapPin,
   Edit3,
   HelpCircle,
+  Bell,
+  CheckCheck,
+  MessageCircle,
+  Calendar,
+  Filter,
 } from 'lucide-react';
 
 export const MyDogsPage: React.FC = () => {
@@ -34,9 +39,16 @@ export const MyDogsPage: React.FC = () => {
     setIsAuthModalOpen,
     profileSubTab,
     setProfileSubTab,
+    notifications,
+    markNotificationAsRead,
+    markAllNotificationsAsRead,
+    unreadNotifsCount,
+    setActiveConversationId,
+    openChatForDog,
   } = useApp();
 
   const { playPawPop } = useAudio();
+  const [notifFilter, setNotifFilter] = useState<'all' | 'unread' | 'messages' | 'adoptions'>('all');
 
   if (!currentUser) {
     return (
@@ -74,6 +86,9 @@ export const MyDogsPage: React.FC = () => {
 
   // User Applications
   const myApplications = applications.filter((a: AdoptionApplication) => a.applicantId === currentUser.id);
+
+  // User Notifications History
+  const userNotifications = notifications.filter((n: NotificationItem) => !n.userId || n.userId === currentUser.id);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 text-left">
@@ -242,6 +257,26 @@ export const MyDogsPage: React.FC = () => {
         >
           <FileText className="w-4 h-4" />
           <span>My Applications ({myApplications.length})</span>
+        </button>
+
+        <button
+          onClick={() => {
+            playPawPop();
+            setProfileSubTab('notifications');
+          }}
+          className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
+            profileSubTab === 'notifications'
+              ? 'bg-coral-500 text-white shadow-glow-coral'
+              : 'bg-obsidian-100 dark:bg-white/10 text-obsidian-700 dark:text-slate-300 hover:bg-obsidian-200 dark:hover:bg-white/20'
+          }`}
+        >
+          <Bell className="w-4 h-4" />
+          <span>Notification History & Tracker ({userNotifications.length})</span>
+          {unreadNotifsCount > 0 && (
+            <span className="px-1.5 py-0.2 bg-coral-500 text-white text-[10px] font-black rounded-full shadow-xs animate-pulse">
+              {unreadNotifsCount} new
+            </span>
+          )}
         </button>
 
         <button
@@ -464,7 +499,183 @@ export const MyDogsPage: React.FC = () => {
         </div>
       )}
 
-      {/* SUBTAB 4: FREQUENTLY ASKED QUESTIONS (FAQ) */}
+      {/* SUBTAB 4: NOTIFICATION HISTORY & TRACKER */}
+      {profileSubTab === 'notifications' && (
+        <div className="space-y-4 animate-in fade-in duration-150">
+          
+          {/* Header Controls Bar */}
+          <div className="glass-card rounded-3xl p-5 border border-white dark:border-white/10 shadow-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-black text-obsidian-950 dark:text-white flex items-center gap-2">
+                <span className="text-xl">🔔</span> Notification History & Updates Tracker
+              </h3>
+              <p className="text-xs text-obsidian-600 dark:text-slate-300 mt-0.5">
+                Complete timeline of all adoption requests, chat messages, meetings & verification updates.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto justify-between sm:justify-end">
+              {unreadNotifsCount > 0 && (
+                <button
+                  onClick={() => {
+                    playPawPop();
+                    markAllNotificationsAsRead();
+                  }}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-coral-500 text-white hover:bg-coral-600 text-xs font-black transition-all shadow-glow-coral cursor-pointer"
+                >
+                  <CheckCheck className="w-4 h-4" />
+                  <span>Mark All as Read ({unreadNotifsCount})</span>
+                </button>
+              )}
+
+              <div className="flex items-center gap-1 bg-obsidian-100 dark:bg-white/10 p-1 rounded-2xl">
+                {[
+                  { id: 'all', label: `All (${userNotifications.length})` },
+                  { id: 'unread', label: `Unread (${unreadNotifsCount})` },
+                  { id: 'messages', label: 'Chats 💬' },
+                  { id: 'adoptions', label: 'Adoptions 🐾' },
+                ].map(f => (
+                  <button
+                    key={f.id}
+                    onClick={() => setNotifFilter(f.id as typeof notifFilter)}
+                    className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
+                      notifFilter === f.id
+                        ? 'bg-white dark:bg-obsidian-900 text-coral-600 dark:text-coral-400 shadow-xs'
+                        : 'text-obsidian-600 dark:text-slate-300 hover:text-obsidian-950 dark:hover:text-white'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Notifications List */}
+          {(() => {
+            const filtered = userNotifications.filter(n => {
+              if (notifFilter === 'unread') return !n.read;
+              if (notifFilter === 'messages') return n.type === 'chat_message';
+              if (notifFilter === 'adoptions') return n.type !== 'chat_message';
+              return true;
+            });
+
+            if (filtered.length === 0) {
+              return (
+                <div className="glass-card rounded-3xl p-12 text-center border border-white dark:border-white/10 space-y-3 shadow-card">
+                  <div className="text-4xl">🔔✨</div>
+                  <h3 className="text-lg font-bold text-obsidian-950 dark:text-white">
+                    {notifFilter === 'unread' ? 'No Unread Notifications' : 'No Notification History Found'}
+                  </h3>
+                  <p className="text-xs text-obsidian-600 dark:text-slate-300 max-w-sm mx-auto leading-relaxed font-normal">
+                    {notifFilter === 'unread'
+                      ? 'You are all caught up! When you receive new adoption requests or chat messages, they will appear here.'
+                      : 'Adoption applications, direct chat updates, and verification alerts will be logged here.'}
+                  </p>
+                </div>
+              );
+            }
+
+            return (
+              <div className="space-y-3">
+                {filtered.map(notif => {
+                  const isChat = notif.type === 'chat_message';
+                  const isAccepted = notif.type === 'application_accepted' || notif.type === 'dog_transferred';
+
+                  return (
+                    <div
+                      key={notif.id}
+                      className={`p-5 rounded-3xl transition-all border ${
+                        !notif.read
+                          ? 'bg-gradient-to-br from-coral-500/10 via-coral-500/5 to-white/60 dark:from-coral-500/20 dark:via-[#162136] dark:to-[#111A2B] border-coral-500/40 dark:border-coral-500/40 shadow-sm'
+                          : 'glass-card border-white/80 dark:border-white/10 hover:border-obsidian-300 dark:hover:border-white/20'
+                      } flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4`}
+                    >
+                      <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                        <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-lg shrink-0 shadow-xs ${
+                          isChat
+                            ? 'bg-sky-100 dark:bg-sky-950/80 text-sky-600'
+                            : isAccepted
+                            ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600'
+                            : 'bg-coral-100 dark:bg-coral-950/80 text-coral-600'
+                        }`}>
+                          {isChat ? '💬' : isAccepted ? '🎉' : '🐾'}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-sm font-black text-obsidian-950 dark:text-white truncate">
+                              {notif.title}
+                            </h4>
+                            {!notif.read ? (
+                              <span className="px-2 py-0.5 rounded-full bg-coral-500 text-white text-[9px] font-black uppercase tracking-wider animate-pulse">
+                                NEW
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded-full bg-obsidian-100 dark:bg-white/10 text-obsidian-600 dark:text-slate-400 text-[9px] font-bold">
+                                Read ✓
+                              </span>
+                            )}
+                          </div>
+                          
+                          <p className="text-xs text-obsidian-700 dark:text-slate-200 mt-1 leading-relaxed">
+                            {notif.message}
+                          </p>
+
+                          <div className="mt-2 flex items-center gap-3 text-[10px] text-obsidian-500 dark:text-slate-400 font-medium">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {notif.timestamp || 'Just now'}
+                            </span>
+                            <span className="capitalize px-2 py-0.2 rounded-md bg-obsidian-100 dark:bg-white/5 border border-obsidian-200/50 dark:border-white/5">
+                              {notif.type.replace('_', ' ')}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Direct CTA Action Button */}
+                      <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                        {isChat ? (
+                          <button
+                            onClick={() => {
+                              markNotificationAsRead(notif.id);
+                              if (notif.relatedApplicationId) {
+                                setActiveConversationId(notif.relatedApplicationId);
+                              } else if (notif.relatedDogId) {
+                                const targetDog = dogs.find(d => d.id === notif.relatedDogId);
+                                if (targetDog) openChatForDog(targetDog);
+                              }
+                              setActiveTab('chat');
+                            }}
+                            className="btn-primary text-white px-4 py-2.5 rounded-2xl text-xs font-black shadow-glow-coral flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                            <span>Open Chat Thread</span>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              markNotificationAsRead(notif.id);
+                              setActiveTab('adopt_flow');
+                            }}
+                            className="bg-obsidian-900 dark:bg-white text-white dark:text-obsidian-900 hover:bg-coral-500 dark:hover:bg-coral-400 dark:hover:text-white px-4 py-2.5 rounded-2xl text-xs font-black transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <span>Open Pipeline</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* SUBTAB 5: FREQUENTLY ASKED QUESTIONS (FAQ) */}
       {profileSubTab === 'faq' && (
         <div className="animate-in fade-in duration-200 -mx-4 sm:-mx-6 lg:-mx-8">
           <FaqSection />
